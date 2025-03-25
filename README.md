@@ -27,7 +27,7 @@ The module also includes additional tools like [Forecastle][forecastle-repo], a 
 
 ### Architecture
 
-The reference architecture used to deploy the Fury Kubernetes Ingress Module is shown in the following figure:
+The reference architecture used to deploy the Ingress Module is shown in the following figure:
 
 ![Ingress Architecture](/docs/images/fury-ingress.png)
 
