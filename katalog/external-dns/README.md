@@ -1,6 +1,6 @@
 # ExternalDNS package
 
-<!-- <KFD-DOCS> -->
+<!-- <SD-DOCS> -->
 
 ExternalDNS synchronizes exposed Kubernetes Services and Ingresses with DNS providers.
 
@@ -77,7 +77,7 @@ You can then apply your kustomize project by running the following command:
 kustomize build | kubectl apply -f -
 ```
 
-<!-- </KFD-DOCS> -->
+<!-- </SD-DOCS> -->
 
 ## License
 

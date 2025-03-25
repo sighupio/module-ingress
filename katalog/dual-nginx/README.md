@@ -1,6 +1,6 @@
 # Ingress NGINX Dual
 
-<!-- <KFD-DOCS> -->
+<!-- <SD-DOCS> -->
 
 Ingress NGINX is an Ingress Controller for [NGINX][nginx-page] webserver and reverse proxy, it manages NGINX in a Kubernetes native manner. This package deploys 2 NGINX Controllers, one with ingress class `external` to serve public traffic, and one with ingress class `internal` to serve internal traffic.
 
@@ -116,7 +116,7 @@ Followings Prometheus [alerts][prometheus-alerts] are already defined for this p
 [nginx-page]: https://nginx.org
 [prometheus-alerts]: https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/
 
-<!-- </KFD-DOCS> -->
+<!-- </SD-DOCS> -->
 
 ## License
 

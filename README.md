@@ -1,7 +1,11 @@
 <!-- markdownlint-disable MD033 -->
-<h1>
-    <img src="https://github.com/sighupio/fury-distribution/blob/main/docs/assets/fury-epta-white.png?raw=true" align="left" width="90" style="margin-right: 15px"/>
-    Kubernetes Fury Ingress
+<h1 align="center">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/sighupio/distribution/refs/heads/main/docs/assets/white-logo.png">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/sighupio/distribution/refs/heads/main/docs/assets/black-logo.png">
+  <img alt="Shows a black logo in light color mode and a white one in dark color mode." src="https://raw.githubusercontent.com/sighupio/distribution/refs/heads/main/docs/assets/white-logo.png">
+</picture><br/>
+  Ingress Module
 </h1>
 <!-- markdownlint-enable MD033 -->
 
@@ -9,15 +13,15 @@
 ![License](https://img.shields.io/github/license/sighupio/fury-kubernetes-ingress?label=License)
 ![Slack](https://img.shields.io/badge/slack-@kubernetes/fury-yellow.svg?logo=slack&label=Slack)
 
-<!-- <KFD-DOCS> -->
+<!-- <SD-DOCS> -->
 
-**Kubernetes Fury Ingress** provides Ingress Controllers to expose services and TLS certificate management solutions for the [Kubernetes Fury Distribution (KFD)][kfd-repo].
+**Ingress Module** provides Ingress Controllers to expose services and TLS certificate management solutions for the [SIGHUP Distribution (SD)][kfd-repo].
 
-If you are new to KFD please refer to the [official documentation][kfd-docs] on how to get started with KFD.
+If you are new to SD please refer to the [official documentation][kfd-docs] on how to get started with SD.
 
 ## Overview
 
-**Kubernetes Fury Ingress** uses CNCF recommended, Cloud Native projects, such as [Ingress NGINX][ingress-nginx-docs] an ingress controller using the well-known NGINX server as a URL path-based routing reverse proxy and load balancer, and [cert-manager](https://github.com/jetstack/cert-manager) to automate the issuing and renewal of TLS certificates from various issuing sources.
+**Ingress Module** uses CNCF recommended, Cloud Native projects, such as [Ingress NGINX][ingress-nginx-docs] an ingress controller using the well-known NGINX server as a URL path-based routing reverse proxy and load balancer, and [cert-manager](https://github.com/jetstack/cert-manager) to automate the issuing and renewal of TLS certificates from various issuing sources.
 
 The module also includes additional tools like [Forecastle][forecastle-repo], a web-based global directory of all the services offered by your cluster.
 
@@ -35,7 +39,7 @@ The reference architecture used to deploy the Fury Kubernetes Ingress Module is 
 
 ## Packages
 
-Kubernetes Fury Ingress provides the following packages:
+Ingress Module provides the following packages:
 
 | Package                                       | Version    | Description                                                                                                                   |
 | --------------------------------------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------- |
@@ -69,12 +73,12 @@ Check the [compatibility matrix][compatibility-matrix] for additional informatio
 
 | Tool                        | Version    | Description                                                                                                                                                    |
 | --------------------------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [furyctl][furyctl-repo]     | `>=0.25.0` | The recommended tool to download and manage KFD modules and their packages. To learn more about `furyctl` read the [official documentation][furyctl-repo].     |
+| [furyctl][furyctl-repo]     | `>=0.25.0` | The recommended tool to download and manage SD modules and their packages. To learn more about `furyctl` read the [official documentation][furyctl-repo].     |
 | [kustomize][kustomize-repo] | `>=5.6.0`  | Packages are customized using `kustomize`. To learn how to create your customization layer with `kustomize`, please refer to the [repository][kustomize-repo]. |
 
 ### Single vs Dual Controller
 
-As the first step, you should choose what type of ingress controller you want to use in your cluster. Kubernetes Fury Ingress provides two types, Single and Dual Ingress Controller.
+As the first step, you should choose what type of ingress controller you want to use in your cluster. Ingress Module provides two types, Single and Dual Ingress Controller.
 
 The Single Controller Package deploys a single class NGINX Ingress Controller that serves all the internal (private) and external (public) traffic.
 
@@ -86,7 +90,7 @@ The Dual Controller Package creates two NGINX Ingress Controller classes, the `i
 
 ### Default Configuration
 
-For both Single and Dual NGINX the Kubernetes Fury Ingress module has the following default configuration:
+For both Single and Dual NGINX the Ingress Module module has the following default configuration:
 
 - Maximum allowed size of the client request body: `10m`
 - HTTP status code used in redirects: `301`
@@ -109,7 +113,7 @@ Additionally, the following Prometheus Rules for [alerts][prometheus-alerts-page
 
 #### Certificates automation with cert-manager
 
-Kubernetes Fury Ingress cert-manager package is the defacto tool to manage certificates in Kubernetes. It manages the issuing and automatic renewal of certificates for the domains served by the Ingress Controller.
+Ingress Module cert-manager package is the defacto tool to manage certificates in Kubernetes. It manages the issuing and automatic renewal of certificates for the domains served by the Ingress Controller.
 
 The package's default configuration includes:
 
@@ -325,7 +329,7 @@ Add the following annotations to your ingresses to be discovered by Forecastle:
 [ingress-nginx-docs]: https://github.com/kubernetes/ingress-nginx
 [prometheus-alerts-page]: https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/
 
-<!-- </KFD-DOCS> -->
+<!-- </SD-DOCS> -->
 
 <!-- <FOOTER> -->
 

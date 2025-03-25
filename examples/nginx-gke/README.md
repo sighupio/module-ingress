@@ -1,6 +1,6 @@
 # NGINX Ingress Controller for GKE
 
-<!-- <KFD-DOCS> -->
+<!-- <SD-DOCS> -->
 
 Ingress NGINX is an Ingress Controller for [NGINX][nginx-page] webserver and reverse proxy, it manages NGINX in a Kubernetes native manner. This package deploys Ingress Controller for Google Kubernetes Engine (GKE) clusters.
 
@@ -114,7 +114,7 @@ Followings Prometheus [alerts][prometheus-alerts] are already defined for this p
 [nginx-page]: https://nginx.org
 [prometheus-alerts]: https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/
 
-<!-- </KFD-DOCS> -->
+<!-- </SD-DOCS> -->
 
 ## License
 

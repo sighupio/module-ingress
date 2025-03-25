@@ -1,6 +1,6 @@
 # Forecastle
 
-<!-- <KFD-DOCS> -->
+<!-- <SD-DOCS> -->
 
 [Forecastle][forecastle-page] provides a handy dashboard to show all the applications running on Kubernetes exposed through an Ingress.
 
@@ -77,4 +77,4 @@ The `kubernetes.io/ingress.class` annotation is required by Forecastle to have t
 <!-- Links -->
 [forecastle-page]: https://github.com/stakater/Forecastle
 
-<!-- </KFD-DOCS> -->
+<!-- </SD-DOCS> -->

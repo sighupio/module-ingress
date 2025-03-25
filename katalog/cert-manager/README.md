@@ -1,6 +1,6 @@
 # cert-manager
 
-<!-- <KFD-DOCS> -->
+<!-- <SD-DOCS> -->
 
 cert-manager is an automation tool to manage and issue TLS certificates from various issuing resources in a Kubernetes native way. It ensures that certificates are valid and attempts to renew them before expiry.
 
@@ -83,7 +83,7 @@ and in the `patches/dual-nginx.yml`:
 kustomize build . | kubectl apply -f -
 ```
 
-<!-- </KFD-DOCS> -->
+<!-- </SD-DOCS> -->
 
 ## License
 
