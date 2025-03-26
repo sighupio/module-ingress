@@ -6,7 +6,7 @@ request to the best possible team for review.
 💡 **TIP**
 Remember that you can always open a PR in draft status and fill all the information afterwards.
 
-Opening a PR in draft allows other team members to knwo that you are working on this change, and let's you have a 
+Opening a PR in draft allows other team members to know that you are working on this change, and let's you have a 
 place to track your work in progress.
 
 When opening PRs in Draft, don't assign reviewers until the PR is ready for review.  Once you are confortable with the
