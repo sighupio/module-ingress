@@ -8,6 +8,6 @@ namespaceSelector:
 crdEnabled: true
 customApps: {}
 instanceName: null
-title: "SIGHUP Kubernetes Distribution - Infrastructure Applications Directory"
-headerBackground: "#421959"
-headerForeground: "#ffffff"
+title: "SIGHUP Distribution - Infrastructure Applications Directory"
+headerBackground: "#1d1e24"
+headerForeground: "#dfe5ef"
