@@ -2,34 +2,6 @@
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
-# Mise configuration anchors
-x-mise-cache-volume: &mise-cache-volume
-  name: mise-cache
-  host:
-    path: /tmp/mise-cache-${DRONE_REPO_NAME}
-
-x-mise-environment: &mise-environment
-  MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
-
-x-mise-setup-e2e: &mise-setup-e2e |
-  echo "[tools]" > mise.ci.toml
-  echo "awscli = \"2.24.17\"" >> mise.ci.toml
-  echo "bats = \"1.1.0\"" >> mise.ci.toml
-  echo "helm = \"3.12.0\"" >> mise.ci.toml
-  echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
-  echo "kustomize = \"5.6.0\"" >> mise.ci.toml
-  echo "yq = \"4.33.3\"" >> mise.ci.toml
-  mise install
-  eval "$(mise activate bash --shims)"
-
-x-mise-setup-kind: &mise-setup-kind |
-  echo "[tools]" > mise.ci.toml
-  echo "kind = \"${KIND_VERSION}\"" >> mise.ci.toml
-  echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
-  echo "kustomize = \"5.6.0\"" >> mise.ci.toml
-  mise install
-  eval "$(mise activate bash --shims)"
-
 ---
 name: license
 kind: pipeline
@@ -56,13 +28,14 @@ platform:
   os: linux
   arch: amd64
 volumes:
-  - <<: *mise-cache-volume
+  - name: mise-cache
+    temp: {}
 steps:
   - name: render
     image: quay.io/sighup/mise:v2025.4.4
     pull: always
     environment:
-      <<: *mise-environment
+      MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
       KUBECTL_VERSION: "1.33.0"
     volumes:
       - name: mise-cache
@@ -70,7 +43,16 @@ steps:
     depends_on:
       - clone
     commands:
-      - *mise-setup-e2e
+      - |
+        echo "[tools]" > mise.ci.toml
+        echo "awscli = \"2.24.17\"" >> mise.ci.toml
+        echo "bats = \"1.1.0\"" >> mise.ci.toml
+        echo "helm = \"3.12.0\"" >> mise.ci.toml
+        echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
+        echo "kustomize = \"5.6.0\"" >> mise.ci.toml
+        echo "yq = \"4.33.3\"" >> mise.ci.toml
+        mise install
+        eval "$(mise activate bash --shims)"
       - kustomize build katalog/cert-manager > cert-manager.yml
       - kustomize build katalog/dual-nginx > dual-nginx.yml
       - kustomize build katalog/forecastle > forecastle.yml
@@ -102,6 +84,7 @@ steps:
     environment:
       KUBERNETES_MANIFESTS: nginx.yml
 
+
 ---
 name: E2E Tests on kind clusters version 1.29.0
 kind: pipeline
@@ -121,8 +104,10 @@ volumes:
   - name: dockersock
     host:
       path: /var/run/docker.sock
-  - <<: *mise-cache-volume
+  - name: mise-cache
+    temp: {}
 steps:
+    
   - name: Generate Kind Config file
     image: alpine:latest
     pull: always
@@ -133,7 +118,7 @@ steps:
     image: quay.io/sighup/mise:v2025.4.4
     pull: always
     environment:
-      <<: *mise-environment
+      MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
       KIND_VERSION: "0.24.0"
       KUBECTL_VERSION: "1.29.1"
       CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.29.0
@@ -143,7 +128,13 @@ steps:
       - name: mise-cache
         path: /root/.cache/mise
     commands:
-      - *mise-setup-kind
+      - |
+        echo "[tools]" > mise.ci.toml
+        echo "kind = \"${KIND_VERSION}\"" >> mise.ci.toml
+        echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
+        echo "kustomize = \"5.6.0\"" >> mise.ci.toml
+        mise install
+        eval "$(mise activate bash --shims)"
       - kind create cluster --config ./config-$${CLUSTER_NAME}.yaml
       - kind get kubeconfig --name $${CLUSTER_NAME} > ./kubeconfig-$${CLUSTER_NAME}
     depends_on:
@@ -154,7 +145,7 @@ steps:
     pull: always
     network_mode: host
     environment:
-      <<: *mise-environment
+      MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
       KUBECTL_VERSION: "1.29.1"
       KUBECONFIG: ./kubeconfig-${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.29.0
       CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.29.0
@@ -162,7 +153,16 @@ steps:
       - name: mise-cache
         path: /root/.cache/mise
     commands:
-      - *mise-setup-e2e
+      - |
+        echo "[tools]" > mise.ci.toml
+        echo "awscli = \"2.24.17\"" >> mise.ci.toml
+        echo "bats = \"1.1.0\"" >> mise.ci.toml
+        echo "helm = \"3.12.0\"" >> mise.ci.toml
+        echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
+        echo "kustomize = \"5.6.0\"" >> mise.ci.toml
+        echo "yq = \"4.33.3\"" >> mise.ci.toml
+        mise install
+        eval "$(mise activate bash --shims)"
       - . ./env-$${CLUSTER_NAME}.env
       - until kubectl get serviceaccount default > /dev/null 2>&1; do echo "waiting for control-plane" && sleep 1; done
       - bats -t ./katalog/tests/tests.bats
@@ -173,7 +173,7 @@ steps:
     image: quay.io/sighup/mise:v2025.4.4
     pull: always
     environment:
-      <<: *mise-environment
+      MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
       KIND_VERSION: "0.24.0"
       KUBECTL_VERSION: "1.29.1"
       CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.29.0
@@ -183,7 +183,13 @@ steps:
       - name: mise-cache
         path: /root/.cache/mise
     commands:
-      - *mise-setup-kind
+      - |
+        echo "[tools]" > mise.ci.toml
+        echo "kind = \"${KIND_VERSION}\"" >> mise.ci.toml
+        echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
+        echo "kustomize = \"5.6.0\"" >> mise.ci.toml
+        mise install
+        eval "$(mise activate bash --shims)"
       - "kind delete cluster --name $${CLUSTER_NAME} || true"
     depends_on:
       - End-to-End Tests
@@ -211,7 +217,8 @@ volumes:
   - name: dockersock
     host:
       path: /var/run/docker.sock
-  - <<: *mise-cache-volume
+  - name: mise-cache
+    temp: {}
 steps:
   - name: Generate Kind Config file
     image: alpine:latest
@@ -223,7 +230,7 @@ steps:
     image: quay.io/sighup/mise:v2025.4.4
     pull: always
     environment:
-      <<: *mise-environment
+      MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
       KIND_VERSION: "0.24.0"
       KUBECTL_VERSION: "1.30.5"
       CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.30.4
@@ -233,7 +240,13 @@ steps:
       - name: mise-cache
         path: /root/.cache/mise
     commands:
-      - *mise-setup-kind
+      - |
+        echo "[tools]" > mise.ci.toml
+        echo "kind = \"${KIND_VERSION}\"" >> mise.ci.toml
+        echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
+        echo "kustomize = \"5.6.0\"" >> mise.ci.toml
+        mise install
+        eval "$(mise activate bash --shims)"
       - kind create cluster --config ./config-$${CLUSTER_NAME}.yaml
       - kind get kubeconfig --name $${CLUSTER_NAME} > ./kubeconfig-$${CLUSTER_NAME}
     depends_on:
@@ -244,7 +257,7 @@ steps:
     pull: always
     network_mode: host
     environment:
-      <<: *mise-environment
+      MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
       KUBECTL_VERSION: "1.30.5"
       KUBECONFIG: ./kubeconfig-${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.30.4
       CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.30.4
@@ -252,7 +265,16 @@ steps:
       - name: mise-cache
         path: /root/.cache/mise
     commands:
-      - *mise-setup-e2e
+      - |
+        echo "[tools]" > mise.ci.toml
+        echo "awscli = \"2.24.17\"" >> mise.ci.toml
+        echo "bats = \"1.1.0\"" >> mise.ci.toml
+        echo "helm = \"3.12.0\"" >> mise.ci.toml
+        echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
+        echo "kustomize = \"5.6.0\"" >> mise.ci.toml
+        echo "yq = \"4.33.3\"" >> mise.ci.toml
+        mise install
+        eval "$(mise activate bash --shims)"
       - . ./env-$${CLUSTER_NAME}.env
       - until kubectl get serviceaccount default > /dev/null 2>&1; do echo "waiting for control-plane" && sleep 1; done
       - bats -t ./katalog/tests/tests.bats
@@ -263,7 +285,7 @@ steps:
     image: quay.io/sighup/mise:v2025.4.4
     pull: always
     environment:
-      <<: *mise-environment
+      MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
       KIND_VERSION: "0.24.0"
       KUBECTL_VERSION: "1.30.5"
       CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.30.4
@@ -273,7 +295,13 @@ steps:
       - name: mise-cache
         path: /root/.cache/mise
     commands:
-      - *mise-setup-kind
+      - |
+        echo "[tools]" > mise.ci.toml
+        echo "kind = \"${KIND_VERSION}\"" >> mise.ci.toml
+        echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
+        echo "kustomize = \"5.6.0\"" >> mise.ci.toml
+        mise install
+        eval "$(mise activate bash --shims)"
       - "kind delete cluster --name $${CLUSTER_NAME} || true"
     depends_on:
       - End-to-End Tests
@@ -301,7 +329,8 @@ volumes:
   - name: dockersock
     host:
       path: /var/run/docker.sock
-  - <<: *mise-cache-volume
+  - name: mise-cache
+    temp: {}
 steps:
   - name: Generate Kind Config file
     image: alpine:latest
@@ -313,7 +342,7 @@ steps:
     image: quay.io/sighup/mise:v2025.4.4
     pull: always
     environment:
-      <<: *mise-environment
+      MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
       KIND_VERSION: "0.24.0"
       KUBECTL_VERSION: "1.31.1"
       CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.31.1
@@ -323,7 +352,13 @@ steps:
       - name: mise-cache
         path: /root/.cache/mise
     commands:
-      - *mise-setup-kind
+      - |
+        echo "[tools]" > mise.ci.toml
+        echo "kind = \"${KIND_VERSION}\"" >> mise.ci.toml
+        echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
+        echo "kustomize = \"5.6.0\"" >> mise.ci.toml
+        mise install
+        eval "$(mise activate bash --shims)"
       - kind create cluster --config ./config-$${CLUSTER_NAME}.yaml
       - kind get kubeconfig --name $${CLUSTER_NAME} > ./kubeconfig-$${CLUSTER_NAME}
     depends_on:
@@ -334,7 +369,7 @@ steps:
     pull: always
     network_mode: host
     environment:
-      <<: *mise-environment
+      MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
       KUBECTL_VERSION: "1.31.1"
       KUBECONFIG: ./kubeconfig-${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.31.1
       CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.31.1
@@ -342,7 +377,16 @@ steps:
       - name: mise-cache
         path: /root/.cache/mise
     commands:
-      - *mise-setup-e2e
+      - |
+        echo "[tools]" > mise.ci.toml
+        echo "awscli = \"2.24.17\"" >> mise.ci.toml
+        echo "bats = \"1.1.0\"" >> mise.ci.toml
+        echo "helm = \"3.12.0\"" >> mise.ci.toml
+        echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
+        echo "kustomize = \"5.6.0\"" >> mise.ci.toml
+        echo "yq = \"4.33.3\"" >> mise.ci.toml
+        mise install
+        eval "$(mise activate bash --shims)"
       - . ./env-$${CLUSTER_NAME}.env
       - until kubectl get serviceaccount default > /dev/null 2>&1; do echo "waiting for control-plane" && sleep 1; done
       - bats -t ./katalog/tests/tests.bats
@@ -353,7 +397,7 @@ steps:
     image: quay.io/sighup/mise:v2025.4.4
     pull: always
     environment:
-      <<: *mise-environment
+      MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
       KIND_VERSION: "0.24.0"
       KUBECTL_VERSION: "1.31.1"
       CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.31.1
@@ -363,7 +407,13 @@ steps:
       - name: mise-cache
         path: /root/.cache/mise
     commands:
-      - *mise-setup-kind
+      - |
+        echo "[tools]" > mise.ci.toml
+        echo "kind = \"${KIND_VERSION}\"" >> mise.ci.toml
+        echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
+        echo "kustomize = \"5.6.0\"" >> mise.ci.toml
+        mise install
+        eval "$(mise activate bash --shims)"
       - "kind delete cluster --name $${CLUSTER_NAME} || true"
     depends_on:
       - End-to-End Tests
@@ -391,7 +441,8 @@ volumes:
   - name: dockersock
     host:
       path: /var/run/docker.sock
-  - <<: *mise-cache-volume
+  - name: mise-cache
+    temp: {}
 steps:
   - name: Generate Kind Config file
     image: alpine:latest
@@ -403,7 +454,7 @@ steps:
     image: quay.io/sighup/mise:v2025.4.4
     pull: always
     environment:
-      <<: *mise-environment
+      MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
       KIND_VERSION: "0.27.0"
       KUBECTL_VERSION: "1.32.2"
       CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.32.2
@@ -413,7 +464,13 @@ steps:
       - name: mise-cache
         path: /root/.cache/mise
     commands:
-      - *mise-setup-kind
+      - |
+        echo "[tools]" > mise.ci.toml
+        echo "kind = \"${KIND_VERSION}\"" >> mise.ci.toml
+        echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
+        echo "kustomize = \"5.6.0\"" >> mise.ci.toml
+        mise install
+        eval "$(mise activate bash --shims)"
       - kind create cluster --config ./config-$${CLUSTER_NAME}.yaml
       - kind get kubeconfig --name $${CLUSTER_NAME} > ./kubeconfig-$${CLUSTER_NAME}
     depends_on:
@@ -424,7 +481,7 @@ steps:
     pull: always
     network_mode: host
     environment:
-      <<: *mise-environment
+      MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
       KUBECTL_VERSION: "1.32.2"
       KUBECONFIG: ./kubeconfig-${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.32.2
       CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.32.2
@@ -432,7 +489,16 @@ steps:
       - name: mise-cache
         path: /root/.cache/mise
     commands:
-      - *mise-setup-e2e
+      - |
+        echo "[tools]" > mise.ci.toml
+        echo "awscli = \"2.24.17\"" >> mise.ci.toml
+        echo "bats = \"1.1.0\"" >> mise.ci.toml
+        echo "helm = \"3.12.0\"" >> mise.ci.toml
+        echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
+        echo "kustomize = \"5.6.0\"" >> mise.ci.toml
+        echo "yq = \"4.33.3\"" >> mise.ci.toml
+        mise install
+        eval "$(mise activate bash --shims)"
       - . ./env-$${CLUSTER_NAME}.env
       - until kubectl get serviceaccount default > /dev/null 2>&1; do echo "waiting for control-plane" && sleep 1; done
       - bats -t ./katalog/tests/tests.bats
@@ -443,7 +509,7 @@ steps:
     image: quay.io/sighup/mise:v2025.4.4
     pull: always
     environment:
-      <<: *mise-environment
+      MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
       KIND_VERSION: "0.27.0"
       KUBECTL_VERSION: "1.32.2"
       CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.32.2
@@ -453,7 +519,13 @@ steps:
       - name: mise-cache
         path: /root/.cache/mise
     commands:
-      - *mise-setup-kind
+      - |
+        echo "[tools]" > mise.ci.toml
+        echo "kind = \"${KIND_VERSION}\"" >> mise.ci.toml
+        echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
+        echo "kustomize = \"5.6.0\"" >> mise.ci.toml
+        mise install
+        eval "$(mise activate bash --shims)"
       - "kind delete cluster --name $${CLUSTER_NAME} || true"
     depends_on:
       - End-to-End Tests
@@ -481,7 +553,8 @@ volumes:
   - name: dockersock
     host:
       path: /var/run/docker.sock
-  - <<: *mise-cache-volume
+  - name: mise-cache
+    temp: {}
 steps:
   - name: Generate Kind Config file
     image: alpine:latest
@@ -493,7 +566,7 @@ steps:
     image: quay.io/sighup/mise:v2025.4.4
     pull: always
     environment:
-      <<: *mise-environment
+      MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
       KIND_VERSION: "0.29.0"
       KUBECTL_VERSION: "1.33.4"
       CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.33.0
@@ -503,7 +576,13 @@ steps:
       - name: mise-cache
         path: /root/.cache/mise
     commands:
-      - *mise-setup-kind
+      - |
+        echo "[tools]" > mise.ci.toml
+        echo "kind = \"${KIND_VERSION}\"" >> mise.ci.toml
+        echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
+        echo "kustomize = \"5.6.0\"" >> mise.ci.toml
+        mise install
+        eval "$(mise activate bash --shims)"
       - kind create cluster --config ./config-$${CLUSTER_NAME}.yaml
       - kind get kubeconfig --name $${CLUSTER_NAME} > ./kubeconfig-$${CLUSTER_NAME}
     depends_on:
@@ -514,7 +593,7 @@ steps:
     pull: always
     network_mode: host
     environment:
-      <<: *mise-environment
+      MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
       KUBECTL_VERSION: "1.33.4"
       KUBECONFIG: ./kubeconfig-${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.33.0
       CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.33.0
@@ -522,7 +601,16 @@ steps:
       - name: mise-cache
         path: /root/.cache/mise
     commands:
-      - *mise-setup-e2e
+      - |
+        echo "[tools]" > mise.ci.toml
+        echo "awscli = \"2.24.17\"" >> mise.ci.toml
+        echo "bats = \"1.1.0\"" >> mise.ci.toml
+        echo "helm = \"3.12.0\"" >> mise.ci.toml
+        echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
+        echo "kustomize = \"5.6.0\"" >> mise.ci.toml
+        echo "yq = \"4.33.3\"" >> mise.ci.toml
+        mise install
+        eval "$(mise activate bash --shims)"
       - . ./env-$${CLUSTER_NAME}.env
       - until kubectl get serviceaccount default > /dev/null 2>&1; do echo "waiting for control-plane" && sleep 1; done
       - bats -t ./katalog/tests/tests.bats
@@ -533,7 +621,7 @@ steps:
     image: quay.io/sighup/mise:v2025.4.4
     pull: always
     environment:
-      <<: *mise-environment
+      MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
       KIND_VERSION: "0.29.0"
       KUBECTL_VERSION: "1.33.4"
       CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.33.0
@@ -543,7 +631,13 @@ steps:
       - name: mise-cache
         path: /root/.cache/mise
     commands:
-      - *mise-setup-kind
+      - |
+        echo "[tools]" > mise.ci.toml
+        echo "kind = \"${KIND_VERSION}\"" >> mise.ci.toml
+        echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
+        echo "kustomize = \"5.6.0\"" >> mise.ci.toml
+        mise install
+        eval "$(mise activate bash --shims)"
       - "kind delete cluster --name $${CLUSTER_NAME} || true"
     depends_on:
       - End-to-End Tests
