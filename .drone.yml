@@ -1,6 +1,36 @@
 # Copyright (c) 2017-present SIGHUP s.r.l All rights reserved.
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
+
+# Mise configuration anchors
+x-mise-cache-volume: &mise-cache-volume
+  name: mise-cache
+  host:
+    path: /tmp/mise-cache-${DRONE_REPO_NAME}
+
+x-mise-environment: &mise-environment
+  MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
+
+x-mise-setup-e2e: &mise-setup-e2e |
+  echo "[tools]" > mise.ci.toml
+  echo "awscli = \"2.24.17\"" >> mise.ci.toml
+  echo "bats = \"1.1.0\"" >> mise.ci.toml
+  echo "helm = \"3.12.0\"" >> mise.ci.toml
+  echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
+  echo "kustomize = \"5.6.0\"" >> mise.ci.toml
+  echo "yq = \"4.33.3\"" >> mise.ci.toml
+  mise install
+  eval "$(mise activate bash --shims)"
+
+x-mise-setup-kind: &mise-setup-kind |
+  echo "[tools]" > mise.ci.toml
+  echo "kind = \"${KIND_VERSION}\"" >> mise.ci.toml
+  echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
+  echo "kustomize = \"5.6.0\"" >> mise.ci.toml
+  mise install
+  eval "$(mise activate bash --shims)"
+
+---
 name: license
 kind: pipeline
 type: docker
@@ -25,13 +55,22 @@ clone:
 platform:
   os: linux
   arch: amd64
+volumes:
+  - <<: *mise-cache-volume
 steps:
   - name: render
-    image: quay.io/sighup/e2e-testing:2.24.17_1.1.0_3.12.0_1.32.2_5.6.0_4.33.3
+    image: quay.io/sighup/mise:v2025.4.4
     pull: always
+    environment:
+      <<: *mise-environment
+      KUBECTL_VERSION: "1.33.0"
+    volumes:
+      - name: mise-cache
+        path: /root/.cache/mise
     depends_on:
       - clone
     commands:
+      - *mise-setup-e2e
       - kustomize build katalog/cert-manager > cert-manager.yml
       - kustomize build katalog/dual-nginx > dual-nginx.yml
       - kustomize build katalog/forecastle > forecastle.yml
@@ -82,6 +121,7 @@ volumes:
   - name: dockersock
     host:
       path: /var/run/docker.sock
+  - <<: *mise-cache-volume
 steps:
   - name: Generate Kind Config file
     image: alpine:latest
@@ -90,42 +130,60 @@ steps:
       - sh ./katalog/tests/kind/generate-template.sh 1.29.0
 
   - name: Create Kind Cluster
-    image: quay.io/sighup/dind-kind-kubectl-kustomize:0.24.0_1.29.1_5.6.0 # vesions: kind_kubectl_kustomize
+    image: quay.io/sighup/mise:v2025.4.4
     pull: always
+    environment:
+      <<: *mise-environment
+      KIND_VERSION: "0.24.0"
+      KUBECTL_VERSION: "1.29.1"
+      CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.29.0
     volumes:
       - name: dockersock
         path: /var/run/docker.sock
-    environment:
-      CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.29.0
+      - name: mise-cache
+        path: /root/.cache/mise
     commands:
+      - *mise-setup-kind
       - kind create cluster --config ./config-$${CLUSTER_NAME}.yaml
       - kind get kubeconfig --name $${CLUSTER_NAME} > ./kubeconfig-$${CLUSTER_NAME}
     depends_on:
       - Generate Kind Config file
 
   - name: End-to-End Tests
-    image: quay.io/sighup/e2e-testing:2.24.17_1.1.0_3.12.0_1.29.1_5.6.0_4.33.3 # versions: awscli_bats_helm_kubectl_kustomize_yq
+    image: quay.io/sighup/mise:v2025.4.4
     pull: always
     network_mode: host
     environment:
+      <<: *mise-environment
+      KUBECTL_VERSION: "1.29.1"
       KUBECONFIG: ./kubeconfig-${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.29.0
       CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.29.0
-    depends_on:
-      - Create Kind Cluster
+    volumes:
+      - name: mise-cache
+        path: /root/.cache/mise
     commands:
+      - *mise-setup-e2e
       - . ./env-$${CLUSTER_NAME}.env
       - until kubectl get serviceaccount default > /dev/null 2>&1; do echo "waiting for control-plane" && sleep 1; done
       - bats -t ./katalog/tests/tests.bats
+    depends_on:
+      - Create Kind Cluster
 
   - name: Destroy Kind Cluster
-    image: quay.io/sighup/dind-kind-kubectl-kustomize:0.24.0_1.29.1_5.6.0 # versions: kind_kubectl_kustomize
+    image: quay.io/sighup/mise:v2025.4.4
     pull: always
+    environment:
+      <<: *mise-environment
+      KIND_VERSION: "0.24.0"
+      KUBECTL_VERSION: "1.29.1"
+      CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.29.0
     volumes:
       - name: dockersock
         path: /var/run/docker.sock
-    environment:
-      CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.29.0
+      - name: mise-cache
+        path: /root/.cache/mise
     commands:
+      - *mise-setup-kind
       - "kind delete cluster --name $${CLUSTER_NAME} || true"
     depends_on:
       - End-to-End Tests
@@ -153,6 +211,7 @@ volumes:
   - name: dockersock
     host:
       path: /var/run/docker.sock
+  - <<: *mise-cache-volume
 steps:
   - name: Generate Kind Config file
     image: alpine:latest
@@ -161,42 +220,60 @@ steps:
       - sh ./katalog/tests/kind/generate-template.sh 1.30.4
 
   - name: Create Kind Cluster
-    image: quay.io/sighup/dind-kind-kubectl-kustomize:0.24.0_1.30.5_5.6.0 # versions: kind_kubectl_kustomize
+    image: quay.io/sighup/mise:v2025.4.4
     pull: always
+    environment:
+      <<: *mise-environment
+      KIND_VERSION: "0.24.0"
+      KUBECTL_VERSION: "1.30.5"
+      CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.30.4
     volumes:
       - name: dockersock
         path: /var/run/docker.sock
-    environment:
-      CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.30.4
+      - name: mise-cache
+        path: /root/.cache/mise
     commands:
+      - *mise-setup-kind
       - kind create cluster --config ./config-$${CLUSTER_NAME}.yaml
       - kind get kubeconfig --name $${CLUSTER_NAME} > ./kubeconfig-$${CLUSTER_NAME}
     depends_on:
       - Generate Kind Config file
 
   - name: End-to-End Tests
-    image: quay.io/sighup/e2e-testing:2.24.17_1.1.0_3.12.0_1.30.5_5.6.0_4.33.3 # versions: awscli_bats_helm_kubectl_kustomize_yq
+    image: quay.io/sighup/mise:v2025.4.4
     pull: always
     network_mode: host
     environment:
+      <<: *mise-environment
+      KUBECTL_VERSION: "1.30.5"
       KUBECONFIG: ./kubeconfig-${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.30.4
       CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.30.4
-    depends_on:
-      - Create Kind Cluster
+    volumes:
+      - name: mise-cache
+        path: /root/.cache/mise
     commands:
+      - *mise-setup-e2e
       - . ./env-$${CLUSTER_NAME}.env
       - until kubectl get serviceaccount default > /dev/null 2>&1; do echo "waiting for control-plane" && sleep 1; done
       - bats -t ./katalog/tests/tests.bats
+    depends_on:
+      - Create Kind Cluster
 
   - name: Destroy Kind Cluster
-    image: quay.io/sighup/dind-kind-kubectl-kustomize:0.24.0_1.30.5_5.6.0 # versions: kind_kubectl_kustomize
+    image: quay.io/sighup/mise:v2025.4.4
     pull: always
+    environment:
+      <<: *mise-environment
+      KIND_VERSION: "0.24.0"
+      KUBECTL_VERSION: "1.30.5"
+      CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.30.4
     volumes:
       - name: dockersock
         path: /var/run/docker.sock
-    environment:
-      CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.30.4
+      - name: mise-cache
+        path: /root/.cache/mise
     commands:
+      - *mise-setup-kind
       - "kind delete cluster --name $${CLUSTER_NAME} || true"
     depends_on:
       - End-to-End Tests
@@ -224,6 +301,7 @@ volumes:
   - name: dockersock
     host:
       path: /var/run/docker.sock
+  - <<: *mise-cache-volume
 steps:
   - name: Generate Kind Config file
     image: alpine:latest
@@ -232,42 +310,60 @@ steps:
       - sh ./katalog/tests/kind/generate-template.sh 1.31.1
 
   - name: Create Kind Cluster
-    image: quay.io/sighup/dind-kind-kubectl-kustomize:0.24.0_1.31.1_5.6.0 # versions: kind_kubectl_kustomize
+    image: quay.io/sighup/mise:v2025.4.4
     pull: always
+    environment:
+      <<: *mise-environment
+      KIND_VERSION: "0.24.0"
+      KUBECTL_VERSION: "1.31.1"
+      CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.31.1
     volumes:
       - name: dockersock
         path: /var/run/docker.sock
-    environment:
-      CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.31.1
+      - name: mise-cache
+        path: /root/.cache/mise
     commands:
+      - *mise-setup-kind
       - kind create cluster --config ./config-$${CLUSTER_NAME}.yaml
       - kind get kubeconfig --name $${CLUSTER_NAME} > ./kubeconfig-$${CLUSTER_NAME}
     depends_on:
       - Generate Kind Config file
 
   - name: End-to-End Tests
-    image: quay.io/sighup/e2e-testing:2.24.17_1.1.0_3.12.0_1.31.1_5.6.0_4.33.3 # versions: awscli_bats_helm_kubectl_kustomize_yq
+    image: quay.io/sighup/mise:v2025.4.4
     pull: always
     network_mode: host
     environment:
+      <<: *mise-environment
+      KUBECTL_VERSION: "1.31.1"
       KUBECONFIG: ./kubeconfig-${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.31.1
       CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.31.1
-    depends_on:
-      - Create Kind Cluster
+    volumes:
+      - name: mise-cache
+        path: /root/.cache/mise
     commands:
+      - *mise-setup-e2e
       - . ./env-$${CLUSTER_NAME}.env
       - until kubectl get serviceaccount default > /dev/null 2>&1; do echo "waiting for control-plane" && sleep 1; done
       - bats -t ./katalog/tests/tests.bats
+    depends_on:
+      - Create Kind Cluster
 
   - name: Destroy Kind Cluster
-    image: quay.io/sighup/dind-kind-kubectl-kustomize:0.24.0_1.31.1_5.6.0 # versions: kind_kubectl_kustomize
+    image: quay.io/sighup/mise:v2025.4.4
     pull: always
+    environment:
+      <<: *mise-environment
+      KIND_VERSION: "0.24.0"
+      KUBECTL_VERSION: "1.31.1"
+      CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.31.1
     volumes:
       - name: dockersock
         path: /var/run/docker.sock
-    environment:
-      CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.31.1
+      - name: mise-cache
+        path: /root/.cache/mise
     commands:
+      - *mise-setup-kind
       - "kind delete cluster --name $${CLUSTER_NAME} || true"
     depends_on:
       - End-to-End Tests
@@ -295,6 +391,7 @@ volumes:
   - name: dockersock
     host:
       path: /var/run/docker.sock
+  - <<: *mise-cache-volume
 steps:
   - name: Generate Kind Config file
     image: alpine:latest
@@ -303,42 +400,60 @@ steps:
       - sh ./katalog/tests/kind/generate-template.sh 1.32.2
 
   - name: Create Kind Cluster
-    image: quay.io/sighup/dind-kind-kubectl-kustomize:0.27.0_1.32.2_5.6.0 # versions: kind_kubectl_kustomize
+    image: quay.io/sighup/mise:v2025.4.4
     pull: always
+    environment:
+      <<: *mise-environment
+      KIND_VERSION: "0.27.0"
+      KUBECTL_VERSION: "1.32.2"
+      CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.32.2
     volumes:
       - name: dockersock
         path: /var/run/docker.sock
-    environment:
-      CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.32.2
+      - name: mise-cache
+        path: /root/.cache/mise
     commands:
+      - *mise-setup-kind
       - kind create cluster --config ./config-$${CLUSTER_NAME}.yaml
       - kind get kubeconfig --name $${CLUSTER_NAME} > ./kubeconfig-$${CLUSTER_NAME}
     depends_on:
       - Generate Kind Config file
 
   - name: End-to-End Tests
-    image: quay.io/sighup/e2e-testing:2.24.17_1.1.0_3.12.0_1.32.2_5.6.0_4.33.3 # versions: awscli_bats_helm_kubectl_kustomize_yq
+    image: quay.io/sighup/mise:v2025.4.4
     pull: always
     network_mode: host
     environment:
+      <<: *mise-environment
+      KUBECTL_VERSION: "1.32.2"
       KUBECONFIG: ./kubeconfig-${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.32.2
       CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.32.2
-    depends_on:
-      - Create Kind Cluster
+    volumes:
+      - name: mise-cache
+        path: /root/.cache/mise
     commands:
+      - *mise-setup-e2e
       - . ./env-$${CLUSTER_NAME}.env
       - until kubectl get serviceaccount default > /dev/null 2>&1; do echo "waiting for control-plane" && sleep 1; done
       - bats -t ./katalog/tests/tests.bats
+    depends_on:
+      - Create Kind Cluster
 
   - name: Destroy Kind Cluster
-    image: quay.io/sighup/dind-kind-kubectl-kustomize:0.27.0_1.32.2_5.6.0
+    image: quay.io/sighup/mise:v2025.4.4
     pull: always
+    environment:
+      <<: *mise-environment
+      KIND_VERSION: "0.27.0"
+      KUBECTL_VERSION: "1.32.2"
+      CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.32.2
     volumes:
       - name: dockersock
         path: /var/run/docker.sock
-    environment:
-      CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.32.2
+      - name: mise-cache
+        path: /root/.cache/mise
     commands:
+      - *mise-setup-kind
       - "kind delete cluster --name $${CLUSTER_NAME} || true"
     depends_on:
       - End-to-End Tests
@@ -366,6 +481,7 @@ volumes:
   - name: dockersock
     host:
       path: /var/run/docker.sock
+  - <<: *mise-cache-volume
 steps:
   - name: Generate Kind Config file
     image: alpine:latest
@@ -374,42 +490,60 @@ steps:
       - sh ./katalog/tests/kind/generate-template.sh 1.33.0
 
   - name: Create Kind Cluster
-    image: quay.io/sighup/dind-kind-kubectl-kustomize:0.29.0_1.33.4_5.6.0 # versions: kind_kubectl_kustomize
+    image: quay.io/sighup/mise:v2025.4.4
     pull: always
+    environment:
+      <<: *mise-environment
+      KIND_VERSION: "0.29.0"
+      KUBECTL_VERSION: "1.33.4"
+      CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.33.0
     volumes:
       - name: dockersock
         path: /var/run/docker.sock
-    environment:
-      CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.33.0
+      - name: mise-cache
+        path: /root/.cache/mise
     commands:
+      - *mise-setup-kind
       - kind create cluster --config ./config-$${CLUSTER_NAME}.yaml
       - kind get kubeconfig --name $${CLUSTER_NAME} > ./kubeconfig-$${CLUSTER_NAME}
     depends_on:
       - Generate Kind Config file
 
   - name: End-to-End Tests
-    image: quay.io/sighup/e2e-testing:2.24.17_1.1.0_3.12.0_1.33.4_5.6.0_4.33.3 # versions: awscli_bats_helm_kubectl_kustomize_yq
+    image: quay.io/sighup/mise:v2025.4.4
     pull: always
     network_mode: host
     environment:
+      <<: *mise-environment
+      KUBECTL_VERSION: "1.33.4"
       KUBECONFIG: ./kubeconfig-${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.33.0
       CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.33.0
-    depends_on:
-      - Create Kind Cluster
+    volumes:
+      - name: mise-cache
+        path: /root/.cache/mise
     commands:
+      - *mise-setup-e2e
       - . ./env-$${CLUSTER_NAME}.env
       - until kubectl get serviceaccount default > /dev/null 2>&1; do echo "waiting for control-plane" && sleep 1; done
       - bats -t ./katalog/tests/tests.bats
+    depends_on:
+      - Create Kind Cluster
 
   - name: Destroy Kind Cluster
-    image: quay.io/sighup/dind-kind-kubectl-kustomize:0.29.0_1.33.4_5.6.0
+    image: quay.io/sighup/mise:v2025.4.4
     pull: always
+    environment:
+      <<: *mise-environment
+      KIND_VERSION: "0.29.0"
+      KUBECTL_VERSION: "1.33.4"
+      CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.33.0
     volumes:
       - name: dockersock
         path: /var/run/docker.sock
-    environment:
-      CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.33.0
+      - name: mise-cache
+        path: /root/.cache/mise
     commands:
+      - *mise-setup-kind
       - "kind delete cluster --name $${CLUSTER_NAME} || true"
     depends_on:
       - End-to-End Tests
