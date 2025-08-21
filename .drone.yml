@@ -62,7 +62,7 @@ steps:
       - render
     commands:
       # we use --ignore-deprecations because we don't want the CI to fail when the API has not been removed yet.
-      - /pluto detect $${KUBERNETES_MANIFESTS} --ignore-deprecations --target-versions=k8s=v1.32.0
+      - /pluto detect $${KUBERNETES_MANIFESTS} --ignore-deprecations --target-versions=k8s=v1.33.0
     environment:
       KUBERNETES_MANIFESTS: cert-manager.yml
 
@@ -366,6 +366,77 @@ steps:
         - failure
 
 ---
+name: E2E Tests on kind clusters version 1.33.0
+kind: pipeline
+type: docker
+platform:
+  os: linux
+  arch: amd64
+depends_on:
+  - policeman
+clone:
+  depth: 1
+trigger:
+  ref:
+    include:
+      - refs/tags/**
+volumes:
+  - name: dockersock
+    host:
+      path: /var/run/docker.sock
+steps:
+  - name: Generate Kind Config file
+    image: alpine:latest
+    pull: always
+    commands:
+      - sh ./katalog/tests/kind/generate-template.sh 1.33.0
+
+  - name: Create Kind Cluster
+    image: quay.io/sighup/dind-kind-kubectl-kustomize:0.29.0_1.33.4_5.6.0 # versions: kind_kubectl_kustomize
+    pull: always
+    volumes:
+      - name: dockersock
+        path: /var/run/docker.sock
+    environment:
+      CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.33.0
+    commands:
+      - kind create cluster --config ./config-$${CLUSTER_NAME}.yaml
+      - kind get kubeconfig --name $${CLUSTER_NAME} > ./kubeconfig-$${CLUSTER_NAME}
+    depends_on:
+      - Generate Kind Config file
+
+  - name: End-to-End Tests
+    image: quay.io/sighup/e2e-testing:2.24.17_1.1.0_3.12.0_1.33.4_5.6.0_4.33.3 # versions: awscli_bats_helm_kubectl_kustomize_yq
+    pull: always
+    network_mode: host
+    environment:
+      KUBECONFIG: ./kubeconfig-${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.33.0
+      CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.33.0
+    depends_on:
+      - Create Kind Cluster
+    commands:
+      - . ./env-$${CLUSTER_NAME}.env
+      - until kubectl get serviceaccount default > /dev/null 2>&1; do echo "waiting for control-plane" && sleep 1; done
+      - bats -t ./katalog/tests/tests.bats
+
+  - name: Destroy Kind Cluster
+    image: quay.io/sighup/dind-kind-kubectl-kustomize:0.29.0_1.33.4_5.6.0
+    pull: always
+    volumes:
+      - name: dockersock
+        path: /var/run/docker.sock
+    environment:
+      CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.33.0
+    commands:
+      - "kind delete cluster --name $${CLUSTER_NAME} || true"
+    depends_on:
+      - End-to-End Tests
+    when:
+      status:
+        - success
+        - failure
+
+---
 name: release
 kind: pipeline
 type: docker
@@ -376,6 +447,7 @@ depends_on:
   - E2E Tests on kind clusters version 1.30.4
   - E2E Tests on kind clusters version 1.31.1
   - E2E Tests on kind clusters version 1.32.2
+  - E2E Tests on kind clusters version 1.33.0
 platform:
   os: linux
   arch: amd64
