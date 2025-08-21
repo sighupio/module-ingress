@@ -1,1 +1,4 @@
 vendor
+
+# Temporary testing files and scripts
+/tmp-tests/

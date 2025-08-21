@@ -1,0 +1,51 @@
+# Copyright (c) 2017-present SIGHUP s.r.l All rights reserved.
+# Use of this source code is governed by a BSD-style
+# license that can be found in the LICENSE file.
+
+[tools]
+kind = "0.28.0"    
+kubectl = "1.33.0" 
+kustomize = "5.6.0"
+helm = "3.15.0"    
+yq = "4.43.1"      
+go = "1.23"        
+bats = "1.11.0"    
+dyff = "1.9.0"     
+
+# Development task definitions
+[tasks.install-tools]
+description = "Install additional development tools"
+run = '''
+echo "📦 Installing development tools..."
+go install github.com/google/addlicense@v1.1.1
+echo "✅ Tools installed successfully!"
+'''
+
+[tasks.add-license]
+description = "Add license headers to all files"
+run = '''
+echo "📄 Adding license headers..."
+addlicense -c "SIGHUP s.r.l" -y "2017-present" -v -l bsd .
+echo "✅ License headers added!"
+'''
+
+[tasks.validate-manifests]
+description = "Validate all manifests can be built"
+run = '''
+echo "🔍 Validating manifest builds..."
+kustomize build katalog/cert-manager > /dev/null && echo "  ✅ cert-manager"
+kustomize build katalog/dual-nginx > /dev/null && echo "  ✅ dual-nginx"
+kustomize build katalog/forecastle > /dev/null && echo "  ✅ forecastle"
+kustomize build katalog/nginx > /dev/null && echo "  ✅ nginx"
+echo "✅ All manifests validated!"
+'''
+
+[tasks.setup]
+description = "Complete development environment setup"
+run = '''
+echo "🚀 Setting up development environment..."
+mise run install-tools
+mise run add-license
+mise run validate-manifests
+echo "✅ Development environment ready!"
+'''
