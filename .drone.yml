@@ -29,18 +29,19 @@ platform:
 volumes:
   - name: mise-cache
     host:
-      path: /root/.cache/mise
+      path: /root/mise_data_dir
 steps:
   - name: render
     image: quay.io/sighup/mise:v2025.4.4
     pull: always
     environment:
+      MISE_DATA_DIR: /mise-data
       MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
       GITHUB_TOKEN:
         from_secret: github_token
     volumes:
       - name: mise-cache
-        path: /root/.cache/mise
+        path: /mise-data
     depends_on:
       - clone
     commands:
@@ -102,7 +103,7 @@ volumes:
       path: /var/run/docker.sock
   - name: mise-cache
     host:
-      path: /root/.cache/mise
+      path: /root/mise_data_dir
 steps:
     
   - name: Generate Kind Config file
@@ -115,6 +116,7 @@ steps:
     image: quay.io/sighup/mise:v2025.4.4
     pull: always
     environment:
+      MISE_DATA_DIR: /mise-data
       MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
       KIND_VERSION: "0.24.0"
       KUBECTL_VERSION: "1.29.1"
@@ -125,7 +127,7 @@ steps:
       - name: dockersock
         path: /var/run/docker.sock
       - name: mise-cache
-        path: /root/.cache/mise
+        path: /mise-data
     commands:
       - |
         echo "[tools]" > mise.ci.toml
@@ -143,6 +145,7 @@ steps:
     pull: always
     network_mode: host
     environment:
+      MISE_DATA_DIR: /mise-data
       MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
       KUBECTL_VERSION: "1.29.1"
       KUBECONFIG: ./kubeconfig-${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.29.0
@@ -151,7 +154,7 @@ steps:
         from_secret: github_token
     volumes:
       - name: mise-cache
-        path: /root/.cache/mise
+        path: /mise-data
     commands:
       - |
         echo "[tools]" > mise.ci.toml
@@ -170,6 +173,7 @@ steps:
     image: quay.io/sighup/mise:v2025.4.4
     pull: always
     environment:
+      MISE_DATA_DIR: /mise-data
       MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
       KIND_VERSION: "0.24.0"
       KUBECTL_VERSION: "1.29.1"
@@ -180,7 +184,7 @@ steps:
       - name: dockersock
         path: /var/run/docker.sock
       - name: mise-cache
-        path: /root/.cache/mise
+        path: /mise-data
     commands:
       - |
         echo "[tools]" > mise.ci.toml
@@ -217,7 +221,7 @@ volumes:
       path: /var/run/docker.sock
   - name: mise-cache
     host:
-      path: /root/.cache/mise
+      path: /root/mise_data_dir
 steps:
   - name: Generate Kind Config file
     image: alpine:latest
@@ -229,6 +233,7 @@ steps:
     image: quay.io/sighup/mise:v2025.4.4
     pull: always
     environment:
+      MISE_DATA_DIR: /mise-data
       MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
       KIND_VERSION: "0.24.0"
       KUBECTL_VERSION: "1.30.5"
@@ -239,7 +244,7 @@ steps:
       - name: dockersock
         path: /var/run/docker.sock
       - name: mise-cache
-        path: /root/.cache/mise
+        path: /mise-data
     commands:
       - |
         echo "[tools]" > mise.ci.toml
@@ -257,6 +262,7 @@ steps:
     pull: always
     network_mode: host
     environment:
+      MISE_DATA_DIR: /mise-data
       MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
       KUBECTL_VERSION: "1.30.5"
       KUBECONFIG: ./kubeconfig-${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.30.4
@@ -265,7 +271,7 @@ steps:
         from_secret: github_token
     volumes:
       - name: mise-cache
-        path: /root/.cache/mise
+        path: /mise-data
     commands:
       - |
         echo "[tools]" > mise.ci.toml
@@ -284,6 +290,7 @@ steps:
     image: quay.io/sighup/mise:v2025.4.4
     pull: always
     environment:
+      MISE_DATA_DIR: /mise-data
       MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
       KIND_VERSION: "0.24.0"
       KUBECTL_VERSION: "1.30.5"
@@ -294,7 +301,7 @@ steps:
       - name: dockersock
         path: /var/run/docker.sock
       - name: mise-cache
-        path: /root/.cache/mise
+        path: /mise-data
     commands:
       - |
         echo "[tools]" > mise.ci.toml
@@ -331,7 +338,7 @@ volumes:
       path: /var/run/docker.sock
   - name: mise-cache
     host:
-      path: /root/.cache/mise
+      path: /root/mise_data_dir
 steps:
   - name: Generate Kind Config file
     image: alpine:latest
@@ -343,6 +350,7 @@ steps:
     image: quay.io/sighup/mise:v2025.4.4
     pull: always
     environment:
+      MISE_DATA_DIR: /mise-data
       MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
       KIND_VERSION: "0.24.0"
       KUBECTL_VERSION: "1.31.1"
@@ -353,7 +361,7 @@ steps:
       - name: dockersock
         path: /var/run/docker.sock
       - name: mise-cache
-        path: /root/.cache/mise
+        path: /mise-data
     commands:
       - |
         echo "[tools]" > mise.ci.toml
@@ -371,6 +379,7 @@ steps:
     pull: always
     network_mode: host
     environment:
+      MISE_DATA_DIR: /mise-data
       MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
       KUBECTL_VERSION: "1.31.1"
       KUBECONFIG: ./kubeconfig-${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.31.1
@@ -379,7 +388,7 @@ steps:
         from_secret: github_token
     volumes:
       - name: mise-cache
-        path: /root/.cache/mise
+        path: /mise-data
     commands:
       - |
         echo "[tools]" > mise.ci.toml
@@ -398,6 +407,7 @@ steps:
     image: quay.io/sighup/mise:v2025.4.4
     pull: always
     environment:
+      MISE_DATA_DIR: /mise-data
       MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
       KIND_VERSION: "0.24.0"
       KUBECTL_VERSION: "1.31.1"
@@ -408,7 +418,7 @@ steps:
       - name: dockersock
         path: /var/run/docker.sock
       - name: mise-cache
-        path: /root/.cache/mise
+        path: /mise-data
     commands:
       - |
         echo "[tools]" > mise.ci.toml
@@ -445,7 +455,7 @@ volumes:
       path: /var/run/docker.sock
   - name: mise-cache
     host:
-      path: /root/.cache/mise
+      path: /root/mise_data_dir
 steps:
   - name: Generate Kind Config file
     image: alpine:latest
@@ -457,6 +467,7 @@ steps:
     image: quay.io/sighup/mise:v2025.4.4
     pull: always
     environment:
+      MISE_DATA_DIR: /mise-data
       MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
       KIND_VERSION: "0.27.0"
       KUBECTL_VERSION: "1.32.2"
@@ -467,7 +478,7 @@ steps:
       - name: dockersock
         path: /var/run/docker.sock
       - name: mise-cache
-        path: /root/.cache/mise
+        path: /mise-data
     commands:
       - |
         echo "[tools]" > mise.ci.toml
@@ -485,6 +496,7 @@ steps:
     pull: always
     network_mode: host
     environment:
+      MISE_DATA_DIR: /mise-data
       MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
       KUBECTL_VERSION: "1.32.2"
       KUBECONFIG: ./kubeconfig-${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.32.2
@@ -493,7 +505,7 @@ steps:
         from_secret: github_token
     volumes:
       - name: mise-cache
-        path: /root/.cache/mise
+        path: /mise-data
     commands:
       - |
         echo "[tools]" > mise.ci.toml
@@ -512,6 +524,7 @@ steps:
     image: quay.io/sighup/mise:v2025.4.4
     pull: always
     environment:
+      MISE_DATA_DIR: /mise-data
       MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
       KIND_VERSION: "0.27.0"
       KUBECTL_VERSION: "1.32.2"
@@ -522,7 +535,7 @@ steps:
       - name: dockersock
         path: /var/run/docker.sock
       - name: mise-cache
-        path: /root/.cache/mise
+        path: /mise-data
     commands:
       - |
         echo "[tools]" > mise.ci.toml
@@ -559,7 +572,7 @@ volumes:
       path: /var/run/docker.sock
   - name: mise-cache
     host:
-      path: /root/.cache/mise
+      path: /root/mise_data_dir
 steps:
   - name: Generate Kind Config file
     image: alpine:latest
@@ -571,6 +584,7 @@ steps:
     image: quay.io/sighup/mise:v2025.4.4
     pull: always
     environment:
+      MISE_DATA_DIR: /mise-data
       MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
       KIND_VERSION: "0.29.0"
       KUBECTL_VERSION: "1.33.4"
@@ -581,7 +595,7 @@ steps:
       - name: dockersock
         path: /var/run/docker.sock
       - name: mise-cache
-        path: /root/.cache/mise
+        path: /mise-data
     commands:
       - |
         echo "[tools]" > mise.ci.toml
@@ -599,6 +613,7 @@ steps:
     pull: always
     network_mode: host
     environment:
+      MISE_DATA_DIR: /mise-data
       MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
       KUBECTL_VERSION: "1.33.4"
       KUBECONFIG: ./kubeconfig-${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.33.0
@@ -607,7 +622,7 @@ steps:
         from_secret: github_token
     volumes:
       - name: mise-cache
-        path: /root/.cache/mise
+        path: /mise-data
     commands:
       - |
         echo "[tools]" > mise.ci.toml
@@ -626,6 +641,7 @@ steps:
     image: quay.io/sighup/mise:v2025.4.4
     pull: always
     environment:
+      MISE_DATA_DIR: /mise-data
       MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
       KIND_VERSION: "0.29.0"
       KUBECTL_VERSION: "1.33.4"
@@ -636,7 +652,7 @@ steps:
       - name: dockersock
         path: /var/run/docker.sock
       - name: mise-cache
-        path: /root/.cache/mise
+        path: /mise-data
     commands:
       - |
         echo "[tools]" > mise.ci.toml
