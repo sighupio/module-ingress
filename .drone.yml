@@ -28,13 +28,16 @@ platform:
   arch: amd64
 volumes:
   - name: mise-cache
-    temp: {}
+    host:
+      path: /root/.cache/mise
 steps:
   - name: render
     image: quay.io/sighup/mise:v2025.4.4
     pull: always
     environment:
       MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
+      GITHUB_TOKEN:
+        from_secret: github_token
     volumes:
       - name: mise-cache
         path: /root/.cache/mise
@@ -98,7 +101,8 @@ volumes:
     host:
       path: /var/run/docker.sock
   - name: mise-cache
-    temp: {}
+    host:
+      path: /root/.cache/mise
 steps:
     
   - name: Generate Kind Config file
@@ -115,6 +119,8 @@ steps:
       KIND_VERSION: "0.24.0"
       KUBECTL_VERSION: "1.29.1"
       CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.29.0
+      GITHUB_TOKEN:
+        from_secret: github_token
     volumes:
       - name: dockersock
         path: /var/run/docker.sock
@@ -141,6 +147,8 @@ steps:
       KUBECTL_VERSION: "1.29.1"
       KUBECONFIG: ./kubeconfig-${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.29.0
       CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.29.0
+      GITHUB_TOKEN:
+        from_secret: github_token
     volumes:
       - name: mise-cache
         path: /root/.cache/mise
@@ -165,6 +173,8 @@ steps:
       MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
       KIND_VERSION: "0.24.0"
       CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.29.0
+      GITHUB_TOKEN:
+        from_secret: github_token
     volumes:
       - name: dockersock
         path: /var/run/docker.sock
@@ -205,7 +215,8 @@ volumes:
     host:
       path: /var/run/docker.sock
   - name: mise-cache
-    temp: {}
+    host:
+      path: /root/.cache/mise
 steps:
   - name: Generate Kind Config file
     image: alpine:latest
@@ -221,6 +232,8 @@ steps:
       KIND_VERSION: "0.24.0"
       KUBECTL_VERSION: "1.30.5"
       CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.30.4
+      GITHUB_TOKEN:
+        from_secret: github_token
     volumes:
       - name: dockersock
         path: /var/run/docker.sock
@@ -247,6 +260,8 @@ steps:
       KUBECTL_VERSION: "1.30.5"
       KUBECONFIG: ./kubeconfig-${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.30.4
       CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.30.4
+      GITHUB_TOKEN:
+        from_secret: github_token
     volumes:
       - name: mise-cache
         path: /root/.cache/mise
@@ -271,6 +286,8 @@ steps:
       MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
       KIND_VERSION: "0.24.0"
       CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.30.4
+      GITHUB_TOKEN:
+        from_secret: github_token
     volumes:
       - name: dockersock
         path: /var/run/docker.sock
@@ -311,7 +328,8 @@ volumes:
     host:
       path: /var/run/docker.sock
   - name: mise-cache
-    temp: {}
+    host:
+      path: /root/.cache/mise
 steps:
   - name: Generate Kind Config file
     image: alpine:latest
@@ -327,6 +345,8 @@ steps:
       KIND_VERSION: "0.24.0"
       KUBECTL_VERSION: "1.31.1"
       CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.31.1
+      GITHUB_TOKEN:
+        from_secret: github_token
     volumes:
       - name: dockersock
         path: /var/run/docker.sock
@@ -353,6 +373,8 @@ steps:
       KUBECTL_VERSION: "1.31.1"
       KUBECONFIG: ./kubeconfig-${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.31.1
       CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.31.1
+      GITHUB_TOKEN:
+        from_secret: github_token
     volumes:
       - name: mise-cache
         path: /root/.cache/mise
@@ -377,6 +399,8 @@ steps:
       MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
       KIND_VERSION: "0.24.0"
       CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.31.1
+      GITHUB_TOKEN:
+        from_secret: github_token
     volumes:
       - name: dockersock
         path: /var/run/docker.sock
@@ -417,7 +441,8 @@ volumes:
     host:
       path: /var/run/docker.sock
   - name: mise-cache
-    temp: {}
+    host:
+      path: /root/.cache/mise
 steps:
   - name: Generate Kind Config file
     image: alpine:latest
@@ -433,6 +458,8 @@ steps:
       KIND_VERSION: "0.27.0"
       KUBECTL_VERSION: "1.32.2"
       CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.32.2
+      GITHUB_TOKEN:
+        from_secret: github_token
     volumes:
       - name: dockersock
         path: /var/run/docker.sock
@@ -459,6 +486,8 @@ steps:
       KUBECTL_VERSION: "1.32.2"
       KUBECONFIG: ./kubeconfig-${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.32.2
       CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.32.2
+      GITHUB_TOKEN:
+        from_secret: github_token
     volumes:
       - name: mise-cache
         path: /root/.cache/mise
@@ -483,6 +512,8 @@ steps:
       MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
       KIND_VERSION: "0.27.0"
       CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.32.2
+      GITHUB_TOKEN:
+        from_secret: github_token
     volumes:
       - name: dockersock
         path: /var/run/docker.sock
@@ -523,7 +554,8 @@ volumes:
     host:
       path: /var/run/docker.sock
   - name: mise-cache
-    temp: {}
+    host:
+      path: /root/.cache/mise
 steps:
   - name: Generate Kind Config file
     image: alpine:latest
@@ -539,6 +571,8 @@ steps:
       KIND_VERSION: "0.29.0"
       KUBECTL_VERSION: "1.33.4"
       CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.33.0
+      GITHUB_TOKEN:
+        from_secret: github_token
     volumes:
       - name: dockersock
         path: /var/run/docker.sock
@@ -565,6 +599,8 @@ steps:
       KUBECTL_VERSION: "1.33.4"
       KUBECONFIG: ./kubeconfig-${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.33.0
       CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.33.0
+      GITHUB_TOKEN:
+        from_secret: github_token
     volumes:
       - name: mise-cache
         path: /root/.cache/mise
@@ -589,6 +625,8 @@ steps:
       MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
       KIND_VERSION: "0.29.0"
       CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.33.0
+      GITHUB_TOKEN:
+        from_secret: github_token
     volumes:
       - name: dockersock
         path: /var/run/docker.sock
