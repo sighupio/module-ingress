@@ -201,14 +201,8 @@ EOF
   assert_success
 }
 
-# Verify skopeo installation and ACME HTTP01 solver image exists
-@test "Verify ACME HTTP01 solver image and skopeo installation" {
-  if ! command -v skopeo &>/dev/null; then
-    echo "skopeo is not installed."
-    exit 1
-  fi
-  echo "skopeo is installed."
-
+# Verify ACME HTTP01 solver image uses SIGHUP registry
+@test "Verify ACME HTTP01 solver image uses SIGHUP registry" {
   # Extract the ACME solver image from cert-manager deployment and verify it uses our registry
   solver_image=$(kubectl get deployment cert-manager -n cert-manager -o jsonpath='{.spec.template.spec.containers[0].args}' | grep -o 'registry\.sighup\.io/fury/jetstack/cert-manager-acmesolver[^[:space:]]*' | head -1)
   
