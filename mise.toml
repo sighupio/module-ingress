@@ -10,7 +10,8 @@ helm = "3.15.0"
 yq = "4.43.1"      
 go = "1.23"        
 bats = "1.11.0"    
-dyff = "1.9.0"     
+dyff = "1.9.0"
+drone = "1.9.0"     
 
 # Development task definitions
 [tasks.install-tools]
@@ -48,4 +49,53 @@ mise run install-tools
 mise run add-license
 mise run validate-manifests
 echo "✅ Development environment ready!"
+'''
+
+[tasks.e2e]
+description = "Run complete E2E test suite with Kind cluster (K8s 1.33)"
+run = '''
+#!/bin/bash
+set -e
+
+echo "🚀 Starting E2E Test Suite for Module Ingress"
+echo "============================================="
+
+# Configuration
+KUBE_VERSION="1.33.0"
+export DRONE_BUILD_NUMBER="${DRONE_BUILD_NUMBER:-9999}"
+export DRONE_REPO_NAME="${DRONE_REPO_NAME:-module-ingress}"
+CLUSTER_NAME="${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-${KUBE_VERSION}"
+KUBECONFIG_PATH="$(pwd)/kubeconfig-e2e"
+
+# Cleanup function
+cleanup() {
+  echo "🧹 Cleaning up..."
+  kind delete cluster --name "${CLUSTER_NAME}" 2>/dev/null || true
+  rm -f "${KUBECONFIG_PATH}"
+  rm -f "config-${CLUSTER_NAME}.yaml"
+  rm -f "env-${CLUSTER_NAME}.env"
+}
+
+# Trap to ensure cleanup on exit (success or failure)
+trap cleanup EXIT
+
+echo "📦 Step 1: Creating Kind cluster (K8s ${KUBE_VERSION})..."
+./katalog/tests/kind/generate-template.sh ${KUBE_VERSION}
+kind create cluster --config "./config-${CLUSTER_NAME}.yaml" --name "${CLUSTER_NAME}"
+
+echo "📋 Step 2: Setting up kubeconfig..."
+kind get kubeconfig --name "${CLUSTER_NAME}" > "${KUBECONFIG_PATH}"
+export KUBECONFIG="${KUBECONFIG_PATH}"
+
+echo "⏳ Step 3: Waiting for cluster to be ready..."
+until kubectl get serviceaccount default > /dev/null 2>&1; do 
+  echo "   Waiting for control-plane..." 
+  sleep 2
+done
+
+echo "🧪 Step 4: Running BATS E2E tests..."
+source "./env-${CLUSTER_NAME}.env"
+bats -t ./katalog/tests/tests.bats
+
+echo "✅ E2E tests completed successfully!"
 '''
