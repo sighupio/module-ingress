@@ -35,7 +35,6 @@ steps:
     pull: always
     environment:
       MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
-      KUBECTL_VERSION: "1.33.0"
     volumes:
       - name: mise-cache
         path: /root/.cache/mise
@@ -44,12 +43,7 @@ steps:
     commands:
       - |
         echo "[tools]" > mise.ci.toml
-        echo 'awscli = "2.24.17"' >> mise.ci.toml
-        echo 'bats = "1.1.0"' >> mise.ci.toml
-        echo 'helm = "3.12.0"' >> mise.ci.toml
-        echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
         echo 'kustomize = "5.6.0"' >> mise.ci.toml
-        echo 'yq = "4.33.3"' >> mise.ci.toml
         mise install
         eval "$(mise activate bash --shims)"
       - kustomize build katalog/cert-manager > cert-manager.yml
@@ -129,9 +123,8 @@ steps:
     commands:
       - |
         echo "[tools]" > mise.ci.toml
-        echo "kind = \"${KIND_VERSION}\"" >> mise.ci.toml
-        echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
-        echo 'kustomize = "5.6.0"' >> mise.ci.toml
+        echo "kind = \"$${KIND_VERSION}\"" >> mise.ci.toml
+        echo "kubectl = \"$${KUBECTL_VERSION}\"" >> mise.ci.toml
         mise install
         eval "$(mise activate bash --shims)"
       - kind create cluster --config ./config-$${CLUSTER_NAME}.yaml
@@ -154,12 +147,9 @@ steps:
     commands:
       - |
         echo "[tools]" > mise.ci.toml
-        echo 'awscli = "2.24.17"' >> mise.ci.toml
         echo 'bats = "1.1.0"' >> mise.ci.toml
-        echo 'helm = "3.12.0"' >> mise.ci.toml
-        echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
+        echo "kubectl = \"$${KUBECTL_VERSION}\"" >> mise.ci.toml
         echo 'kustomize = "5.6.0"' >> mise.ci.toml
-        echo 'yq = "4.33.3"' >> mise.ci.toml
         mise install
         eval "$(mise activate bash --shims)"
       - . ./env-$${CLUSTER_NAME}.env
@@ -174,7 +164,6 @@ steps:
     environment:
       MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
       KIND_VERSION: "0.24.0"
-      KUBECTL_VERSION: "1.29.1"
       CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.29.0
     volumes:
       - name: dockersock
@@ -184,9 +173,8 @@ steps:
     commands:
       - |
         echo "[tools]" > mise.ci.toml
-        echo "kind = \"${KIND_VERSION}\"" >> mise.ci.toml
-        echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
-        echo 'kustomize = "5.6.0"' >> mise.ci.toml
+        echo "kind = \"$${KIND_VERSION}\"" >> mise.ci.toml
+        echo "kubectl = \"$${KUBECTL_VERSION}\"" >> mise.ci.toml
         mise install
         eval "$(mise activate bash --shims)"
       - "kind delete cluster --name $${CLUSTER_NAME} || true"
@@ -241,9 +229,8 @@ steps:
     commands:
       - |
         echo "[tools]" > mise.ci.toml
-        echo "kind = \"${KIND_VERSION}\"" >> mise.ci.toml
-        echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
-        echo 'kustomize = "5.6.0"' >> mise.ci.toml
+        echo "kind = \"$${KIND_VERSION}\"" >> mise.ci.toml
+        echo "kubectl = \"$${KUBECTL_VERSION}\"" >> mise.ci.toml
         mise install
         eval "$(mise activate bash --shims)"
       - kind create cluster --config ./config-$${CLUSTER_NAME}.yaml
@@ -266,12 +253,9 @@ steps:
     commands:
       - |
         echo "[tools]" > mise.ci.toml
-        echo 'awscli = "2.24.17"' >> mise.ci.toml
         echo 'bats = "1.1.0"' >> mise.ci.toml
-        echo 'helm = "3.12.0"' >> mise.ci.toml
-        echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
+        echo "kubectl = \"$${KUBECTL_VERSION}\"" >> mise.ci.toml
         echo 'kustomize = "5.6.0"' >> mise.ci.toml
-        echo 'yq = "4.33.3"' >> mise.ci.toml
         mise install
         eval "$(mise activate bash --shims)"
       - . ./env-$${CLUSTER_NAME}.env
@@ -286,7 +270,6 @@ steps:
     environment:
       MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
       KIND_VERSION: "0.24.0"
-      KUBECTL_VERSION: "1.30.5"
       CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.30.4
     volumes:
       - name: dockersock
@@ -296,9 +279,8 @@ steps:
     commands:
       - |
         echo "[tools]" > mise.ci.toml
-        echo "kind = \"${KIND_VERSION}\"" >> mise.ci.toml
-        echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
-        echo 'kustomize = "5.6.0"' >> mise.ci.toml
+        echo "kind = \"$${KIND_VERSION}\"" >> mise.ci.toml
+        echo "kubectl = \"$${KUBECTL_VERSION}\"" >> mise.ci.toml
         mise install
         eval "$(mise activate bash --shims)"
       - "kind delete cluster --name $${CLUSTER_NAME} || true"
@@ -353,9 +335,8 @@ steps:
     commands:
       - |
         echo "[tools]" > mise.ci.toml
-        echo "kind = \"${KIND_VERSION}\"" >> mise.ci.toml
-        echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
-        echo 'kustomize = "5.6.0"' >> mise.ci.toml
+        echo "kind = \"$${KIND_VERSION}\"" >> mise.ci.toml
+        echo "kubectl = \"$${KUBECTL_VERSION}\"" >> mise.ci.toml
         mise install
         eval "$(mise activate bash --shims)"
       - kind create cluster --config ./config-$${CLUSTER_NAME}.yaml
@@ -378,12 +359,9 @@ steps:
     commands:
       - |
         echo "[tools]" > mise.ci.toml
-        echo 'awscli = "2.24.17"' >> mise.ci.toml
         echo 'bats = "1.1.0"' >> mise.ci.toml
-        echo 'helm = "3.12.0"' >> mise.ci.toml
-        echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
+        echo "kubectl = \"$${KUBECTL_VERSION}\"" >> mise.ci.toml
         echo 'kustomize = "5.6.0"' >> mise.ci.toml
-        echo 'yq = "4.33.3"' >> mise.ci.toml
         mise install
         eval "$(mise activate bash --shims)"
       - . ./env-$${CLUSTER_NAME}.env
@@ -398,7 +376,6 @@ steps:
     environment:
       MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
       KIND_VERSION: "0.24.0"
-      KUBECTL_VERSION: "1.31.1"
       CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.31.1
     volumes:
       - name: dockersock
@@ -408,9 +385,8 @@ steps:
     commands:
       - |
         echo "[tools]" > mise.ci.toml
-        echo "kind = \"${KIND_VERSION}\"" >> mise.ci.toml
-        echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
-        echo 'kustomize = "5.6.0"' >> mise.ci.toml
+        echo "kind = \"$${KIND_VERSION}\"" >> mise.ci.toml
+        echo "kubectl = \"$${KUBECTL_VERSION}\"" >> mise.ci.toml
         mise install
         eval "$(mise activate bash --shims)"
       - "kind delete cluster --name $${CLUSTER_NAME} || true"
@@ -465,9 +441,8 @@ steps:
     commands:
       - |
         echo "[tools]" > mise.ci.toml
-        echo "kind = \"${KIND_VERSION}\"" >> mise.ci.toml
-        echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
-        echo 'kustomize = "5.6.0"' >> mise.ci.toml
+        echo "kind = \"$${KIND_VERSION}\"" >> mise.ci.toml
+        echo "kubectl = \"$${KUBECTL_VERSION}\"" >> mise.ci.toml
         mise install
         eval "$(mise activate bash --shims)"
       - kind create cluster --config ./config-$${CLUSTER_NAME}.yaml
@@ -490,12 +465,9 @@ steps:
     commands:
       - |
         echo "[tools]" > mise.ci.toml
-        echo 'awscli = "2.24.17"' >> mise.ci.toml
         echo 'bats = "1.1.0"' >> mise.ci.toml
-        echo 'helm = "3.12.0"' >> mise.ci.toml
-        echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
+        echo "kubectl = \"$${KUBECTL_VERSION}\"" >> mise.ci.toml
         echo 'kustomize = "5.6.0"' >> mise.ci.toml
-        echo 'yq = "4.33.3"' >> mise.ci.toml
         mise install
         eval "$(mise activate bash --shims)"
       - . ./env-$${CLUSTER_NAME}.env
@@ -510,7 +482,6 @@ steps:
     environment:
       MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
       KIND_VERSION: "0.27.0"
-      KUBECTL_VERSION: "1.32.2"
       CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.32.2
     volumes:
       - name: dockersock
@@ -520,9 +491,8 @@ steps:
     commands:
       - |
         echo "[tools]" > mise.ci.toml
-        echo "kind = \"${KIND_VERSION}\"" >> mise.ci.toml
-        echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
-        echo 'kustomize = "5.6.0"' >> mise.ci.toml
+        echo "kind = \"$${KIND_VERSION}\"" >> mise.ci.toml
+        echo "kubectl = \"$${KUBECTL_VERSION}\"" >> mise.ci.toml
         mise install
         eval "$(mise activate bash --shims)"
       - "kind delete cluster --name $${CLUSTER_NAME} || true"
@@ -577,9 +547,8 @@ steps:
     commands:
       - |
         echo "[tools]" > mise.ci.toml
-        echo "kind = \"${KIND_VERSION}\"" >> mise.ci.toml
-        echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
-        echo 'kustomize = "5.6.0"' >> mise.ci.toml
+        echo "kind = \"$${KIND_VERSION}\"" >> mise.ci.toml
+        echo "kubectl = \"$${KUBECTL_VERSION}\"" >> mise.ci.toml
         mise install
         eval "$(mise activate bash --shims)"
       - kind create cluster --config ./config-$${CLUSTER_NAME}.yaml
@@ -602,12 +571,9 @@ steps:
     commands:
       - |
         echo "[tools]" > mise.ci.toml
-        echo 'awscli = "2.24.17"' >> mise.ci.toml
         echo 'bats = "1.1.0"' >> mise.ci.toml
-        echo 'helm = "3.12.0"' >> mise.ci.toml
-        echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
+        echo "kubectl = \"$${KUBECTL_VERSION}\"" >> mise.ci.toml
         echo 'kustomize = "5.6.0"' >> mise.ci.toml
-        echo 'yq = "4.33.3"' >> mise.ci.toml
         mise install
         eval "$(mise activate bash --shims)"
       - . ./env-$${CLUSTER_NAME}.env
@@ -622,7 +588,6 @@ steps:
     environment:
       MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
       KIND_VERSION: "0.29.0"
-      KUBECTL_VERSION: "1.33.4"
       CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.33.0
     volumes:
       - name: dockersock
@@ -632,9 +597,8 @@ steps:
     commands:
       - |
         echo "[tools]" > mise.ci.toml
-        echo "kind = \"${KIND_VERSION}\"" >> mise.ci.toml
-        echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
-        echo 'kustomize = "5.6.0"' >> mise.ci.toml
+        echo "kind = \"$${KIND_VERSION}\"" >> mise.ci.toml
+        echo "kubectl = \"$${KUBECTL_VERSION}\"" >> mise.ci.toml
         mise install
         eval "$(mise activate bash --shims)"
       - "kind delete cluster --name $${CLUSTER_NAME} || true"
