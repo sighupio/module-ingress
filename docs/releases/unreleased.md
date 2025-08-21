@@ -26,12 +26,7 @@ This release adds support for Kubernetes 1.33.4, expanding the compatibility mat
 
 ### NGINX Ingress Controller v1.13.1
 
-Updated to NGINX Ingress Controller v1.13.1, which includes:
-
-- Security improvements and CVE fixes
-- Enhanced stability and performance optimizations  
-- Better compatibility with Kubernetes 1.33
-- Various bug fixes from the upstream project
+Updated to NGINX Ingress Controller v1.13.1.
 
 For detailed information about changes in NGINX Ingress Controller v1.13.1, please refer to the [upstream changelog](https://github.com/kubernetes/ingress-nginx/blob/main/changelog/controller-1.13.1.md).
 
