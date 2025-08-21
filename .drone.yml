@@ -44,12 +44,12 @@ steps:
     commands:
       - |
         echo "[tools]" > mise.ci.toml
-        echo "awscli = \"2.24.17\"" >> mise.ci.toml
-        echo "bats = \"1.1.0\"" >> mise.ci.toml
-        echo "helm = \"3.12.0\"" >> mise.ci.toml
+        echo 'awscli = "2.24.17"' >> mise.ci.toml
+        echo 'bats = "1.1.0"' >> mise.ci.toml
+        echo 'helm = "3.12.0"' >> mise.ci.toml
         echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
-        echo "kustomize = \"5.6.0\"" >> mise.ci.toml
-        echo "yq = \"4.33.3\"" >> mise.ci.toml
+        echo 'kustomize = "5.6.0"' >> mise.ci.toml
+        echo 'yq = "4.33.3"' >> mise.ci.toml
         mise install
         eval "$(mise activate bash --shims)"
       - kustomize build katalog/cert-manager > cert-manager.yml
@@ -131,7 +131,7 @@ steps:
         echo "[tools]" > mise.ci.toml
         echo "kind = \"${KIND_VERSION}\"" >> mise.ci.toml
         echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
-        echo "kustomize = \"5.6.0\"" >> mise.ci.toml
+        echo 'kustomize = "5.6.0"' >> mise.ci.toml
         mise install
         eval "$(mise activate bash --shims)"
       - kind create cluster --config ./config-$${CLUSTER_NAME}.yaml
@@ -154,12 +154,12 @@ steps:
     commands:
       - |
         echo "[tools]" > mise.ci.toml
-        echo "awscli = \"2.24.17\"" >> mise.ci.toml
-        echo "bats = \"1.1.0\"" >> mise.ci.toml
-        echo "helm = \"3.12.0\"" >> mise.ci.toml
+        echo 'awscli = "2.24.17"' >> mise.ci.toml
+        echo 'bats = "1.1.0"' >> mise.ci.toml
+        echo 'helm = "3.12.0"' >> mise.ci.toml
         echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
-        echo "kustomize = \"5.6.0\"" >> mise.ci.toml
-        echo "yq = \"4.33.3\"" >> mise.ci.toml
+        echo 'kustomize = "5.6.0"' >> mise.ci.toml
+        echo 'yq = "4.33.3"' >> mise.ci.toml
         mise install
         eval "$(mise activate bash --shims)"
       - . ./env-$${CLUSTER_NAME}.env
@@ -186,7 +186,7 @@ steps:
         echo "[tools]" > mise.ci.toml
         echo "kind = \"${KIND_VERSION}\"" >> mise.ci.toml
         echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
-        echo "kustomize = \"5.6.0\"" >> mise.ci.toml
+        echo 'kustomize = "5.6.0"' >> mise.ci.toml
         mise install
         eval "$(mise activate bash --shims)"
       - "kind delete cluster --name $${CLUSTER_NAME} || true"
@@ -243,7 +243,7 @@ steps:
         echo "[tools]" > mise.ci.toml
         echo "kind = \"${KIND_VERSION}\"" >> mise.ci.toml
         echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
-        echo "kustomize = \"5.6.0\"" >> mise.ci.toml
+        echo 'kustomize = "5.6.0"' >> mise.ci.toml
         mise install
         eval "$(mise activate bash --shims)"
       - kind create cluster --config ./config-$${CLUSTER_NAME}.yaml
@@ -266,12 +266,12 @@ steps:
     commands:
       - |
         echo "[tools]" > mise.ci.toml
-        echo "awscli = \"2.24.17\"" >> mise.ci.toml
-        echo "bats = \"1.1.0\"" >> mise.ci.toml
-        echo "helm = \"3.12.0\"" >> mise.ci.toml
+        echo 'awscli = "2.24.17"' >> mise.ci.toml
+        echo 'bats = "1.1.0"' >> mise.ci.toml
+        echo 'helm = "3.12.0"' >> mise.ci.toml
         echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
-        echo "kustomize = \"5.6.0\"" >> mise.ci.toml
-        echo "yq = \"4.33.3\"" >> mise.ci.toml
+        echo 'kustomize = "5.6.0"' >> mise.ci.toml
+        echo 'yq = "4.33.3"' >> mise.ci.toml
         mise install
         eval "$(mise activate bash --shims)"
       - . ./env-$${CLUSTER_NAME}.env
@@ -298,7 +298,7 @@ steps:
         echo "[tools]" > mise.ci.toml
         echo "kind = \"${KIND_VERSION}\"" >> mise.ci.toml
         echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
-        echo "kustomize = \"5.6.0\"" >> mise.ci.toml
+        echo 'kustomize = "5.6.0"' >> mise.ci.toml
         mise install
         eval "$(mise activate bash --shims)"
       - "kind delete cluster --name $${CLUSTER_NAME} || true"
@@ -355,7 +355,7 @@ steps:
         echo "[tools]" > mise.ci.toml
         echo "kind = \"${KIND_VERSION}\"" >> mise.ci.toml
         echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
-        echo "kustomize = \"5.6.0\"" >> mise.ci.toml
+        echo 'kustomize = "5.6.0"' >> mise.ci.toml
         mise install
         eval "$(mise activate bash --shims)"
       - kind create cluster --config ./config-$${CLUSTER_NAME}.yaml
@@ -378,12 +378,12 @@ steps:
     commands:
       - |
         echo "[tools]" > mise.ci.toml
-        echo "awscli = \"2.24.17\"" >> mise.ci.toml
-        echo "bats = \"1.1.0\"" >> mise.ci.toml
-        echo "helm = \"3.12.0\"" >> mise.ci.toml
+        echo 'awscli = "2.24.17"' >> mise.ci.toml
+        echo 'bats = "1.1.0"' >> mise.ci.toml
+        echo 'helm = "3.12.0"' >> mise.ci.toml
         echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
-        echo "kustomize = \"5.6.0\"" >> mise.ci.toml
-        echo "yq = \"4.33.3\"" >> mise.ci.toml
+        echo 'kustomize = "5.6.0"' >> mise.ci.toml
+        echo 'yq = "4.33.3"' >> mise.ci.toml
         mise install
         eval "$(mise activate bash --shims)"
       - . ./env-$${CLUSTER_NAME}.env
@@ -410,7 +410,7 @@ steps:
         echo "[tools]" > mise.ci.toml
         echo "kind = \"${KIND_VERSION}\"" >> mise.ci.toml
         echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
-        echo "kustomize = \"5.6.0\"" >> mise.ci.toml
+        echo 'kustomize = "5.6.0"' >> mise.ci.toml
         mise install
         eval "$(mise activate bash --shims)"
       - "kind delete cluster --name $${CLUSTER_NAME} || true"
@@ -467,7 +467,7 @@ steps:
         echo "[tools]" > mise.ci.toml
         echo "kind = \"${KIND_VERSION}\"" >> mise.ci.toml
         echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
-        echo "kustomize = \"5.6.0\"" >> mise.ci.toml
+        echo 'kustomize = "5.6.0"' >> mise.ci.toml
         mise install
         eval "$(mise activate bash --shims)"
       - kind create cluster --config ./config-$${CLUSTER_NAME}.yaml
@@ -490,12 +490,12 @@ steps:
     commands:
       - |
         echo "[tools]" > mise.ci.toml
-        echo "awscli = \"2.24.17\"" >> mise.ci.toml
-        echo "bats = \"1.1.0\"" >> mise.ci.toml
-        echo "helm = \"3.12.0\"" >> mise.ci.toml
+        echo 'awscli = "2.24.17"' >> mise.ci.toml
+        echo 'bats = "1.1.0"' >> mise.ci.toml
+        echo 'helm = "3.12.0"' >> mise.ci.toml
         echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
-        echo "kustomize = \"5.6.0\"" >> mise.ci.toml
-        echo "yq = \"4.33.3\"" >> mise.ci.toml
+        echo 'kustomize = "5.6.0"' >> mise.ci.toml
+        echo 'yq = "4.33.3"' >> mise.ci.toml
         mise install
         eval "$(mise activate bash --shims)"
       - . ./env-$${CLUSTER_NAME}.env
@@ -522,7 +522,7 @@ steps:
         echo "[tools]" > mise.ci.toml
         echo "kind = \"${KIND_VERSION}\"" >> mise.ci.toml
         echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
-        echo "kustomize = \"5.6.0\"" >> mise.ci.toml
+        echo 'kustomize = "5.6.0"' >> mise.ci.toml
         mise install
         eval "$(mise activate bash --shims)"
       - "kind delete cluster --name $${CLUSTER_NAME} || true"
@@ -579,7 +579,7 @@ steps:
         echo "[tools]" > mise.ci.toml
         echo "kind = \"${KIND_VERSION}\"" >> mise.ci.toml
         echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
-        echo "kustomize = \"5.6.0\"" >> mise.ci.toml
+        echo 'kustomize = "5.6.0"' >> mise.ci.toml
         mise install
         eval "$(mise activate bash --shims)"
       - kind create cluster --config ./config-$${CLUSTER_NAME}.yaml
@@ -602,12 +602,12 @@ steps:
     commands:
       - |
         echo "[tools]" > mise.ci.toml
-        echo "awscli = \"2.24.17\"" >> mise.ci.toml
-        echo "bats = \"1.1.0\"" >> mise.ci.toml
-        echo "helm = \"3.12.0\"" >> mise.ci.toml
+        echo 'awscli = "2.24.17"' >> mise.ci.toml
+        echo 'bats = "1.1.0"' >> mise.ci.toml
+        echo 'helm = "3.12.0"' >> mise.ci.toml
         echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
-        echo "kustomize = \"5.6.0\"" >> mise.ci.toml
-        echo "yq = \"4.33.3\"" >> mise.ci.toml
+        echo 'kustomize = "5.6.0"' >> mise.ci.toml
+        echo 'yq = "4.33.3"' >> mise.ci.toml
         mise install
         eval "$(mise activate bash --shims)"
       - . ./env-$${CLUSTER_NAME}.env
@@ -634,7 +634,7 @@ steps:
         echo "[tools]" > mise.ci.toml
         echo "kind = \"${KIND_VERSION}\"" >> mise.ci.toml
         echo "kubectl = \"${KUBECTL_VERSION}\"" >> mise.ci.toml
-        echo "kustomize = \"5.6.0\"" >> mise.ci.toml
+        echo 'kustomize = "5.6.0"' >> mise.ci.toml
         mise install
         eval "$(mise activate bash --shims)"
       - "kind delete cluster --name $${CLUSTER_NAME} || true"
