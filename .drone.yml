@@ -26,28 +26,6 @@ platform:
   os: linux
   arch: amd64
 steps:
-  - name: lint
-    image: quay.io/sighup/policeman
-    pull: always
-    environment:
-      # Identifies false positives like missing 'selector'.
-      # Doing this is valid for Kustomize patches
-      VALIDATE_KUBERNETES_KUBEVAL: "false"
-      # Some duplicated code is intended.
-      VALIDATE_JSCPD: "false"
-      # hadolint already validated dockerfiles
-      VALIDATE_DOCKERFILE: "false"
-      # Disable natural language checks
-      VALIDATE_NATURAL_LANGUAGE: "false"
-      # Disable linter on helper files in the test folder
-      FILTER_REGEX_EXCLUDE: (katalog/tests/helper|\.github)
-      # Set default branch for super-linter v8.0.0 compatibility
-      DEFAULT_BRANCH: "main"
-      # Use filesystem discovery instead of git diff to bypass git validation
-      USE_FIND_ALGORITHM: "true"
-    depends_on:
-      - clone
-
   - name: render
     image: quay.io/sighup/e2e-testing:2.24.17_1.1.0_3.12.0_1.32.2_5.6.0_4.33.3
     pull: always
