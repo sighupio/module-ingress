@@ -41,6 +41,8 @@ steps:
       VALIDATE_NATURAL_LANGUAGE: "false"
       # Disable linter on helper files in the test folder
       FILTER_REGEX_EXCLUDE: (katalog/tests/helper|\.github)
+      # Set default branch for super-linter v8.0.0 compatibility
+      DEFAULT_BRANCH: "main"
     depends_on:
       - clone
 
