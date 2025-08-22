@@ -14,7 +14,7 @@ This release updates the NGINX Ingress Controller to version 1.13.1 for improved
 | `cert-manager`     | [`v1.18.2`](https://cert-manager.io/docs/releases/release-notes/release-notes-1.18/)     |   `v1.17.1`      |
 | `dual-nginx`       | [`v1.13.1`](https://github.com/kubernetes/ingress-nginx/releases/tag/controller-v1.13.1) |     `1.12.1`     |
 | `external-dns`     | [`v0.16.1`](https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.16.1)        |   `No update`    |
-| `forecastle`       | [`v1.0.156`](https://github.com/stakater/Forecastle/releases/tag/v1.0.156)               |   `No update`    |
+| `forecastle`       | [`v1.0.157`](https://github.com/stakater/Forecastle/releases/tag/v1.0.157)               |   `v1.0.156`    |
 | `nginx`            | [`v1.13.1`](https://github.com/kubernetes/ingress-nginx/releases/tag/controller-v1.13.1) |     `1.12.1`     |
 
 > Please refer the individual release notes to get a more detailed information on each release.
@@ -36,6 +36,12 @@ For detailed information about changes in NGINX Ingress Controller v1.13.1, plea
 Updated to cert-manager v1.18.2.
 
 For detailed information about changes in cert-manager v1.18.2, please refer to the [upstream release notes](https://cert-manager.io/docs/releases/release-notes/release-notes-1.18/).
+
+### Forecastle v1.0.157
+
+Updated to Forecastle v1.0.157 with dependency updates including security improvements.
+
+For detailed information about changes in Forecastle v1.0.157, please refer to the [upstream release notes](https://github.com/stakater/Forecastle/releases/tag/v1.0.157).
 
 ## Breaking changes 💔
 
