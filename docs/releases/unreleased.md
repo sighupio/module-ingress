@@ -39,7 +39,15 @@ For detailed information about changes in cert-manager v1.18.2, please refer to 
 
 ## Breaking changes 💔
 
-No breaking changes are introduced in this release. The updates from nginx v1.12.1 to v1.13.1 and cert-manager v1.17.1 to v1.18.2 are backward compatible.
+### cert-manager v1.18 ACME HTTP01 Challenge PathType Change
+
+cert-manager v1.18 introduced a breaking change where ACME HTTP01 challenge ingress paths now use `PathType: Exact` instead of `PathType: ImplementationSpecific` for enhanced security and reliable handling across different ingress controllers.
+
+**Compatibility Issue**: This change conflicts with nginx-ingress controller versions >=1.12.0 when the `strict-validate-path-type` option is enabled (default since v1.12.0). The strict validation rejects ACME challenge paths like `/.well-known/acme-challenge/<TOKEN>` when using `PathType: Exact`, causing certificate provisioning to fail.
+
+**Workaround Applied**: This module includes an automatic workaround by setting the cert-manager feature gate `ACMEHTTP01IngressPathTypeExact=false`, which reverts to the previous `PathType: ImplementationSpecific` behavior while maintaining ACME HTTP01 challenge functionality.
+
+For more details, see the [cert-manager v1.18 release notes](https://cert-manager.io/docs/releases/release-notes/release-notes-1.18/#acme-http01-challenge-paths-now-use-pathtype-exact-in-ingress-routes).
 
 ## Kubernetes support 🚢
 

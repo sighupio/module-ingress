@@ -40,6 +40,9 @@ patches:
         path: /spec/template/spec/containers/0/args/-
         value: --default-issuer-name=letsencrypt-prod
       - op: add
+        path: /spec/template/spec/containers/0/args/-
+        value: --feature-gates=ACMEHTTP01IngressPathTypeExact=false
+      - op: add
         path: /spec/template/spec/containers/0/resources
         value:
             requests:
