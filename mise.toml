@@ -11,16 +11,9 @@ yq = "4.43.1"
 go = "1.23"        
 bats = "1.11.0"    
 dyff = "1.9.0"     
+"ubi:google/addlicense" = "v1.1.1"     
 
 # Development task definitions
-[tasks.install-tools]
-description = "Install additional development tools"
-run = '''
-echo "📦 Installing development tools..."
-go install github.com/google/addlicense@v1.1.1
-echo "✅ Tools installed successfully!"
-'''
-
 [tasks.add-license]
 description = "Add license headers to all files"
 run = '''
@@ -44,7 +37,6 @@ echo "✅ All manifests validated!"
 description = "Complete development environment setup"
 run = '''
 echo "🚀 Setting up development environment..."
-mise run install-tools
 mise run add-license
 mise run validate-manifests
 echo "✅ Development environment ready!"
