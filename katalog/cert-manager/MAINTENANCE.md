@@ -281,7 +281,7 @@ This patch is located in `katalog/cert-manager/cert-manager-controller/kustomiza
    strict-validate-path-type: "false"
    ```
 
-2. **Wait for nginx-ingress fix**: Future versions may properly handle dots in `PathType: Exact` paths.
+2. **Wait for nginx-ingress fix**: Future versions may properly handle dots in `PathType: Exact` paths. See [this PR](https://github.com/kubernetes/ingress-nginx/pull/13799) for reference.
 
 ### Helm vs Kustomize
 Unlike Helm deployments which can use:
