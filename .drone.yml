@@ -46,9 +46,7 @@ steps:
       - clone
     commands:
       - |
-        echo "[tools]" > mise.ci.toml
-        echo 'kustomize = "5.6.0"' >> mise.ci.toml
-        mise install
+        mise use kustomize@5.6.0
         eval "$(mise activate bash --shims)"
       - kustomize build katalog/cert-manager > cert-manager.yml
       - kustomize build katalog/dual-nginx > dual-nginx.yml
@@ -130,10 +128,7 @@ steps:
         path: /mise-data
     commands:
       - |
-        echo "[tools]" > mise.ci.toml
-        echo "kind = \"$${KIND_VERSION}\"" >> mise.ci.toml
-        echo "kubectl = \"$${KUBECTL_VERSION}\"" >> mise.ci.toml
-        mise install
+        mise use kind@$${KIND_VERSION} kubectl@$${KUBECTL_VERSION}
         eval "$(mise activate bash --shims)"
       - kind create cluster --config ./config-$${CLUSTER_NAME}.yaml
       - kind get kubeconfig --name $${CLUSTER_NAME} > ./kubeconfig-$${CLUSTER_NAME}
@@ -157,11 +152,7 @@ steps:
         path: /mise-data
     commands:
       - |
-        echo "[tools]" > mise.ci.toml
-        echo 'bats = "1.1.0"' >> mise.ci.toml
-        echo "kubectl = \"$${KUBECTL_VERSION}\"" >> mise.ci.toml
-        echo 'kustomize = "5.6.0"' >> mise.ci.toml
-        mise install
+        mise use bats@1.1.0 kubectl@$${KUBECTL_VERSION} kustomize@5.6.0
         eval "$(mise activate bash --shims)"
       - . ./env-$${CLUSTER_NAME}.env
       - until kubectl get serviceaccount default > /dev/null 2>&1; do echo "waiting for control-plane" && sleep 1; done
@@ -187,10 +178,7 @@ steps:
         path: /mise-data
     commands:
       - |
-        echo "[tools]" > mise.ci.toml
-        echo "kind = \"$${KIND_VERSION}\"" >> mise.ci.toml
-        echo "kubectl = \"$${KUBECTL_VERSION}\"" >> mise.ci.toml
-        mise install
+        mise use kind@$${KIND_VERSION} kubectl@$${KUBECTL_VERSION}
         eval "$(mise activate bash --shims)"
       - "kind delete cluster --name $${CLUSTER_NAME} || true"
     depends_on:
@@ -247,10 +235,7 @@ steps:
         path: /mise-data
     commands:
       - |
-        echo "[tools]" > mise.ci.toml
-        echo "kind = \"$${KIND_VERSION}\"" >> mise.ci.toml
-        echo "kubectl = \"$${KUBECTL_VERSION}\"" >> mise.ci.toml
-        mise install
+        mise use kind@$${KIND_VERSION} kubectl@$${KUBECTL_VERSION}
         eval "$(mise activate bash --shims)"
       - kind create cluster --config ./config-$${CLUSTER_NAME}.yaml
       - kind get kubeconfig --name $${CLUSTER_NAME} > ./kubeconfig-$${CLUSTER_NAME}
@@ -274,11 +259,7 @@ steps:
         path: /mise-data
     commands:
       - |
-        echo "[tools]" > mise.ci.toml
-        echo 'bats = "1.1.0"' >> mise.ci.toml
-        echo "kubectl = \"$${KUBECTL_VERSION}\"" >> mise.ci.toml
-        echo 'kustomize = "5.6.0"' >> mise.ci.toml
-        mise install
+        mise use bats@1.1.0 kubectl@$${KUBECTL_VERSION} kustomize@5.6.0
         eval "$(mise activate bash --shims)"
       - . ./env-$${CLUSTER_NAME}.env
       - until kubectl get serviceaccount default > /dev/null 2>&1; do echo "waiting for control-plane" && sleep 1; done
@@ -304,10 +285,7 @@ steps:
         path: /mise-data
     commands:
       - |
-        echo "[tools]" > mise.ci.toml
-        echo "kind = \"$${KIND_VERSION}\"" >> mise.ci.toml
-        echo "kubectl = \"$${KUBECTL_VERSION}\"" >> mise.ci.toml
-        mise install
+        mise use kind@$${KIND_VERSION} kubectl@$${KUBECTL_VERSION}
         eval "$(mise activate bash --shims)"
       - "kind delete cluster --name $${CLUSTER_NAME} || true"
     depends_on:
@@ -364,10 +342,7 @@ steps:
         path: /mise-data
     commands:
       - |
-        echo "[tools]" > mise.ci.toml
-        echo "kind = \"$${KIND_VERSION}\"" >> mise.ci.toml
-        echo "kubectl = \"$${KUBECTL_VERSION}\"" >> mise.ci.toml
-        mise install
+        mise use kind@$${KIND_VERSION} kubectl@$${KUBECTL_VERSION}
         eval "$(mise activate bash --shims)"
       - kind create cluster --config ./config-$${CLUSTER_NAME}.yaml
       - kind get kubeconfig --name $${CLUSTER_NAME} > ./kubeconfig-$${CLUSTER_NAME}
@@ -391,11 +366,7 @@ steps:
         path: /mise-data
     commands:
       - |
-        echo "[tools]" > mise.ci.toml
-        echo 'bats = "1.1.0"' >> mise.ci.toml
-        echo "kubectl = \"$${KUBECTL_VERSION}\"" >> mise.ci.toml
-        echo 'kustomize = "5.6.0"' >> mise.ci.toml
-        mise install
+        mise use bats@1.1.0 kubectl@$${KUBECTL_VERSION} kustomize@5.6.0
         eval "$(mise activate bash --shims)"
       - . ./env-$${CLUSTER_NAME}.env
       - until kubectl get serviceaccount default > /dev/null 2>&1; do echo "waiting for control-plane" && sleep 1; done
@@ -421,10 +392,7 @@ steps:
         path: /mise-data
     commands:
       - |
-        echo "[tools]" > mise.ci.toml
-        echo "kind = \"$${KIND_VERSION}\"" >> mise.ci.toml
-        echo "kubectl = \"$${KUBECTL_VERSION}\"" >> mise.ci.toml
-        mise install
+        mise use kind@$${KIND_VERSION} kubectl@$${KUBECTL_VERSION}
         eval "$(mise activate bash --shims)"
       - "kind delete cluster --name $${CLUSTER_NAME} || true"
     depends_on:
@@ -481,10 +449,7 @@ steps:
         path: /mise-data
     commands:
       - |
-        echo "[tools]" > mise.ci.toml
-        echo "kind = \"$${KIND_VERSION}\"" >> mise.ci.toml
-        echo "kubectl = \"$${KUBECTL_VERSION}\"" >> mise.ci.toml
-        mise install
+        mise use kind@$${KIND_VERSION} kubectl@$${KUBECTL_VERSION}
         eval "$(mise activate bash --shims)"
       - kind create cluster --config ./config-$${CLUSTER_NAME}.yaml
       - kind get kubeconfig --name $${CLUSTER_NAME} > ./kubeconfig-$${CLUSTER_NAME}
@@ -508,11 +473,7 @@ steps:
         path: /mise-data
     commands:
       - |
-        echo "[tools]" > mise.ci.toml
-        echo 'bats = "1.1.0"' >> mise.ci.toml
-        echo "kubectl = \"$${KUBECTL_VERSION}\"" >> mise.ci.toml
-        echo 'kustomize = "5.6.0"' >> mise.ci.toml
-        mise install
+        mise use bats@1.1.0 kubectl@$${KUBECTL_VERSION} kustomize@5.6.0
         eval "$(mise activate bash --shims)"
       - . ./env-$${CLUSTER_NAME}.env
       - until kubectl get serviceaccount default > /dev/null 2>&1; do echo "waiting for control-plane" && sleep 1; done
@@ -538,10 +499,7 @@ steps:
         path: /mise-data
     commands:
       - |
-        echo "[tools]" > mise.ci.toml
-        echo "kind = \"$${KIND_VERSION}\"" >> mise.ci.toml
-        echo "kubectl = \"$${KUBECTL_VERSION}\"" >> mise.ci.toml
-        mise install
+        mise use kind@$${KIND_VERSION} kubectl@$${KUBECTL_VERSION}
         eval "$(mise activate bash --shims)"
       - "kind delete cluster --name $${CLUSTER_NAME} || true"
     depends_on:
@@ -598,10 +556,7 @@ steps:
         path: /mise-data
     commands:
       - |
-        echo "[tools]" > mise.ci.toml
-        echo "kind = \"$${KIND_VERSION}\"" >> mise.ci.toml
-        echo "kubectl = \"$${KUBECTL_VERSION}\"" >> mise.ci.toml
-        mise install
+        mise use kind@$${KIND_VERSION} kubectl@$${KUBECTL_VERSION}
         eval "$(mise activate bash --shims)"
       - kind create cluster --config ./config-$${CLUSTER_NAME}.yaml
       - kind get kubeconfig --name $${CLUSTER_NAME} > ./kubeconfig-$${CLUSTER_NAME}
@@ -625,11 +580,7 @@ steps:
         path: /mise-data
     commands:
       - |
-        echo "[tools]" > mise.ci.toml
-        echo 'bats = "1.1.0"' >> mise.ci.toml
-        echo "kubectl = \"$${KUBECTL_VERSION}\"" >> mise.ci.toml
-        echo 'kustomize = "5.6.0"' >> mise.ci.toml
-        mise install
+        mise use bats@1.1.0 kubectl@$${KUBECTL_VERSION} kustomize@5.6.0
         eval "$(mise activate bash --shims)"
       - . ./env-$${CLUSTER_NAME}.env
       - until kubectl get serviceaccount default > /dev/null 2>&1; do echo "waiting for control-plane" && sleep 1; done
@@ -655,10 +606,7 @@ steps:
         path: /mise-data
     commands:
       - |
-        echo "[tools]" > mise.ci.toml
-        echo "kind = \"$${KIND_VERSION}\"" >> mise.ci.toml
-        echo "kubectl = \"$${KUBECTL_VERSION}\"" >> mise.ci.toml
-        mise install
+        mise use kind@$${KIND_VERSION} kubectl@$${KUBECTL_VERSION}
         eval "$(mise activate bash --shims)"
       - "kind delete cluster --name $${CLUSTER_NAME} || true"
     depends_on:
