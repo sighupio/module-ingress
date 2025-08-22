@@ -1,4 +1,4 @@
-# Ingress Module Release unreleased
+# Ingress Module Release v4.1.0
 
 Welcome to the latest release of `Ingress` module of [`SIGHUP Distribution`](https://github.com/sighupio/fury-distribution) maintained by team SIGHUP.
 
