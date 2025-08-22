@@ -1,4 +1,5 @@
-# Ingress Module Release unreleased
+# Ingress Module Release v4.1.0
+
 
 Welcome to the latest release of `Ingress` module of [`SIGHUP Distribution`](https://github.com/sighupio/fury-distribution) maintained by team SIGHUP.
 
@@ -10,7 +11,7 @@ This release updates the NGINX Ingress Controller to version 1.13.1 for improved
 | ------------------ | ---------------------------------------------------------------------------------------- | :--------------: |
 | `aws-cert-manager` | N.A.                                                                                     |   `No update`    |
 | `aws-external-dns` | N.A.                                                                                     |   `No update`    |
-| `cert-manager`     | [`v1.18.2`](https://cert-manager.io/docs/releases/release-notes/release-notes-1.18/)     |   `v1.17.1`    |
+| `cert-manager`     | [`v1.18.2`](https://cert-manager.io/docs/releases/release-notes/release-notes-1.18/)     |   `v1.17.1`      |
 | `dual-nginx`       | [`v1.13.1`](https://github.com/kubernetes/ingress-nginx/releases/tag/controller-v1.13.1) |     `1.12.1`     |
 | `external-dns`     | [`v0.16.1`](https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.16.1)        |   `No update`    |
 | `forecastle`       | [`v1.0.156`](https://github.com/stakater/Forecastle/releases/tag/v1.0.156)               |   `No update`    |
@@ -22,7 +23,7 @@ This release updates the NGINX Ingress Controller to version 1.13.1 for improved
 
 ### Kubernetes 1.33 Support
 
-This release adds support for Kubernetes 1.33.4, expanding the compatibility matrix to support Kubernetes versions 1.29 through 1.33.
+This release adds support for Kubernetes 1.33.x, expanding the compatibility matrix to support Kubernetes versions 1.29 through 1.33.
 
 ### NGINX Ingress Controller v1.13.1
 
