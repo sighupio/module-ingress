@@ -36,7 +36,7 @@ References:
 - Specific version
 
   ```bash
-  curl --location --remote-name https://github.com/cert-manager/cert-manager/releases/download/v1.17.1/cert-manager.yaml
+  curl --location --remote-name https://github.com/cert-manager/cert-manager/releases/download/v1.18.2/cert-manager.yaml
   ```
 
 - Latest version
@@ -253,9 +253,43 @@ References:
         patch: |-
         - op: replace
             path: /spec/template/spec/containers/0/args/6
-            value: --acme-http01-solver-image=registry.sighup.io/fury/cert-manager-acmesolver:v1.17.1
+            value: --acme-http01-solver-image=registry.sighup.io/fury/cert-manager-acmesolver:v1.18.2
 
     ```
+
+## cert-manager v1.18 PathType Breaking Change
+
+cert-manager v1.18 introduced a breaking change where ACME HTTP01 challenge ingress paths use `PathType: Exact` instead of `PathType: ImplementationSpecific`. This conflicts with nginx-ingress controller versions >=1.12.0 when `strict-validate-path-type` is enabled (default behavior).
+
+### Issue
+The strict path validation rejects ACME challenge paths like `/.well-known/acme-challenge/<TOKEN>` when using `PathType: Exact`, causing certificate provisioning failures.
+
+### Solution Applied
+This module applies a kustomize patch to disable the breaking behavior by adding the feature gate:
+```yaml
+- op: add
+  path: /spec/template/spec/containers/0/args/-
+  value: --feature-gates=ACMEHTTP01IngressPathTypeExact=false
+```
+
+This patch is located in `katalog/cert-manager/cert-manager-controller/kustomization.yaml`.
+
+### Alternative Solutions
+1. **Disable nginx strict validation** (not recommended):
+   ```yaml
+   # In nginx ConfigMap
+   strict-validate-path-type: "false"
+   ```
+
+2. **Wait for nginx-ingress fix**: Future versions may properly handle dots in `PathType: Exact` paths. See [this PR](https://github.com/kubernetes/ingress-nginx/pull/13799) for reference.
+
+### Helm vs Kustomize
+Unlike Helm deployments which can use:
+```yaml
+featureGates: "ACMEHTTP01IngressPathTypeExact=false"
+```
+
+Kustomize deployments require manual patching of the deployment args as implemented in this module.
 
 ## Dashboards
 
