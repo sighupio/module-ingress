@@ -43,7 +43,7 @@ Ingress Module provides the following packages:
 
 | Package                                       | Version    | Description                                                                                                                   |
 | --------------------------------------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| [nginx](katalog/nginx)                        | `v1.12.1`  | The NGINX Ingress Controller for Kubernetes provides delivery services for Kubernetes applications.                           |
+| [nginx](katalog/nginx)                        | `v1.13.1`  | The NGINX Ingress Controller for Kubernetes provides delivery services for Kubernetes applications.                           |
 | [dual-nginx](katalog/dual-nginx)              | `v1.12.1`  | It deploys two identical NGINX ingress controllers but with two different scopes: public/external and private/internal.       |
 | [cert-manager](katalog/cert-manager)          | `v1.16.1`  | cert-manager is a Kubernetes add-on to automate the management and issuance of TLS certificates from various issuing sources. |
 | [external-dns](katalog/external-dns)          | `v0.16.1`  | external-dns allows you to manage DNS records natively from Kubernetes.                                                       |
@@ -59,6 +59,7 @@ Ingress Module provides the following packages:
 | `1.30.x`           | :white_check_mark: | No known issues |
 | `1.31.x`           | :white_check_mark: | No known issues |
 | `1.32.x`           | :white_check_mark: | No known issues |
+| `1.33.x`           | :white_check_mark: | No known issues |
 
 Check the [compatibility matrix][compatibility-matrix] for additional information on previous releases of the module.
 
