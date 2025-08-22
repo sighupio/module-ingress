@@ -32,7 +32,7 @@ patches:
         value: --leader-election-namespace=$(POD_NAMESPACE)
       - op: replace
         path: /spec/template/spec/containers/0/args/4
-        value: --acme-http01-solver-image=registry.sighup.io/fury/jetstack/cert-manager-acmesolver:v1.17.1
+        value: --acme-http01-solver-image=registry.sighup.io/fury/jetstack/cert-manager-acmesolver:v1.18.2
       - op: add
         path: /spec/template/spec/containers/0/args/-
         value: --default-issuer-kind=ClusterIssuer

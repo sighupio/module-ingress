@@ -1,5 +1,6 @@
 # Ingress Module Release v4.1.0
 
+
 Welcome to the latest release of `Ingress` module of [`SIGHUP Distribution`](https://github.com/sighupio/fury-distribution) maintained by team SIGHUP.
 
 This release updates the NGINX Ingress Controller to version 1.13.1 for improved security, performance, and compatibility. It also introduces support for Kubernetes 1.33 while maintaining compatibility with previous versions.
@@ -10,10 +11,10 @@ This release updates the NGINX Ingress Controller to version 1.13.1 for improved
 | ------------------ | ---------------------------------------------------------------------------------------- | :--------------: |
 | `aws-cert-manager` | N.A.                                                                                     |   `No update`    |
 | `aws-external-dns` | N.A.                                                                                     |   `No update`    |
-| `cert-manager`     | [`v1.17.1`](https://cert-manager.io/docs/releases/release-notes/release-notes-1.17/)     |   `No update`    |
+| `cert-manager`     | [`v1.18.2`](https://cert-manager.io/docs/releases/release-notes/release-notes-1.18/)     |   `v1.17.1`      |
 | `dual-nginx`       | [`v1.13.1`](https://github.com/kubernetes/ingress-nginx/releases/tag/controller-v1.13.1) |     `1.12.1`     |
-| `external-dns`     | [`v0.16.1`](https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.16.1)        |   `No update`    |
-| `forecastle`       | [`v1.0.156`](https://github.com/stakater/Forecastle/releases/tag/v1.0.156)               |   `No update`    |
+| `external-dns`     | [`v0.18.0`](https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.18.0)        |   `v0.16.1`    |
+| `forecastle`       | [`v1.0.157`](https://github.com/stakater/Forecastle/releases/tag/v1.0.157)               |   `v1.0.156`    |
 | `nginx`            | [`v1.13.1`](https://github.com/kubernetes/ingress-nginx/releases/tag/controller-v1.13.1) |     `1.12.1`     |
 
 > Please refer the individual release notes to get a more detailed information on each release.
@@ -30,9 +31,36 @@ Updated to NGINX Ingress Controller v1.13.1.
 
 For detailed information about changes in NGINX Ingress Controller v1.13.1, please refer to the [upstream changelog](https://github.com/kubernetes/ingress-nginx/blob/main/changelog/controller-1.13.1.md).
 
+### cert-manager v1.18.2
+
+Updated to cert-manager v1.18.2.
+
+For detailed information about changes in cert-manager v1.18.2, please refer to the [upstream release notes](https://cert-manager.io/docs/releases/release-notes/release-notes-1.18/).
+
+### Forecastle v1.0.157
+
+Updated to Forecastle v1.0.157 with dependency updates including security improvements.
+
+For detailed information about changes in Forecastle v1.0.157, please refer to the [upstream release notes](https://github.com/stakater/Forecastle/releases/tag/v1.0.157).
+
+### External-DNS v0.18.0
+
+Updated to External-DNS v0.18.0 for **mandatory** Kubernetes 1.33 compatibility.
+
+#### Important: EndpointSlices Migration
+
+External-DNS v0.18.0 switches from using the Endpoints API to the more scalable EndpointSlices API for discovering Service endpoints. This change:
+- **Improves Performance**: EndpointSlices split large endpoint lists into smaller chunks (100 endpoints per slice), reducing API server load and network traffic
+- **Enables K8s 1.33 Support**: Required for compatibility with Kubernetes 1.33+
+- **Requires RBAC Update**: Adds `discovery.k8s.io/endpointslices` permissions
+
+This is a transparent change for users but significantly improves performance for Services with many pods.
+
+For detailed information about changes in External-DNS v0.18.0, please refer to the [upstream release notes](https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.18.0).
+
 ## Breaking changes 💔
 
-No breaking changes are introduced in this release. The update from nginx v1.12.1 to v1.13.1 is backward compatible.
+No breaking changes are introduced in this release. The updates from nginx v1.12.1 to v1.13.1 and cert-manager v1.17.1 to v1.18.2 are backward compatible.
 
 ## Kubernetes support 🚢
 

@@ -36,7 +36,7 @@ References:
 - Specific version
 
   ```bash
-  curl --location --remote-name https://github.com/cert-manager/cert-manager/releases/download/v1.17.1/cert-manager.yaml
+  curl --location --remote-name https://github.com/cert-manager/cert-manager/releases/download/v1.18.2/cert-manager.yaml
   ```
 
 - Latest version
@@ -253,7 +253,7 @@ References:
         patch: |-
         - op: replace
             path: /spec/template/spec/containers/0/args/6
-            value: --acme-http01-solver-image=registry.sighup.io/fury/cert-manager-acmesolver:v1.17.1
+            value: --acme-http01-solver-image=registry.sighup.io/fury/cert-manager-acmesolver:v1.18.2
 
     ```
 
