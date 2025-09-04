@@ -38,7 +38,6 @@ echo "✅ All manifests validated!"
 description = "Complete development environment setup"
 run = '''
 echo "🚀 Setting up development environment..."
-mise run install-tools
 mise run add-license
 mise run validate-manifests
 echo "✅ Development environment ready!"
