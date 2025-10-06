@@ -1,8 +1,8 @@
 # Ingress NGINX controller package maintenance guide
 
-**Current Version**: v1.13.1 (Helm Chart 4.13.0)  
-**Previous Version**: v1.12.1 (Helm Chart 4.12.0)  
-**Last Updated**: August 2025 for Kubernetes 1.33 compatibility  
+**Current Version**: v1.13.3 (Helm Chart 4.13.3)
+**Previous Version**: v1.13.1 (Helm Chart 4.13.0)
+**Last Updated**: October 2025 for ingress-nginx bug fix
 
 To update Ingress NGINX controller, follow the next steps (or update and use the [upgrade.sh](./upgrade.sh) script to automate it):
 

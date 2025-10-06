@@ -4,4 +4,4 @@
 
 bases:
   - name: ingress/nginx
-    version: v1.13.1
+    version: v1.13.3

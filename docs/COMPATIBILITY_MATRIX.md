@@ -13,6 +13,7 @@
 | v3.0.1                              |                    |                    |                    |                    |                    | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |                    |
 | v4.0.0                              |                    |                    |                    |                    |                    |                    | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |                    |
 | v4.1.0                              |                    |                    |                    |                    |                    |                    | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| v4.1.1                              |                    |                    |                    |                    |                    |                    | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 
 :white_check_mark: Compatible
 
@@ -32,6 +33,7 @@ because it is not officially supported by [SIGHUP](https://sighup.io).
 - :warning: : module version: `v1.12.X` and Kubernetes Version: `1.23.x`. It works as expected. Marked as a warning because it is not officially supported by [SIGHUP](https://sighup.io).
 - :x:: module version: `v1.12.0` has a known bug breaking upgrades. Please do not use.
 - :x:: module version: `v1.12.1` has a known bug breaking upgrades. Please do not use.
+- :warning: : module version: `v4.1.0` with ingress-nginx `v1.13.1` may experience pod stabilization issues depending on environment-specific proxy buffer configurations. Impact varies by environment. Upgrade to `v4.1.1` with ingress-nginx `v1.13.3` to resolve. See [upstream issue #13672](https://github.com/kubernetes/ingress-nginx/issues/13672).
 
 ## Legacy versions
 
