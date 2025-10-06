@@ -29,7 +29,7 @@ NGINX OVH is deployed with the following default configuration:
 ```yaml
 bases:
   - name: ingress/nginx
-    version: "v1.13.1"
+    version: "v1.13.3"
 ```
 
 > See `furyctl` [documentation][furyctl-repo] for additional details about `Furyfile.yml` format.
