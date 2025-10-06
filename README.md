@@ -9,7 +9,7 @@
 </h1>
 <!-- markdownlint-enable MD033 -->
 
-![Release](https://img.shields.io/badge/Latest%20Release-v4.1.0-blue)
+![Release](https://img.shields.io/badge/Latest%20Release-v4.1.1-blue)
 ![License](https://img.shields.io/github/license/sighupio/fury-kubernetes-ingress?label=License)
 ![Slack](https://img.shields.io/badge/slack-@kubernetes/fury-yellow.svg?logo=slack&label=Slack)
 
@@ -43,8 +43,8 @@ Ingress Module provides the following packages:
 
 | Package                                       | Version    | Description                                                                                                                   |
 | --------------------------------------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| [nginx](katalog/nginx)                        | `v1.13.1`  | The NGINX Ingress Controller for Kubernetes provides delivery services for Kubernetes applications.                           |
-| [dual-nginx](katalog/dual-nginx)              | `v1.12.1`  | It deploys two identical NGINX ingress controllers but with two different scopes: public/external and private/internal.       |
+| [nginx](katalog/nginx)                        | `v1.13.3`  | The NGINX Ingress Controller for Kubernetes provides delivery services for Kubernetes applications.                           |
+| [dual-nginx](katalog/dual-nginx)              | `v1.13.3`  | It deploys two identical NGINX ingress controllers but with two different scopes: public/external and private/internal.       |
 | [cert-manager](katalog/cert-manager)          | `v1.18.2`  | cert-manager is a Kubernetes add-on to automate the management and issuance of TLS certificates from various issuing sources. |
 | [external-dns](katalog/external-dns)          | `v0.18.0`  | external-dns allows you to manage DNS records natively from Kubernetes.                                                       |
 | [forecastle](katalog/forecastle)              | `v1.0.157` | Forecastle gives you access to a control panel where you can see your ingresses and access them on Kubernetes.                |
@@ -128,9 +128,9 @@ To deploy the `cert-manager` package:
 ```yaml
 bases:
   - name: ingress/dual-nginx
-    version: "v4.1.0"
+    version: "v4.1.1"
   - name: ingress/cert-manager
-    version: "v4.1.0"
+    version: "v4.1.1"
 ```
 
 2. Execute `furyctl vendor -H` to download the packages
@@ -189,7 +189,7 @@ Single Ingress:
 ```yaml
 bases:
   - name: ingress/nginx
-    version: "v4.1.0"
+    version: "v4.1.1"
 ```
 
 Dual Ingress:
@@ -199,9 +199,9 @@ Dual Ingress:
 ```yaml
 bases:
   - name: ingress/nginx
-    version: "v4.1.0"
+    version: "v4.1.1"
   - name: ingress/dual-nginx
-    version: "v4.1.0"
+    version: "v4.1.1"
 ```
 
 > See `furyctl` [documentation][furyctl-repo] for additional details about `Furyfile.yml` format.
@@ -273,11 +273,11 @@ To deploy the `forecastle` package:
 ```yaml
 bases:
   - name: ingress/dual-nginx
-    version: "v4.1.0"
+    version: "v4.1.1"
   - name: ingress/cert-manager
-    version: "v4.1.0"
+    version: "v4.1.1"
   - name: ingress/forecastle
-    version: "v4.1.0"
+    version: "v4.1.1"
 ```
 
 2. Execute `furyctl legacy vendor -H` to download the packages
