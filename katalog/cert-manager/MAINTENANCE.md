@@ -36,7 +36,7 @@ References:
 - Specific version
 
   ```bash
-  curl --location --remote-name https://github.com/cert-manager/cert-manager/releases/download/v1.18.2/cert-manager.yaml
+  curl --location --remote-name https://github.com/cert-manager/cert-manager/releases/download/v1.19.2/cert-manager.yaml
   ```
 
 - Latest version
@@ -199,7 +199,7 @@ References:
         cert-manager-controller-approve:cert-manager-io-crb.yaml \
         cert-manager-tokenrequest-role.yaml \
         cert-manager:leaderelection-role.yaml \
-        cert-manager-cert-manager-tokenrequest-rb.yaml \
+        cert-manager-tokenrequest-rb.yaml \
         cert-manager:leaderelection-rb.yaml \
         > rbac.yml
     mv cert-manager-sa.yaml \
@@ -224,7 +224,7 @@ References:
         cert-manager-controller-approve:cert-manager-io-crb.yaml \
         cert-manager-tokenrequest-role.yaml \
         cert-manager:leaderelection-role.yaml \
-        cert-manager-cert-manager-tokenrequest-rb.yaml \
+        cert-manager-tokenrequest-rb.yaml \
         cert-manager:leaderelection-rb.yaml \
         done
 
@@ -252,8 +252,8 @@ References:
         name: cert-manager
         patch: |-
         - op: replace
-            path: /spec/template/spec/containers/0/args/6
-            value: --acme-http01-solver-image=registry.sighup.io/fury/cert-manager-acmesolver:v1.18.2
+            path: /spec/template/spec/containers/0/args/3
+            value: --acme-http01-solver-image=registry.sighup.io/fury/cert-manager-acmesolver:v1.19.2
 
     ```
 
