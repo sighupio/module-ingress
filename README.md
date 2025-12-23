@@ -47,7 +47,7 @@ Ingress Module provides the following packages:
 | [dual-nginx](katalog/dual-nginx)              | `v1.13.3`  | It deploys two identical NGINX ingress controllers but with two different scopes: public/external and private/internal.       |
 | [cert-manager](katalog/cert-manager)          | `v1.19.2`  | cert-manager is a Kubernetes add-on to automate the management and issuance of TLS certificates from various issuing sources. |
 | [external-dns](katalog/external-dns)          | `v0.20.0`  | external-dns allows you to manage DNS records natively from Kubernetes.                                                       |
-| [forecastle](katalog/forecastle)              | `v1.0.157` | Forecastle gives you access to a control panel where you can see your ingresses and access them on Kubernetes.                |
+| [forecastle](katalog/forecastle)              | `v1.0.159` | Forecastle gives you access to a control panel where you can see your ingresses and access them on Kubernetes.                |
 | [aws-cert-manager](modules/aws-cert-manager/) | -          | Terraform modules for managing IAM permissions on AWS for cert-manager                                                        |
 | [aws-external-dns](modules/aws-external-dns/) | -          | Terraform modules for managing IAM permissions on AWS for external-dns                                                        |
 
@@ -326,7 +326,7 @@ Add the following annotations to your ingresses to be discovered by Forecastle:
 [kubernetes-ingress]: https://kubernetes.io/docs/concepts/services-networking/ingress/
 [forecastle-repo]: https://github.com/stakater/Forecastle
 [forecastle-icons]: https://github.com/stakater/ForecastleIcons
-[forecastle-repository]: https://github.com/stakater/Forecastle/blob/v1.0.136/README.md
+[forecastle-repository]: https://github.com/stakater/Forecastle/blob/v1.0.159/README.md
 [ingress-nginx-docs]: https://github.com/kubernetes/ingress-nginx
 [prometheus-alerts-page]: https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/
 
