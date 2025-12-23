@@ -1,7 +1,7 @@
 # Ingress NGINX controller package maintenance guide
 
-**Current Version**: v1.13.3 (Helm Chart 4.13.3)
-**Previous Version**: v1.13.1 (Helm Chart 4.13.0)
+**Current Version**: v1.14.1 (Helm Chart 4.14.1)
+**Previous Version**: v1.13.3 (Helm Chart 4.13.3)
 **Last Updated**: October 2025 for ingress-nginx bug fix
 
 To update Ingress NGINX controller, follow the next steps (or update and use the [upgrade.sh](./upgrade.sh) script to automate it):
@@ -45,17 +45,17 @@ mv ClusterRoleBinding-ingress-nginx.yml bases/configs
 mv Role-ingress-nginx.yml bases/configs
 mv RoleBinding-ingress-nginx.yml bases/configs
 mv ServiceAccount-ingress-nginx.yml bases/configs
-mv ServiceMonitor-ingress-nginx.yml bases/configs
-mv Service-ingress-nginx-metrics.yml bases/configs
-mv PrometheusRule-ingress-nginx.yml bases/configs
+mv ServiceMonitor-ingress-nginx-controller.yml bases/configs
+mv Service-ingress-nginx-controller-metrics.yml bases/configs
+mv PrometheusRule-ingress-nginx-controller.yml bases/configs
 mv Issuer-ingress-nginx-root-issuer.yml bases/configs
 mv Issuer-ingress-nginx-self-signed-issuer.yml bases/configs
 mv Certificate-ingress-nginx-root-cert.yml bases/configs
 
-mv DaemonSet-ingress-nginx.yml bases/controller
-mv ConfigMap-ingress-nginx.yml bases/controller
-mv Service-ingress-nginx-admission.yml bases/controller
-mv Service-ingress-nginx.yml bases/controller
+mv DaemonSet-ingress-nginx-controller.yml bases/controller
+mv ConfigMap-ingress-nginx-controller.yml bases/controller
+mv Service-ingress-nginx-controller-admission.yml bases/controller
+mv Service-ingress-nginx-controller.yml bases/controller
 mv IngressClass-nginx.yml bases/controller
 mv Certificate-ingress-nginx-admission.yml bases/controller
 mv ValidatingWebhookConfiguration-ingress-nginx-admission.yml bases/controller
