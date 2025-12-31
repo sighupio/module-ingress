@@ -9,7 +9,7 @@ Install instructions here:
 Upgrade instructions are here:
 <https://cert-manager.io/docs/installation/upgrading/>
 There are also docs for each minor upgrade, for example:
-<https://cert-manager.io/docs/installation/upgrading/upgrading-1.6-1.7>
+<https://cert-manager.io/docs/installation/upgrading/upgrading-1.18-1.19>
 
 And here you can find instructions on how to verify that the installation is OK:
 <https://cert-manager.io/docs/installation/verify/>
@@ -294,3 +294,6 @@ Kustomize deployments require manual patching of the deployment args as implemen
 ## Dashboards
 
 The included Grafana dashboard seems to be taken from here: <https://grafana.com/grafana/dashboards/11001-cert-manager/>. It has not been updated in a while.
+
+As documented [here](https://cert-manager.io/docs/releases/upgrading/upgrading-1.18-1.19#potentially-breaking-acme-metrics-label-changes), from cert-manager 1.19 a few metrics no longer use the "path" label, which was replaced with the "action" label. 
+The values used by these metrics are not equal, so the dashboard was updated to reflect these changes. 
