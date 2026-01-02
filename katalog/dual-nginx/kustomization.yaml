@@ -10,7 +10,7 @@ resources:
   - external
   - ../nginx/bases/configs
 
-patchesJson6902:
+patches:
   - target:
       group: rbac.authorization.k8s.io
       version: v1
