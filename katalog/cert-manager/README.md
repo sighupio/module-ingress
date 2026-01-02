@@ -8,12 +8,12 @@ This package deploys cert-manager to be used with [Let's Encrypt](https://letsen
 
 ## Requirements
 
-- Kubernetes `1.29` -> `1.32`
+- Kubernetes `1.31` -> `1.34`
 - Kustomize >= `v5.6.0`
 
 ## Image repository and tag
 
-- Cert Manager image: `quay.io/jetstack/cert-manager-controller:v1.18.2`
+- Cert Manager image: `quay.io/jetstack/cert-manager-controller:v1.19.2`
 - Cert Manager repo: [https://github.com/jetstack/cert-manager](https://github.com/jetstack/cert-manager)
 - Cert Manager documentation: [https://cert-manager.io/docs/](https://cert-manager.io/docs/)
 
@@ -33,9 +33,9 @@ To deploy the `cert-manager` package:
 ```yaml
 resources:
   - name: ingress/dual-nginx
-    version: "v4.0.0"
+    version: "v4.1.1"
   - name: ingress/cert-manager
-    version: "v4.0.0"
+    version: "v4.1.1"
 ```
 
 2. Execute `furyctl legacy vendor -H` to download the packages
