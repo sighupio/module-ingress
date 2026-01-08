@@ -9,7 +9,6 @@ kind: Kustomization
 namespace: ingress-haproxy
 
 resources:
-  - dashboards
   - Namespace-ingress-haproxy.yaml
   - ServiceAccount-haproxy-ingress.yaml
   - ClusterRole-haproxy-ingress.yaml
@@ -18,4 +17,3 @@ resources:
   - Service-haproxy-ingress-admin.yaml
   - ServiceMonitor-haproxy-ingress.yaml
   - ServiceMonitor-haproxy-ingress-admin.yaml
-  - PrometheusRule-haproxy-ingress-controller.yaml

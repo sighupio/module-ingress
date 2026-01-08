@@ -15,7 +15,6 @@ labels:
 
 resources:
   - ConfigMap-haproxy-ingress.yaml
-  - Secret-haproxy-ingress-default-cert.yaml
   - DaemonSet-haproxy-ingress.yaml
   - Service-haproxy-ingress.yaml
   - IngressClass-haproxy.yaml

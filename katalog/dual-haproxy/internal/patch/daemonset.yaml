@@ -5,16 +5,12 @@
 ---
 - op: "replace"
   path: "/spec/template/spec/containers/0/args/0"
-  value: "--default-ssl-certificate=ingress-haproxy/haproxy-ingress-default-cert-internal"
-
-- op: "replace"
-  path: "/spec/template/spec/containers/0/args/1"
   value: "--configmap=ingress-haproxy/haproxy-ingress-internal"
 
 - op: "replace"
-  path: "/spec/template/spec/containers/0/args/4"
+  path: "/spec/template/spec/containers/0/args/3"
   value: "--ingress.class=internal"
 
 - op: "replace"
-  path: "/spec/template/spec/containers/0/args/5"
+  path: "/spec/template/spec/containers/0/args/4"
   value: "--publish-service=ingress-haproxy/haproxy-ingress-internal"
