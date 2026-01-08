@@ -1,0 +1,84 @@
+# Copyright (c) 2024 SIGHUP s.r.l All rights reserved.
+# Use of this source code is governed by a BSD-style
+# license that can be found in the LICENSE file.
+
+fullnameOverride: haproxy-ingress
+namespaceOverride: ingress-haproxy
+
+namespace:
+  create: true
+
+serviceAccount:
+  create: true
+  name: haproxy-ingress
+  automountServiceAccountToken: true
+
+
+controller:
+  kind: DaemonSet
+  name: controller
+  minReadySeconds: 0
+  image:
+    registry: docker.io
+    image: haproxytech/kubernetes-ingress
+    tag: "3.1.14" # see https://github.com/haproxytech/kubernetes-ingress/issues/762
+    pullPolicy: IfNotPresent
+    digest: ""
+  containerPort:
+    http: 8080
+    https: 8443
+    stat: 1024
+    admin: 6060
+  daemonset:
+    useHostNetwork: false
+    useHostPort: false
+  ingressClass: haproxy
+  ingressClassResource:
+    name: haproxy
+    default: true
+  kubernetesGateway:
+    enabled: false
+  publishService:
+    enabled: true
+  service:
+    type: NodePort
+    externalTrafficPolicy: Local
+    enablePorts:
+      http: true
+      https: true
+      quic: false
+      stat: false
+      admin: false
+    nodePorts:
+      http: 31080
+      https: 31443
+    ports:
+      http: 80
+      https: 443
+      stat: 1024
+      admin: 6060
+    labels:
+      k8s-app: haproxy-ingress
+    metrics:
+      type: ClusterIP
+      labels:
+        k8s-app: haproxy-ingress
+  serviceMonitor:
+    enabled: true
+    extraLabels:
+      k8s-app: haproxy-ingress
+    endpoints:
+      - port: stat
+        path: /metrics
+        scheme: http
+        interval: 10s
+  podLabels:
+    k8s-app: haproxy-ingress
+  resources:
+    requests:
+      cpu: 250m
+      memory: 400Mi
+  config:
+    ssl-redirect: "true"
+    ssl-redirect-code: "301"
+    syslog-server: "address:stdout, format: raw, facility:daemon, level:info"
