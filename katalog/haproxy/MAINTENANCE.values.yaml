@@ -18,6 +18,8 @@ controller:
   kind: DaemonSet
   name: controller
   minReadySeconds: 0
+  defaultTLSSecret:
+    enabled: false
   image:
     registry: docker.io
     image: haproxytech/kubernetes-ingress
