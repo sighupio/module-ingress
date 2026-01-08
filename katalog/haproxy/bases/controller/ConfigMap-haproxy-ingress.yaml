@@ -18,3 +18,4 @@ metadata:
 data:
   ssl-redirect: "true"
   ssl-redirect-code: "301"
+  syslog-server: 'address:stdout, format: raw, facility:daemon, level:info'
