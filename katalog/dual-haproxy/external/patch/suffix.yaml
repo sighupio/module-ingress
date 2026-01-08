@@ -1,0 +1,24 @@
+# Copyright (c) 2017-present SIGHUP s.r.l All rights reserved.
+# Use of this source code is governed by a BSD-style
+# license that can be found in the LICENSE file.
+
+---
+apiVersion: builtin
+kind: PrefixSuffixTransformer
+metadata:
+  name: haproxy-external-suffix
+suffix: "-external"
+fieldSpecs:
+  - kind: ConfigMap
+    path: metadata/name
+  - kind: Service
+    path: metadata/name
+  - kind: Secret
+    path: metadata/name
+  - kind: DaemonSet
+    path: metadata/name
+  - kind: Job
+    path: metadata/name
+  - group: monitoring.coreos.com
+    kind: ServiceMonitor
+    path: metadata/name

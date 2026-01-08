@@ -1,0 +1,23 @@
+# Copyright (c) 2017-present SIGHUP s.r.l All rights reserved.
+# Use of this source code is governed by a BSD-style
+# license that can be found in the LICENSE file.
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: haproxy-ingress-admin
+  namespace: ingress-haproxy
+  labels:
+    app: haproxy
+    type: internal
+spec:
+  type: ClusterIP
+  ports:
+    - name: admin
+      port: 6060
+      protocol: TCP
+      targetPort: admin
+  selector:
+    app: haproxy
+    type: internal

@@ -1,0 +1,20 @@
+# Copyright (c) 2017-present SIGHUP s.r.l All rights reserved.
+# Use of this source code is governed by a BSD-style
+# license that can be found in the LICENSE file.
+
+---
+- op: "replace"
+  path: "/spec/template/spec/containers/0/args/0"
+  value: "--default-ssl-certificate=ingress-haproxy/haproxy-ingress-default-cert-internal"
+
+- op: "replace"
+  path: "/spec/template/spec/containers/0/args/1"
+  value: "--configmap=ingress-haproxy/haproxy-ingress-internal"
+
+- op: "replace"
+  path: "/spec/template/spec/containers/0/args/4"
+  value: "--ingress.class=internal"
+
+- op: "replace"
+  path: "/spec/template/spec/containers/0/args/5"
+  value: "--publish-service=ingress-haproxy/haproxy-ingress-internal"
