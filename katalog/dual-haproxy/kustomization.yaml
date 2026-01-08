@@ -17,19 +17,16 @@ patches:
       version: v1
       kind: Service
       name: haproxy-ingress-metrics
-      labelSelector: 'helm.sh/chart'
     path: patch/delete-metrics-service.yaml
   - target:
       group: monitoring.coreos.com
       version: v1
       kind: ServiceMonitor
       name: haproxy-ingress
-      labelSelector: 'helm.sh/chart'
     path: patch/delete-servicemonitor.yaml
   - target:
       group: ""
       version: v1
       kind: Service
       name: haproxy-ingress-admin
-      labelSelector: 'helm.sh/chart'
     path: patch/delete-admin-service.yaml
