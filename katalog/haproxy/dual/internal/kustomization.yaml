@@ -21,7 +21,7 @@ resources:
   - Service-haproxy-ingress-internal-admin.yaml
   - Service-haproxy-ingress-internal-metrics.yaml
   - ServiceMonitor-haproxy-ingress-internal.yaml
-  - IngressClass-internal.yaml
+  - IngressClass-haproxy-internal.yaml
   - Job-haproxy-ingress-internal-crdjob-1.yaml
 
 patches:

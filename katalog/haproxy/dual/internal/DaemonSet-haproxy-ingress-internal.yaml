@@ -48,7 +48,7 @@ spec:
             - --configmap=ingress-haproxy/haproxy-ingress-internal
             - --http-bind-port=8080
             - --https-bind-port=8443
-            - --ingress.class=internal
+            - --ingress.class=haproxy-internal
             - --publish-service=ingress-haproxy/haproxy-ingress-internal
             - --log=info
           securityContext:

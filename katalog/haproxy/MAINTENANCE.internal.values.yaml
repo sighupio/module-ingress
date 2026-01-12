@@ -5,9 +5,9 @@
 fullnameOverride: haproxy-ingress-internal
 
 controller:
-  ingressClass: internal
+  ingressClass: haproxy-internal
   ingressClassResource:
-    name: internal
+    name: haproxy-internal
     default: false
   podLabels:
     k8s-app: haproxy-ingress

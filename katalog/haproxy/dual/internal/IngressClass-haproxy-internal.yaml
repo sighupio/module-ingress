@@ -7,7 +7,7 @@
 apiVersion: networking.k8s.io/v1
 kind: IngressClass
 metadata:
-  name: internal
+  name: haproxy-internal
   labels:
     app.kubernetes.io/name: kubernetes-ingress
     app.kubernetes.io/instance: haproxy-ingress
@@ -15,4 +15,4 @@ metadata:
     app.kubernetes.io/version: "3.1.14"
     app.kubernetes.io/managed-by: Helm
 spec:
-  controller: haproxy.org/ingress-controller/internal
+  controller: haproxy.org/ingress-controller/haproxy-internal

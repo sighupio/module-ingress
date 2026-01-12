@@ -14,7 +14,5 @@ metadata:
     helm.sh/chart: kubernetes-ingress-1.46.1
     app.kubernetes.io/version: "3.1.14"
     app.kubernetes.io/managed-by: Helm
-  annotations:
-    ingressclass.kubernetes.io/is-default-class: "true"
 spec:
   controller: haproxy.org/ingress-controller/haproxy

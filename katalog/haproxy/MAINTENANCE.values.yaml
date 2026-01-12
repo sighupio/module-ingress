@@ -37,7 +37,7 @@ controller:
   ingressClass: haproxy
   ingressClassResource:
     name: haproxy
-    default: true
+    default: false
   kubernetesGateway:
     enabled: false
   publishService:
