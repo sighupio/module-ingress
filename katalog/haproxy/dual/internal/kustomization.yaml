@@ -1,0 +1,39 @@
+# Copyright (c) 2017-present SIGHUP s.r.l All rights reserved.
+# Use of this source code is governed by a BSD-style
+# license that can be found in the LICENSE file.
+
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - Namespace-ingress-haproxy.yaml
+  - ServiceAccount-haproxy-ingress.yaml
+  - ClusterRole-haproxy-ingress-internal.yaml
+  - ClusterRoleBinding-haproxy-ingress-internal.yaml
+  - Issuer-haproxy-ingress-self-signed-issuer.yaml
+  - Certificate-haproxy-ingress-root-cert.yaml
+  - Issuer-haproxy-ingress-root-issuer.yaml
+  - Certificate-haproxy-ingress-default-cert.yaml
+  - ConfigMap-haproxy-ingress-internal.yaml
+  - DaemonSet-haproxy-ingress-internal.yaml
+  - Service-haproxy-ingress-internal.yaml
+  - Service-haproxy-ingress-internal-admin.yaml
+  - Service-haproxy-ingress-internal-metrics.yaml
+  - ServiceMonitor-haproxy-ingress-internal.yaml
+  - IngressClass-internal.yaml
+  - Job-haproxy-ingress-internal-crdjob-1.yaml
+
+patches:
+  - target:
+      kind: Service
+      name: haproxy-ingress-internal
+    path: patch/service-selector.yaml
+  - target:
+      kind: Service
+      name: haproxy-ingress-internal-metrics
+    path: patch/service-selector.yaml
+  - target:
+      kind: Service
+      name: haproxy-ingress-internal-metrics
+    path: patch/metrics-service-label.yaml

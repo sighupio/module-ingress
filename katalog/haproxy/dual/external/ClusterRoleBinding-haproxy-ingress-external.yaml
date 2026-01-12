@@ -1,0 +1,24 @@
+# Copyright (c) 2017-present SIGHUP s.r.l All rights reserved.
+# Use of this source code is governed by a BSD-style
+# license that can be found in the LICENSE file.
+
+---
+# Source: kubernetes-ingress/templates/clusterrolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: haproxy-ingress-external
+  labels:
+    app.kubernetes.io/name: kubernetes-ingress
+    app.kubernetes.io/instance: haproxy-ingress
+    helm.sh/chart: kubernetes-ingress-1.46.1
+    app.kubernetes.io/version: "3.1.14"
+    app.kubernetes.io/managed-by: Helm
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: haproxy-ingress-external
+subjects:
+  - kind: ServiceAccount
+    name: haproxy-ingress
+    namespace: ingress-haproxy

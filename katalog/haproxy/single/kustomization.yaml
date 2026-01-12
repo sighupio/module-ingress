@@ -6,6 +6,24 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
+images:
+  - name: haproxytech/kubernetes-ingress
+    newName: registry.sighup.io/fury/haproxytech/kubernetes-ingress
+
 resources:
-  - ../bases/configs
-  - ../bases/controller
+  - Namespace-ingress-haproxy.yaml
+  - ServiceAccount-haproxy-ingress.yaml
+  - ClusterRole-haproxy-ingress.yaml
+  - ClusterRoleBinding-haproxy-ingress.yaml
+  - Issuer-haproxy-ingress-self-signed-issuer.yaml
+  - Certificate-haproxy-ingress-root-cert.yaml
+  - Issuer-haproxy-ingress-root-issuer.yaml
+  - Certificate-haproxy-ingress-default-cert.yaml
+  - ConfigMap-haproxy-ingress.yaml
+  - DaemonSet-haproxy-ingress.yaml
+  - Service-haproxy-ingress.yaml
+  - Service-haproxy-ingress-metrics.yaml
+  - Service-haproxy-ingress-admin.yaml
+  - ServiceMonitor-haproxy-ingress.yaml
+  - IngressClass-haproxy.yaml
+  - Job-haproxy-ingress-crdjob-1.yaml

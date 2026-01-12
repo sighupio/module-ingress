@@ -13,17 +13,17 @@ serviceAccount:
   name: haproxy-ingress
   automountServiceAccountToken: true
 
-
 controller:
   kind: DaemonSet
   name: controller
   minReadySeconds: 0
   defaultTLSSecret:
-    enabled: false
+    enabled: true
+    secret: "haproxy-ingress-default-cert"
   image:
     registry: registry.sighup.io
     image: fury/haproxytech/kubernetes-ingress
-    tag: "3.1.14" # see https://github.com/haproxytech/kubernetes-ingress/issues/762
+    tag: "3.1.14"
     pullPolicy: IfNotPresent
     digest: ""
   containerPort:
@@ -52,8 +52,8 @@ controller:
       stat: false
       admin: false
     nodePorts:
-      http: 31080
-      https: 31443
+      http: 30080
+      https: 30443
     ports:
       http: 80
       https: 443
@@ -61,10 +61,6 @@ controller:
       admin: 6060
     labels:
       k8s-app: haproxy-ingress
-    metrics:
-      type: ClusterIP
-      labels:
-        k8s-app: haproxy-ingress
   serviceMonitor:
     enabled: true
     extraLabels:
