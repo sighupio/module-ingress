@@ -27,13 +27,13 @@ spec:
       protocol: TCP
       appProtocol: http
       targetPort: http
-      nodePort: 32080
+      nodePort: 32680
     - name: https
       port: 443
       protocol: TCP
       appProtocol: https
       targetPort: https
-      nodePort: 32443
+      nodePort: 32643
   selector:
     app.kubernetes.io/name: kubernetes-ingress
     app.kubernetes.io/instance: haproxy-ingress

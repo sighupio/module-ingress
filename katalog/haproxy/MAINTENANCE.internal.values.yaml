@@ -17,5 +17,5 @@ controller:
       k8s-app: haproxy-ingress
       type: internal
     nodePorts:
-      http: 32080
-      https: 32443
+      http: 32680
+      https: 32643
