@@ -77,4 +77,5 @@ controller:
   config:
     ssl-redirect: "true"
     ssl-redirect-code: "301"
+    ssl-redirect-port: "443"
     syslog-server: "address:stdout, format: raw, facility:daemon, level:info"
