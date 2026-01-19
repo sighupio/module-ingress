@@ -12,8 +12,8 @@ metadata:
   labels:
     app.kubernetes.io/name: haproxy-ingress-proxy
     app.kubernetes.io/instance: haproxy-ingress
-    helm.sh/chart: kubernetes-ingress-1.46.1
-    app.kubernetes.io/version: "3.1.14"
+    helm.sh/chart: kubernetes-ingress-1.47.4
+    app.kubernetes.io/version: "3.2.4"
     app.kubernetes.io/managed-by: Helm
 spec:
   ttlSecondsAfterFinished: 600
@@ -33,8 +33,8 @@ spec:
         runAsGroup: 1000
       containers:
         - name: crd
-          image: "haproxytech/kubernetes-ingress:3.1.14"
-          imagePullPolicy: IfNotPresent
+          image: "registry.sighup.io/fury/haproxytech/kubernetes-ingress:3.2.4"
+          imagePullPolicy: Always
           command:
             - /haproxy-ingress-controller
             - --job-check-crd

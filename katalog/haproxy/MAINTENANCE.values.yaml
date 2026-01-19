@@ -21,11 +21,9 @@ controller:
     enabled: true
     secret: "haproxy-ingress-default-cert"
   image:
-    registry: registry.sighup.io
-    image: fury/haproxytech/kubernetes-ingress
-    tag: "3.1.14"
-    pullPolicy: IfNotPresent
-    digest: ""
+    repository: registry.sighup.io/fury/haproxytech/kubernetes-ingress
+    tag: "3.2.4"
+    pullPolicy: Always
   containerPort:
     http: 8080
     https: 8443

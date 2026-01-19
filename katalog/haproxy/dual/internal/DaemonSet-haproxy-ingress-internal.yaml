@@ -12,8 +12,8 @@ metadata:
   labels:
     app.kubernetes.io/name: kubernetes-ingress
     app.kubernetes.io/instance: haproxy-ingress
-    helm.sh/chart: kubernetes-ingress-1.46.1
-    app.kubernetes.io/version: "3.1.14"
+    helm.sh/chart: kubernetes-ingress-1.47.4
+    app.kubernetes.io/version: "3.2.4"
     app.kubernetes.io/managed-by: Helm
 spec:
   minReadySeconds: 0
@@ -33,6 +33,7 @@ spec:
     spec:
       enableServiceLinks: true
       serviceAccountName: haproxy-ingress
+      automountServiceAccountToken: true
       terminationGracePeriodSeconds: 60
       dnsPolicy: ClusterFirst
       securityContext:
@@ -41,8 +42,8 @@ spec:
         runAsGroup: 1000
       containers:
         - name: kubernetes-ingress-controller
-          image: "haproxytech/kubernetes-ingress:3.1.14"
-          imagePullPolicy: IfNotPresent
+          image: "registry.sighup.io/fury/haproxytech/kubernetes-ingress:3.2.4"
+          imagePullPolicy: Always
           args:
             - --default-ssl-certificate=ingress-haproxy/haproxy-ingress-default-cert
             - --configmap=ingress-haproxy/haproxy-ingress-internal
@@ -82,7 +83,7 @@ spec:
               path: /healthz
               port: 1042
               scheme: HTTP
-            initialDelaySeconds: 0
+            initialDelaySeconds: 10
             periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 1
@@ -92,18 +93,18 @@ spec:
               path: /healthz
               port: 1042
               scheme: HTTP
-            initialDelaySeconds: 0
+            initialDelaySeconds: 10
             periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 1
           startupProbe:
-            failureThreshold: 20
+            failureThreshold: 30
             httpGet:
               path: /healthz
               port: 1042
               scheme: HTTP
-            initialDelaySeconds: 0
-            periodSeconds: 1
+            initialDelaySeconds: 10
+            periodSeconds: 5
             successThreshold: 1
             timeoutSeconds: 1
           env:
