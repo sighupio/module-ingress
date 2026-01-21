@@ -25,6 +25,7 @@ generate_mode() {
     --repo "$CHART_REPO" \
     --namespace "$NAMESPACE" \
     --version "$VERSION" \
+    --api-versions monitoring.coreos.com/v1 \
     $values_files | yq -s '.kind + "-" + .metadata.name'
 
   mkdir -p "$output_dir"

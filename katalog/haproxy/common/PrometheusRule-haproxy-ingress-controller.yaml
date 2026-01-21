@@ -1,0 +1,146 @@
+# Copyright (c) 2017-present SIGHUP s.r.l All rights reserved.
+# Use of this source code is governed by a BSD-style
+# license that can be found in the LICENSE file.
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: haproxy-ingress-controller
+  namespace: ingress-haproxy
+  labels:
+    app.kubernetes.io/name: kubernetes-ingress
+    app.kubernetes.io/instance: haproxy-ingress
+    app.kubernetes.io/component: controller
+    k8s-app: haproxy-ingress
+    prometheus: k8s
+    role: alert-rules
+spec:
+  groups:
+    - name: haproxy-ingress
+      rules:
+        - alert: HaproxyIngressTargetDown
+          expr: absent(up{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"} == 1)
+          for: 15m
+          labels:
+            severity: critical
+          annotations:
+            summary: HAProxy Ingress metrics target down ({{ $labels.namespace }})
+            description: Prometheus cannot scrape haproxy-ingress metrics endpoints for 15 minutes.
+            doc: This alert fires if Prometheus target discovery was not able to reach haproxy-ingress metrics in the last 15 minutes.
+
+        - alert: HaproxyHighHttp4xxErrorRateBackend
+          expr: |
+            (sum by (proxy) (rate(haproxy_backend_http_responses_total{job=~"haproxy-ingress(-internal|-external)?(-metrics)?",code=~"4.."}[2m])) /
+             sum by (proxy) (rate(haproxy_backend_http_responses_total{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}[2m]))) * 100 > 10
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: HAProxy backend high 4xx rate ({{ $labels.proxy }})
+            description: Too many HTTP 4xx responses (>10%) on backend {{ $labels.proxy }}.
+            doc: This alert fires if the 4xx error rate measured on a 2 minute window exceeds 10% for 5 minutes.
+
+        - alert: HaproxyHighHttp5xxErrorRateBackend
+          expr: |
+            (sum by (proxy) (rate(haproxy_backend_http_responses_total{job=~"haproxy-ingress(-internal|-external)?(-metrics)?",code=~"5.."}[2m])) /
+             sum by (proxy) (rate(haproxy_backend_http_responses_total{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}[2m]))) * 100 > 10
+          for: 10m
+          labels:
+            severity: critical
+          annotations:
+            summary: HAProxy backend high 5xx rate ({{ $labels.proxy }})
+            description: Too many HTTP 5xx responses (>10%) on backend {{ $labels.proxy }}.
+            doc: This alert fires if the 5xx error rate measured on a 2 minute window exceeds 10% for 10 minutes.
+
+        - alert: HaproxyServerResponseErrors
+          expr: |
+            (sum by (proxy, server) (rate(haproxy_server_response_errors_total{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}[2m])) /
+             sum by (proxy, server) (rate(haproxy_server_http_responses_total{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}[2m]))) * 100 > 5
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: HAProxy server response errors ({{ $labels.proxy }}/{{ $labels.server }})
+            description: Response errors exceed 5% on server {{ $labels.proxy }}/{{ $labels.server }}.
+            doc: This alert fires if a specific backend server has response error rate exceeding 5% for 5 minutes.
+
+        - alert: HaproxyBackendConnectionErrors
+          expr: sum by (proxy) (rate(haproxy_backend_connection_errors_total{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}[1m])) > 100
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: HAProxy backend connection errors ({{ $labels.proxy }})
+            description: Backend {{ $labels.proxy }} sees more than 100 connection errors per second.
+            doc: This alert fires if connection errors exceed 100 per second for 5 minutes on a backend.
+
+        - alert: HaproxyBackendNoAliveServers
+          expr: (haproxy_backend_active_servers{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"} + haproxy_backend_backup_servers{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}) == 0
+          for: 0m
+          labels:
+            severity: critical
+          annotations:
+            summary: HAProxy backend has no alive servers ({{ $labels.proxy }})
+            description: No active or backup servers available on backend {{ $labels.proxy }}.
+            doc: This alert fires immediately when a backend has no healthy servers available.
+
+        - alert: HaproxyBackendPendingRequests
+          expr: sum by (proxy) (haproxy_backend_current_queue{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}) > 0
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: HAProxy backend pending requests ({{ $labels.proxy }})
+            description: Requests are pending in queue for backend {{ $labels.proxy }}.
+            doc: This alert fires if requests have been queued for a backend for more than 5 minutes.
+
+        - alert: HaproxyFrontendSecurityBlockedRequests
+          expr: sum by (proxy) (rate(haproxy_frontend_denied_connections_total{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}[2m])) > 10
+          for: 2m
+          labels:
+            severity: warning
+          annotations:
+            summary: HAProxy frontend security blocked requests ({{ $labels.proxy }})
+            description: Security rules are blocking requests on frontend {{ $labels.proxy }}.
+            doc: This alert fires if more than 10 connections per second are being denied on a frontend for 2 minutes.
+
+        - alert: HaproxyBackendLatencyHigh
+          expr: max_over_time(haproxy_backend_response_time_average_seconds{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}[5m]) > 5
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: HAProxy backend latency high ({{ $labels.proxy }})
+            description: Average response time for backend {{ $labels.proxy }} exceeded 5s.
+            doc: This alert fires if average backend response time exceeds 5 seconds for 10 minutes.
+
+        - alert: HaproxyBackendLatencyCritical
+          expr: max_over_time(haproxy_backend_total_time_average_seconds{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}[5m]) > 10
+          for: 10m
+          labels:
+            severity: critical
+          annotations:
+            summary: HAProxy backend latency critical ({{ $labels.proxy }})
+            description: Average total time for backend {{ $labels.proxy }} exceeded 10s.
+            doc: This alert fires if average total time (including queue time) exceeds 10 seconds for 10 minutes.
+
+        - alert: HaproxyServerHealthcheckFailure
+          expr: increase(haproxy_server_check_failures_total{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}[5m]) > 0
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: HAProxy server healthcheck failures ({{ $labels.server }})
+            description: Health checks are failing for server {{ $labels.server }}.
+            doc: This alert fires if health check failures are detected for a server over a 5 minute period.
+
+        - alert: HaproxyIngressConfigSyncFailed
+          expr: haproxy_unable_to_sync_configuration{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"} == 1
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: HAProxy Ingress configuration sync failed
+            description: HAProxy Ingress has a pending configuration that is not valid.
+            doc: This alert fires if the ingress configuration sync failed in the last 10 minutes.

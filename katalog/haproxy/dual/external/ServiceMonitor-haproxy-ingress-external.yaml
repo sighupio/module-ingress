@@ -3,14 +3,19 @@
 # license that can be found in the LICENSE file.
 
 ---
+# Source: kubernetes-ingress/templates/controller-servicemonitor.yaml
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: haproxy-ingress-external-metrics
+  name: haproxy-ingress-external
   namespace: ingress-haproxy
   labels:
+    app.kubernetes.io/name: kubernetes-ingress
+    app.kubernetes.io/instance: haproxy-ingress
+    helm.sh/chart: kubernetes-ingress-1.47.4
+    app.kubernetes.io/version: "3.2.4"
+    app.kubernetes.io/managed-by: Helm
     k8s-app: haproxy-ingress
-    type: external
 spec:
   endpoints:
     - interval: 10s
@@ -24,4 +29,3 @@ spec:
     matchLabels:
       app.kubernetes.io/name: kubernetes-ingress
       app.kubernetes.io/instance: haproxy-ingress
-      type: external

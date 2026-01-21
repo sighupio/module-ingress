@@ -52,6 +52,7 @@ spec:
             - --ingress.class=haproxy-internal
             - --publish-service=ingress-haproxy/haproxy-ingress-internal
             - --log=info
+            - --prometheus
           securityContext:
             runAsNonRoot: true
             runAsUser: 1000

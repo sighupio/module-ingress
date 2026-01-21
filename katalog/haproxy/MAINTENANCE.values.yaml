@@ -70,6 +70,8 @@ controller:
         interval: 10s
   podLabels:
     k8s-app: haproxy-ingress
+  extraArgs:
+    - --prometheus
   resources:
     requests:
       cpu: 250m
