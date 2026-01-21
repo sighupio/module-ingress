@@ -1,0 +1,21 @@
+# Copyright (c) 2017-present SIGHUP s.r.l All rights reserved.
+# Use of this source code is governed by a BSD-style
+# license that can be found in the LICENSE file.
+
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: haproxy-ingress-root-cert
+  namespace: ingress-haproxy
+spec:
+  secretName: haproxy-ingress-root-cert
+  duration: "43800h0m0s"
+  renewBefore: "2160h0m0s"
+  issuerRef:
+    name: haproxy-ingress-self-signed-issuer
+  commonName: "ca.ingress.haproxy"
+  isCA: true
+  subject:
+    organizations:
+      - ingress-haproxy

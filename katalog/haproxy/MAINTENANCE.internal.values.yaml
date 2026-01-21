@@ -1,0 +1,21 @@
+# Copyright (c) 2017-present SIGHUP s.r.l All rights reserved.
+# Use of this source code is governed by a BSD-style
+# license that can be found in the LICENSE file.
+
+fullnameOverride: haproxy-ingress-internal
+
+controller:
+  ingressClass: haproxy-internal
+  ingressClassResource:
+    name: haproxy-internal
+    default: false
+  podLabels:
+    k8s-app: haproxy-ingress
+    type: internal
+  service:
+    labels:
+      k8s-app: haproxy-ingress
+      type: internal
+    nodePorts:
+      http: 32680
+      https: 32643

@@ -1,0 +1,81 @@
+# Copyright (c) 2017-present SIGHUP s.r.l All rights reserved.
+# Use of this source code is governed by a BSD-style
+# license that can be found in the LICENSE file.
+
+fullnameOverride: haproxy-ingress
+namespaceOverride: ingress-haproxy
+
+namespace:
+  create: true
+
+serviceAccount:
+  create: true
+  name: haproxy-ingress
+  automountServiceAccountToken: true
+
+controller:
+  kind: DaemonSet
+  name: controller
+  minReadySeconds: 0
+  defaultTLSSecret:
+    enabled: true
+    secret: "haproxy-ingress-default-cert"
+  image:
+    repository: registry.sighup.io/fury/haproxytech/kubernetes-ingress
+    tag: "3.2.4"
+    pullPolicy: Always
+  containerPort:
+    http: 8080
+    https: 8443
+    stat: 1024
+    admin: 6060
+  daemonset:
+    useHostNetwork: false
+    useHostPort: false
+  ingressClass: haproxy
+  ingressClassResource:
+    name: haproxy
+    default: false
+  kubernetesGateway:
+    enabled: false
+  publishService:
+    enabled: true
+  service:
+    type: NodePort
+    externalTrafficPolicy: Local
+    enablePorts:
+      http: true
+      https: true
+      quic: false
+      stat: false
+      admin: false
+    nodePorts:
+      http: 30080
+      https: 30443
+    ports:
+      http: 80
+      https: 443
+      stat: 1024
+      admin: 6060
+    labels:
+      k8s-app: haproxy-ingress
+  serviceMonitor:
+    enabled: true
+    extraLabels:
+      k8s-app: haproxy-ingress
+    endpoints:
+      - port: stat
+        path: /metrics
+        scheme: http
+        interval: 10s
+  podLabels:
+    k8s-app: haproxy-ingress
+  resources:
+    requests:
+      cpu: 250m
+      memory: 400Mi
+  config:
+    ssl-redirect: "true"
+    ssl-redirect-code: "301"
+    ssl-redirect-port: "443"
+    syslog-server: "address:stdout, format: raw, facility:daemon, level:info"

@@ -1,0 +1,25 @@
+# Copyright (c) 2017-present SIGHUP s.r.l All rights reserved.
+# Use of this source code is governed by a BSD-style
+# license that can be found in the LICENSE file.
+
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - Namespace-ingress-haproxy.yaml
+  - ServiceAccount-haproxy-ingress.yaml
+  - ClusterRole-haproxy-ingress.yaml
+  - ClusterRoleBinding-haproxy-ingress.yaml
+  - Issuer-haproxy-ingress-self-signed-issuer.yaml
+  - Certificate-haproxy-ingress-root-cert.yaml
+  - Issuer-haproxy-ingress-root-issuer.yaml
+  - Certificate-haproxy-ingress-default-cert.yaml
+  - ConfigMap-haproxy-ingress.yaml
+  - DaemonSet-haproxy-ingress.yaml
+  - Service-haproxy-ingress.yaml
+  - Service-haproxy-ingress-metrics.yaml
+  - Service-haproxy-ingress-admin.yaml
+  - ServiceMonitor-haproxy-ingress.yaml
+  - IngressClass-haproxy.yaml
+  - Job-haproxy-ingress-crdjob-1.yaml
