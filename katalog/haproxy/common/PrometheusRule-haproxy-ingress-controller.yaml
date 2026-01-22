@@ -31,8 +31,8 @@ spec:
 
         - alert: HaproxyHighHttp4xxErrorRateBackend
           expr: |
-            (sum by (proxy) (rate(haproxy_backend_http_responses_total{job=~"haproxy-ingress(-internal|-external)?(-metrics)?",code=~"4.."}[2m])) /
-             sum by (proxy) (rate(haproxy_backend_http_responses_total{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}[2m]))) * 100 > 10
+            (sum by (job, proxy) (rate(haproxy_backend_http_responses_total{job=~"haproxy-ingress(-internal|-external)?(-metrics)?",code=~"4.."}[2m])) /
+             sum by (job, proxy) (rate(haproxy_backend_http_responses_total{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}[2m]))) * 100 > 10
           for: 5m
           labels:
             severity: warning
@@ -43,8 +43,8 @@ spec:
 
         - alert: HaproxyHighHttp5xxErrorRateBackend
           expr: |
-            (sum by (proxy) (rate(haproxy_backend_http_responses_total{job=~"haproxy-ingress(-internal|-external)?(-metrics)?",code=~"5.."}[2m])) /
-             sum by (proxy) (rate(haproxy_backend_http_responses_total{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}[2m]))) * 100 > 10
+            (sum by (job, proxy) (rate(haproxy_backend_http_responses_total{job=~"haproxy-ingress(-internal|-external)?(-metrics)?",code=~"5.."}[2m])) /
+             sum by (job, proxy) (rate(haproxy_backend_http_responses_total{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}[2m]))) * 100 > 10
           for: 10m
           labels:
             severity: critical
@@ -55,8 +55,8 @@ spec:
 
         - alert: HaproxyServerResponseErrors
           expr: |
-            (sum by (proxy, server) (rate(haproxy_server_response_errors_total{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}[2m])) /
-             sum by (proxy, server) (rate(haproxy_server_http_responses_total{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}[2m]))) * 100 > 5
+            (sum by (job, proxy, server) (rate(haproxy_server_response_errors_total{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}[2m])) /
+             sum by (job, proxy, server) (rate(haproxy_server_http_responses_total{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}[2m]))) * 100 > 5
           for: 5m
           labels:
             severity: warning
@@ -66,7 +66,7 @@ spec:
             doc: This alert fires if a specific backend server has response error rate exceeding 5% for 5 minutes.
 
         - alert: HaproxyBackendConnectionErrors
-          expr: sum by (proxy) (rate(haproxy_backend_connection_errors_total{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}[1m])) > 100
+          expr: sum by (job, proxy) (rate(haproxy_backend_connection_errors_total{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}[1m])) > 100
           for: 5m
           labels:
             severity: warning
@@ -86,7 +86,7 @@ spec:
             doc: This alert fires immediately when a backend has no healthy servers available.
 
         - alert: HaproxyBackendPendingRequests
-          expr: sum by (proxy) (haproxy_backend_current_queue{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}) > 0
+          expr: sum by (job, proxy) (haproxy_backend_current_queue{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}) > 0
           for: 5m
           labels:
             severity: warning
@@ -96,7 +96,7 @@ spec:
             doc: This alert fires if requests have been queued for a backend for more than 5 minutes.
 
         - alert: HaproxyFrontendSecurityBlockedRequests
-          expr: sum by (proxy) (rate(haproxy_frontend_denied_connections_total{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}[2m])) > 10
+          expr: sum by (job, proxy) (rate(haproxy_frontend_denied_connections_total{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}[2m])) > 10
           for: 2m
           labels:
             severity: warning
