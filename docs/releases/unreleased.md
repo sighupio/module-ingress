@@ -1,9 +1,8 @@
 # Ingress Module Release v5.0.0
 
-
 Welcome to the latest release of `Ingress` module of [`SIGHUP Distribution`](https://github.com/sighupio/fury-distribution) maintained by team SIGHUP.
 
-This release updates several packages included in the ingress module, to officially support Kubernetes v1.34.x. 
+This release updates several packages included in the ingress module, to officially support Kubernetes v1.34. 
 
 ## Component versions 🚢
 
@@ -18,6 +17,15 @@ This release updates several packages included in the ingress module, to officia
 | `nginx`            | [`v1.14.1`](https://github.com/kubernetes/ingress-nginx/releases/tag/controller-v1.14.1) |     `v1.13.3`    |
 
 > Please refer the individual release notes to get a more detailed information on each release.
+
+## Kubernetes support 🚢
+
+| Kubernetes Version |   Compatibility    | Notes           |
+| ------------------ | :----------------: | --------------- |
+| `1.31.x`           | :white_check_mark: | No known issues |
+| `1.32.x`           | :white_check_mark: | No known issues |
+| `1.33.x`           | :white_check_mark: | No known issues |
+| `1.34.x`           | :white_check_mark: | No known issues |
 
 ## New features 🎉
 
@@ -54,16 +62,15 @@ Se the [related PR](https://github.com/kubernetes-sigs/external-dns/pull/5575) f
 
 ### Cert manager new metrics label
 
-From cert-manager 1.19, the certmanager_http_acme_client_request_count metric doesn't use the "path" label anymore. The included cert-manager dashboard has been updated accordingly. 
+From cert-manager 1.19, the certmanager_http_acme_client_request_count metric doesn't use the "path" label anymore. The included cert-manager dashboard has been updated accordingly.
 
-## Kubernetes support 🚢
+### Forecastle namespace migration
 
-| Kubernetes Version |   Compatibility    | Notes           |
-| ------------------ | :----------------: | --------------- |
-| `1.31.x`           | :white_check_mark: | No known issues |
-| `1.32.x`           | :white_check_mark: | No known issues |
-| `1.33.x`           | :white_check_mark: | No known issues |
-| `1.34.x`           | :white_check_mark: | No known issues |
+Forecastle has been moved from the `ingress-nginx` namespace to its own dedicated `forecastle` namespace. Existing deployments will need to manually delete the old resources from `ingress-nginx` before applying the new manifests. See the Upgrade Guide for detailed migration steps.
+
+### External-DNS namespace migration
+
+External-DNS has been moved from the `ingress-nginx` namespace to its own dedicated `external-dns` namespace. Both public and private variants now deploy to the same `external-dns` namespace. See the Upgrade Guide for detailed migration steps.
 
 ## Upgrade Guide 🦮
 
@@ -74,10 +81,105 @@ From cert-manager 1.19, the certmanager_http_acme_client_request_count metric do
 
 ### Process
 
-To upgrade this core module from `v4.1.1` to `v5.0.0`, you need to download this new version and apply the standard update process.
+To upgrade this core module from `v4.1.1` to `v5.0.0`, you need to download this new version and apply the following process.
+
+### Forecastle migration
+
+Forecastle has been moved from the `ingress-nginx` namespace to its own dedicated `forecastle` namespace.
+
+To migrate the existing deployment:
+
+1. Delete the old Forecastle resources from the `ingress-nginx` namespace:
+
+```bash
+kubectl delete deployment forecastle -n ingress-nginx
+kubectl delete service forecastle -n ingress-nginx
+kubectl delete serviceaccount forecastle -n ingress-nginx
+kubectl delete configmap -l app=forecastle -n ingress-nginx
+```
+
+2. Apply the new manifests:
 
 ```bash
 kustomize build <your-project-path> | kubectl apply -f - --server-side
 ```
 
-The upgrade process is seamless and does not require any manual intervention.
+3. Verify the new deployment is running:
+
+```bash
+kubectl get pods -n forecastle
+```
+
+> **Note:** The ClusterRole and ClusterRoleBinding are cluster-scoped resources and will be updated in place.
+
+### External-DNS migration
+
+External-DNS has been moved from the `ingress-nginx` namespace to its own dedicated `external-dns` namespace.
+
+#### AWS users
+
+If you are using the `aws-external-dns` Terraform module, you must update and apply Terraform before deploying the new Kubernetes manifests. The IAM OIDC trust policy has been updated to reference the new namespace.
+
+1. Update the Terraform module to the new version
+
+2. Apply Terraform changes:
+
+```bash
+terraform apply
+```
+
+3. Delete the old External-DNS resources from the `ingress-nginx` namespace:
+
+```bash
+# For external-dns-public
+kubectl delete deployment external-dns-public -n ingress-nginx
+kubectl delete service external-dns-metrics-public -n ingress-nginx
+kubectl delete serviceaccount external-dns-public -n ingress-nginx
+
+# For external-dns-private
+kubectl delete deployment external-dns-private -n ingress-nginx
+kubectl delete service external-dns-metrics-private -n ingress-nginx
+kubectl delete serviceaccount external-dns-private -n ingress-nginx
+```
+
+4. Apply the new manifests:
+
+```bash
+kustomize build <your-project-path> | kubectl apply -f - --server-side
+```
+
+5. Verify the new deployment is running:
+
+```bash
+kubectl get pods -n external-dns
+```
+
+#### Other users
+
+1. Delete the old External-DNS resources from the `ingress-nginx` namespace:
+
+```bash
+# For external-dns-public
+kubectl delete deployment external-dns-public -n ingress-nginx
+kubectl delete service external-dns-metrics-public -n ingress-nginx
+kubectl delete serviceaccount external-dns-public -n ingress-nginx
+
+# For external-dns-private
+kubectl delete deployment external-dns-private -n ingress-nginx
+kubectl delete service external-dns-metrics-private -n ingress-nginx
+kubectl delete serviceaccount external-dns-private -n ingress-nginx
+```
+
+2. Apply the new manifests:
+
+```bash
+kustomize build <your-project-path> | kubectl apply -f - --server-side
+```
+
+3. Verify the new deployment is running:
+
+```bash
+kubectl get pods -n external-dns
+```
+
+> **Note:** The ClusterRole and ClusterRoleBinding are cluster-scoped resources and will be updated in place. Existing DNS records managed by External-DNS will not be affected as long as the `--txt-owner-id` remains consistent.
