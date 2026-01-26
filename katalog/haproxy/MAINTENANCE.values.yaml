@@ -81,3 +81,7 @@ controller:
     ssl-redirect-code: "301"
     ssl-redirect-port: "443"
     syslog-server: "address:stdout, format: raw, facility:daemon, level:info"
+    request-capture: |
+      hdr(Referer)
+      hdr(User-Agent)
+    log-format: '%ci - - [%Tl] "%HM %HPO%HQ %HV" %ST %B "%[capture.req.hdr(0)]" "%[capture.req.hdr(1)]" %U %TR [%b] [] %si:%sp %B %Tr %ST %ID'
