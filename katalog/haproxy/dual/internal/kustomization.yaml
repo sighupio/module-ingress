@@ -37,3 +37,7 @@ patches:
       kind: Service
       name: haproxy-ingress-internal-metrics
     path: patch/metrics-service-label.yaml
+  - target:
+      kind: ServiceMonitor
+      name: haproxy-ingress-internal
+    path: patch/servicemonitor-selector.yaml

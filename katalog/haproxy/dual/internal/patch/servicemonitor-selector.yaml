@@ -3,10 +3,9 @@
 # license that can be found in the LICENSE file.
 
 ---
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-
-resources:
-  - internal
-  - external
-  - ../common
+- op: add
+  path: /metadata/labels/type
+  value: internal
+- op: add
+  path: /spec/selector/matchLabels/type
+  value: internal

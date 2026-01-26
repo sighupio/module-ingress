@@ -52,6 +52,7 @@ spec:
             - --ingress.class=haproxy-external
             - --publish-service=ingress-haproxy/haproxy-ingress-external
             - --log=info
+            - --prometheus
           securityContext:
             runAsNonRoot: true
             runAsUser: 1000
