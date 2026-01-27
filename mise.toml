@@ -12,7 +12,8 @@ go = "1.23"
 bats = "1.11.0"    
 dyff = "1.9.0"    
 drone = "1.9.0"
-"ubi:google/addlicense" = "v1.1.1"     
+"ubi:google/addlicense" = "v1.1.1"
+gh = "2.86.0"     
 
 # Development task definitions
 [tasks.add-license]
@@ -90,8 +91,4 @@ source "./env-${CLUSTER_NAME}.env"
 bats -t ./katalog/tests/tests.bats
 
 echo "✅ E2E tests completed successfully!"
-=======
-mise run add-license
-mise run validate-manifests
-echo "✅ Development environment ready!"
 '''

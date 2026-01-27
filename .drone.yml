@@ -52,6 +52,8 @@ steps:
       - kustomize build katalog/dual-nginx > dual-nginx.yml
       - kustomize build katalog/forecastle > forecastle.yml
       - kustomize build katalog/nginx > nginx.yml
+      - kustomize build katalog/external-dns/public > external-dns-public.yml
+      - kustomize build katalog/external-dns/private > external-dns-private.yml
   - &check-deprecated-apis
     name: check-deprecated-apis-cert-manager
     image: us-docker.pkg.dev/fairwinds-ops/oss/pluto:v5
@@ -78,6 +80,16 @@ steps:
     name: check-deprecated-apis-nginx
     environment:
       KUBERNETES_MANIFESTS: nginx.yml
+
+  - <<: *check-deprecated-apis
+    name: check-deprecated-apis-external-dns-public
+    environment:
+      KUBERNETES_MANIFESTS: external-dns-public.yml
+
+  - <<: *check-deprecated-apis
+    name: check-deprecated-apis-external-dns-private
+    environment:
+      KUBERNETES_MANIFESTS: external-dns-private.yml
 
 
 ---

@@ -69,6 +69,17 @@ wait_for_settlement() {
   [ "$status" -eq 0 ]
 }
 
+# Verify forecastle deployment is running
+@test "Verify forecastle is running" {
+  info
+  test() {
+    kubectl rollout status deployment/forecastle -n forecastle --timeout=10s
+  }
+  loop_it test 30 5
+  status=${loop_it_result}
+  [ "$status" -eq 0 ]
+}
+
 # Wait for all resources to be applied and settled
 @test "wait for apply to settle and dump state to dump.json" {
   info
