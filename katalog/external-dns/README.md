@@ -48,7 +48,7 @@ metadata:
   annotations:
     eks.amazonaws.com/role-arn: arn:aws:iam::123456789123:role/your-role-name-public
   name: external-dns-public
-  namespace: ingress-nginx
+  namespace: external-dns
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -56,7 +56,7 @@ metadata:
   annotations:
     eks.amazonaws.com/role-arn: arn:aws:iam::123456789123:role/your-role-name-private
   name: external-dns-private
-  namespace: ingress-nginx
+  namespace: external-dns
 ```
 
 and then add on the `kustomization.yaml` file the patches:

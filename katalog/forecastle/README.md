@@ -51,7 +51,7 @@ apiVersion: forecastle.stakater.com/v1alpha1
 kind: ForecastleApp
 metadata:
   name: sighup-example-app
-  namespace: ingress-nginx
+  namespace: forecastle
   labels:
     app: forecastle
 spec:
