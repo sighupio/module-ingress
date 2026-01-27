@@ -91,8 +91,4 @@ source "./env-${CLUSTER_NAME}.env"
 bats -t ./katalog/tests/tests.bats
 
 echo "✅ E2E tests completed successfully!"
-=======
-mise run add-license
-mise run validate-manifests
-echo "✅ Development environment ready!"
 '''
