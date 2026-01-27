@@ -95,7 +95,7 @@ To migrate the existing deployment:
 kubectl delete deployment forecastle -n ingress-nginx
 kubectl delete service forecastle -n ingress-nginx
 kubectl delete serviceaccount forecastle -n ingress-nginx
-kubectl delete configmap -l app=forecastle -n ingress-nginx
+kubectl delete configmap -n ingress-nginx $(kubectl get configmap -n ingress-nginx -o name 2>/dev/null | grep forecastle) 2>/dev/null || true
 ```
 
 2. Apply the new manifests:
@@ -182,4 +182,4 @@ kustomize build <your-project-path> | kubectl apply -f - --server-side
 kubectl get pods -n external-dns
 ```
 
-> **Note:** The ClusterRole and ClusterRoleBinding are cluster-scoped resources and will be updated in place. Existing DNS records managed by External-DNS will not be affected as long as the `--txt-owner-id` remains consistent.
+> **Note:** The ClusterRole and ClusterRoleBinding are cluster-scoped resources and will be updated in place. Existing DNS records managed by External-DNS will not be affected as long as the `--txt-owner-id` remains consistent. If you have customized external-dns (as done in SIGHUP Distribution with the `--txt-owner-id` flag), ensure your configuration patches are updated to reference the new `external-dns` namespace.
