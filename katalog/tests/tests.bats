@@ -7,37 +7,73 @@ load './helper/bats-assert/load'
 load ./helper
 
 # Function to build and apply kustomize manifests
+# Uses server-side apply to avoid annotation size limits with large ConfigMaps (e.g., Grafana dashboards)
 apply() {
   kustomize build "${1}" >&2
-  kustomize build "${1}" | kubectl apply -f -
+  kustomize build "${1}" | kubectl apply --server-side -f -
 }
 
 # Function to wait for all pods to reach a stable state
+# Excludes Job pods (crdjob) since they are expected to terminate with Completed or Error
 wait_for_settlement() {
   max_retry=0
   echo "=====" $max_retry "=====" >&2
-  while kubectl get pods --all-namespaces | grep -ie "\(Pending\|Error\|CrashLoop\|ContainerCreating\)" >&2; do
+  while kubectl get pods --all-namespaces | grep -v "crdjob" | grep -ie "\(Pending\|Error\|CrashLoop\|ContainerCreating\)" >&2; do
     [ $max_retry -lt "${1}" ] || (kubectl describe all --all-namespaces >&2 && return 1)
     sleep 10 && echo "# waiting..." $max_retry >&3
     max_retry=$((max_retry + 1))
   done
 }
 
+# Helper function to check HTTP response code and content
+# Usage: check_http_and_content <port> <path> <expected_code> <expected_content>
+check_http_and_content() {
+  local port=$1
+  local path=$2
+  local expected_code=$3
+  local expected_content=$4
+  local response_file="/tmp/curl_response_$$"
+
+  http_code=$(curl -s -o "$response_file" -w "%{http_code}" "http://localhost:${port}${path}")
+
+  if [ "$http_code" != "$expected_code" ]; then
+    echo "Expected HTTP $expected_code but got $http_code for localhost:${port}${path}" >&2
+    rm -f "$response_file"
+    return 1
+  fi
+
+  if [ -n "$expected_content" ]; then
+    if ! grep -q "$expected_content" "$response_file" 2>/dev/null; then
+      echo "Expected content '$expected_content' not found in response" >&2
+      echo "Response was: $(cat "$response_file")" >&2
+      rm -f "$response_file"
+      return 1
+    fi
+  fi
+
+  rm -f "$response_file"
+  return 0
+}
+
+# ========================================
+# Installation Phase - All components
+# ========================================
+
 # Apply monitoring CRDs from an external source
-@test "applying monitoring" {
+@test "Apply Prometheus monitoring CRDs" {
   info
   kubectl apply -f https://raw.githubusercontent.com/sighupio/fury-kubernetes-monitoring/v2.0.0/katalog/prometheus-operator/crds/0prometheusruleCustomResourceDefinition.yaml
   kubectl apply -f https://raw.githubusercontent.com/sighupio/fury-kubernetes-monitoring/v2.0.0/katalog/prometheus-operator/crds/0servicemonitorCustomResourceDefinition.yaml
 }
 
 # Apply cert-manager CRDs from local files
-@test "prepare cert-manager apply" {
+@test "Apply cert-manager CRDs" {
   info
   kubectl apply -f katalog/cert-manager/cert-manager-controller/crd.yml
 }
 
 # Install cert-manager using kustomize
-@test "testing cert-manager apply" {
+@test "Install cert-manager" {
   info
   install() {
     apply katalog/cert-manager
@@ -48,7 +84,7 @@ wait_for_settlement() {
 }
 
 # Install dual-nginx using kustomize
-@test "testing dual-nginx apply" {
+@test "Install dual-nginx ingress controller" {
   info
   install() {
     apply katalog/dual-nginx
@@ -58,8 +94,19 @@ wait_for_settlement() {
   [ "$status" -eq 0 ]
 }
 
+# Install haproxy dual using kustomize
+@test "Install haproxy dual ingress controller" {
+  info
+  install() {
+    apply katalog/haproxy/dual
+  }
+  loop_it install 45 10
+  status=${loop_it_result}
+  [ "$status" -eq 0 ]
+}
+
 # Install forecastle using kustomize
-@test "testing forecastle apply" {
+@test "Install forecastle" {
   info
   install() {
     apply katalog/forecastle
@@ -69,73 +116,223 @@ wait_for_settlement() {
   [ "$status" -eq 0 ]
 }
 
-# Wait for all resources to be applied and settled
-@test "wait for apply to settle and dump state to dump.json" {
-  info
-  wait_for_settlement 36
-}
-
-# Apply test ingress resources
-@test "prepare test ingresses" {
+# Deploy test backend services (4 deployments with unique content)
+@test "Deploy test backend services" {
   info
   install() {
-    kubectl apply -f katalog/tests/ingress-dual-test.yaml
+    kubectl apply -f katalog/tests/test-services.yaml
   }
-  loop_it install 45 10
+  loop_it install 30 5
   status=${loop_it_result}
   [ "$status" -eq 0 ]
 }
 
-# Verify that the internal ingress controller is functioning
-@test "Check that internal ingress controller is working" {
+# Wait for all resources to be applied and settled
+@test "Wait for cluster pods to settle" {
   info
-  test() {
-    http_code=$(curl "http://localhost:${INTERNAL_PORT}/internal" -s -o /dev/null -w "%{http_code}")
-    if [ "${http_code}" -ne "503" ]; then return 1; fi
-  }
-  loop_it test 30 2
-  status=${loop_it_result}
-  [[ "$status" -eq 0 ]]
+  wait_for_settlement 48
 }
 
-# Verify that internal routes are not served by the external ingress controller
-@test "Check that internal ingress is not working on external ingress controller" {
+# Wait for test service deployments to be ready
+@test "Wait for test backend services to be ready" {
+  info
+  kubectl wait --for=condition=available --timeout=120s deployment/test-nginx-external -n default
+  kubectl wait --for=condition=available --timeout=120s deployment/test-nginx-internal -n default
+  kubectl wait --for=condition=available --timeout=120s deployment/test-haproxy-external -n default
+  kubectl wait --for=condition=available --timeout=120s deployment/test-haproxy-internal -n default
+}
+
+# Deploy test ingress resources (4 ingresses with path stripping)
+@test "Deploy test ingress resources" {
+  info
+  install() {
+    kubectl apply -f katalog/tests/test-ingresses.yaml
+  }
+  loop_it install 30 5
+  status=${loop_it_result}
+  [ "$status" -eq 0 ]
+}
+
+# ========================================
+# Routing Tests - Verify each controller serves its paths
+# ========================================
+
+# Verify nginx-external serves correct content
+@test "Routing: nginx-external controller serves /nginx-external path" {
   info
   test() {
-    http_code=$(curl "http://localhost:${EXTERNAL_PORT}/internal" -s -o /dev/null -w "%{http_code}")
+    check_http_and_content "${EXTERNAL_PORT}" "/nginx-external" "200" "NGINX-EXTERNAL"
+  }
+  loop_it test 30 2
+  [[ "${loop_it_result}" -eq 0 ]]
+}
+
+# Verify nginx-internal serves correct content
+@test "Routing: nginx-internal controller serves /nginx-internal path" {
+  info
+  test() {
+    check_http_and_content "${INTERNAL_PORT}" "/nginx-internal" "200" "NGINX-INTERNAL"
+  }
+  loop_it test 30 2
+  [[ "${loop_it_result}" -eq 0 ]]
+}
+
+# Verify haproxy-external serves correct content
+@test "Routing: haproxy-external controller serves /haproxy-external path" {
+  info
+  test() {
+    check_http_and_content "${HAPROXY_EXTERNAL_PORT}" "/haproxy-external" "200" "HAPROXY-EXTERNAL"
+  }
+  loop_it test 45 2
+  [[ "${loop_it_result}" -eq 0 ]]
+}
+
+# Verify haproxy-internal serves correct content
+@test "Routing: haproxy-internal controller serves /haproxy-internal path" {
+  info
+  test() {
+    check_http_and_content "${HAPROXY_INTERNAL_PORT}" "/haproxy-internal" "200" "HAPROXY-INTERNAL"
+  }
+  loop_it test 45 2
+  [[ "${loop_it_result}" -eq 0 ]]
+}
+
+# ========================================
+# Isolation Tests - Cross-controller (nginx ↔ haproxy)
+# ========================================
+
+# Verify nginx-external path is not served by haproxy-external
+@test "Isolation: haproxy-external rejects nginx paths" {
+  info
+  test() {
+    http_code=$(curl "http://localhost:${HAPROXY_EXTERNAL_PORT}/nginx-external" -s -o /dev/null -w "%{http_code}")
     if [ "${http_code}" -ne "404" ]; then return 1; fi
   }
   loop_it test 30 2
-  status=${loop_it_result}
-  [[ "$status" -eq 0 ]]
+  [[ "${loop_it_result}" -eq 0 ]]
 }
 
-# Verify that the external ingress controller is functioning
-@test "Check that external ingress controller is working" {
+# Verify haproxy-external path is not served by nginx-external
+@test "Isolation: nginx-external rejects haproxy paths" {
   info
   test() {
-    http_code=$(curl "http://localhost:${EXTERNAL_PORT}/external" -s -o /dev/null -w "%{http_code}")
-    if [ "${http_code}" -ne "503" ]; then return 1; fi
-  }
-  loop_it test 30 2
-  status=${loop_it_result}
-  [[ "$status" -eq 0 ]]
-}
-
-# Verify that external routes are not served by the internal ingress controller
-@test "Check that external ingress is not working on internal ingress controller" {
-  info
-  test() {
-    http_code=$(curl "http://localhost:${INTERNAL_PORT}/external" -s -o /dev/null -w "%{http_code}")
+    http_code=$(curl "http://localhost:${EXTERNAL_PORT}/haproxy-external" -s -o /dev/null -w "%{http_code}")
     if [ "${http_code}" -ne "404" ]; then return 1; fi
   }
   loop_it test 30 2
-  status=${loop_it_result}
-  [[ "$status" -eq 0 ]]
+  [[ "${loop_it_result}" -eq 0 ]]
 }
+
+# Verify nginx-internal path is not served by haproxy-internal
+@test "Isolation: haproxy-internal rejects nginx paths" {
+  info
+  test() {
+    http_code=$(curl "http://localhost:${HAPROXY_INTERNAL_PORT}/nginx-internal" -s -o /dev/null -w "%{http_code}")
+    if [ "${http_code}" -ne "404" ]; then return 1; fi
+  }
+  loop_it test 30 2
+  [[ "${loop_it_result}" -eq 0 ]]
+}
+
+# Verify haproxy-internal path is not served by nginx-internal
+@test "Isolation: nginx-internal rejects haproxy paths" {
+  info
+  test() {
+    http_code=$(curl "http://localhost:${INTERNAL_PORT}/haproxy-internal" -s -o /dev/null -w "%{http_code}")
+    if [ "${http_code}" -ne "404" ]; then return 1; fi
+  }
+  loop_it test 30 2
+  [[ "${loop_it_result}" -eq 0 ]]
+}
+
+# ========================================
+# Isolation Tests - Internal/External scope separation
+# ========================================
+
+# Verify nginx-external path is not served by nginx-internal
+@test "Isolation: nginx-internal rejects external paths" {
+  info
+  test() {
+    http_code=$(curl "http://localhost:${INTERNAL_PORT}/nginx-external" -s -o /dev/null -w "%{http_code}")
+    if [ "${http_code}" -ne "404" ]; then return 1; fi
+  }
+  loop_it test 30 2
+  [[ "${loop_it_result}" -eq 0 ]]
+}
+
+# Verify nginx-internal path is not served by nginx-external
+@test "Isolation: nginx-external rejects internal paths" {
+  info
+  test() {
+    http_code=$(curl "http://localhost:${EXTERNAL_PORT}/nginx-internal" -s -o /dev/null -w "%{http_code}")
+    if [ "${http_code}" -ne "404" ]; then return 1; fi
+  }
+  loop_it test 30 2
+  [[ "${loop_it_result}" -eq 0 ]]
+}
+
+# Verify haproxy-external path is not served by haproxy-internal
+@test "Isolation: haproxy-internal rejects external paths" {
+  info
+  test() {
+    http_code=$(curl "http://localhost:${HAPROXY_INTERNAL_PORT}/haproxy-external" -s -o /dev/null -w "%{http_code}")
+    if [ "${http_code}" -ne "404" ]; then return 1; fi
+  }
+  loop_it test 30 2
+  [[ "${loop_it_result}" -eq 0 ]]
+}
+
+# Verify haproxy-internal path is not served by haproxy-external
+@test "Isolation: haproxy-external rejects internal paths" {
+  info
+  test() {
+    http_code=$(curl "http://localhost:${HAPROXY_EXTERNAL_PORT}/haproxy-internal" -s -o /dev/null -w "%{http_code}")
+    if [ "${http_code}" -ne "404" ]; then return 1; fi
+  }
+  loop_it test 30 2
+  [[ "${loop_it_result}" -eq 0 ]]
+}
+
+# ========================================
+# HAProxy Resource Verification Tests
+# ========================================
+
+# Verify haproxy-external IngressClass exists
+@test "Verify haproxy-external IngressClass exists" {
+  run kubectl get ingressclass haproxy-external
+  assert_success
+}
+
+# Verify haproxy-internal IngressClass exists
+@test "Verify haproxy-internal IngressClass exists" {
+  run kubectl get ingressclass haproxy-internal
+  assert_success
+}
+
+# Verify ingress-haproxy namespace exists
+@test "Verify ingress-haproxy namespace exists" {
+  run kubectl get namespace ingress-haproxy
+  assert_success
+}
+
+# Verify HAProxy External DaemonSet exists
+@test "Verify HAProxy External DaemonSet exists" {
+  run kubectl get daemonset -n ingress-haproxy haproxy-ingress-external
+  assert_success
+}
+
+# Verify HAProxy Internal DaemonSet exists
+@test "Verify HAProxy Internal DaemonSet exists" {
+  run kubectl get daemonset -n ingress-haproxy haproxy-ingress-internal
+  assert_success
+}
+
+# ========================================
+# Cert-Manager Verification Tests
+# ========================================
 
 # Verify the installation of cert-manager CRDs
-@test "Verify cert-manager CRD installation" {
+@test "Verify certificates.cert-manager.io CRD exists" {
   run kubectl get crd certificates.cert-manager.io
   assert_success
 }
@@ -166,7 +363,7 @@ wait_for_settlement() {
 }
 
 # Create and verify a self-signed issuer
-@test "Create and verify a self-signed Issuer" {
+@test "Create and verify selfsigned-issuer Issuer" {
   cat <<EOF | kubectl apply -f -
 apiVersion: cert-manager.io/v1
 kind: Issuer
@@ -181,7 +378,7 @@ EOF
 }
 
 # Create and verify a certificate using the self-signed issuer
-@test "Create and verify a test certificate" {
+@test "Create and verify selfsigned-cert Certificate" {
   cat <<EOF | kubectl apply -f -
 apiVersion: cert-manager.io/v1
 kind: Certificate
@@ -205,7 +402,7 @@ EOF
 @test "Verify ACME HTTP01 solver image uses SIGHUP registry" {
   # Extract the ACME solver image from cert-manager deployment and verify it uses our registry
   solver_image=$(kubectl get deployment cert-manager -n cert-manager -o jsonpath='{.spec.template.spec.containers[0].args}' | grep -o 'registry\.sighup\.io/fury/jetstack/cert-manager-acmesolver[^[:space:]]*' | head -1)
-  
+
   if [[ "$solver_image" == registry.sighup.io/fury/jetstack/cert-manager-acmesolver* ]]; then
     echo "ACME solver image uses our registry: $solver_image"
   else
@@ -215,13 +412,13 @@ EOF
 }
 
 # Verify the existence of ValidatingWebhookConfiguration for cert-manager
-@test "Verify ValidatingWebhookConfiguration exists" {
+@test "Verify cert-manager-webhook ValidatingWebhookConfiguration exists" {
   run kubectl get validatingwebhookconfiguration cert-manager-webhook
   assert_success
 }
 
 # Verify the existence of MutatingWebhookConfiguration for cert-manager
-@test "Verify MutatingWebhookConfiguration exists" {
+@test "Verify cert-manager-webhook MutatingWebhookConfiguration exists" {
   run kubectl get mutatingwebhookconfiguration cert-manager-webhook
   assert_success
 }
@@ -233,7 +430,7 @@ EOF
 }
 
 # Ensure Roles and RoleBindings are properly configured
-@test "Verify Roles and RoleBindings configuration" {
+@test "Verify cert-manager:leaderelection Role and RoleBinding exist" {
   run kubectl get role -n cert-manager cert-manager:leaderelection
   assert_success
 
@@ -242,7 +439,7 @@ EOF
 }
 
 # Verify ClusterRoles and ClusterRoleBindings for cert-manager
-@test "Verify ClusterRoles and ClusterRoleBindings configuration" {
+@test "Verify cert-manager-controller-approve ClusterRole and ClusterRoleBinding exist" {
   run kubectl get clusterrole cert-manager-controller-approve:cert-manager-io
   assert_success
 
@@ -251,7 +448,7 @@ EOF
 }
 
 # Confirm that cert-manager Services are configured correctly
-@test "Verify cert-manager Services configuration" {
+@test "Verify cert-manager and cert-manager-webhook Services exist" {
   run kubectl get service -n cert-manager cert-manager
   assert_success
 
@@ -260,26 +457,26 @@ EOF
 }
 
 # Ensure cert-manager certificates are properly issued
-@test "Verify Certificate configuration" {
+@test "Verify selfsigned-cert Certificate exists" {
   run kubectl get certificate -n cert-manager selfsigned-cert
   assert_success
 }
 
 # Confirm ConfigMaps are created for cert-manager
-@test "Verify ConfigMaps exist" {
+@test "Verify cert-manager-dashboard ConfigMap exists" {
   run kubectl get configmap -n cert-manager cert-manager-dashboard
   assert_success
 
 }
 
 # Verify the existence of ServiceMonitor for cert-manager
-@test "Verify ServiceMonitor exists" {
+@test "Verify cert-manager ServiceMonitor exists" {
   run kubectl get servicemonitor -n cert-manager cert-manager
   assert_success
 }
 
 # Ensure Deployments are created for cert-manager components
-@test "Verify Deployments exist" {
+@test "Verify cert-manager, cainjector and webhook Deployments exist" {
   run kubectl get deployment -n cert-manager cert-manager
   assert_success
 
@@ -291,7 +488,7 @@ EOF
 }
 
 # Verify ReplicaSets for cert-manager deployments
-@test "Verify ReplicaSets exist" {
+@test "Verify cert-manager, cainjector and webhook ReplicaSets exist" {
   run kubectl get replicaset -n cert-manager -l app=cert-manager
   assert_success
 
@@ -303,7 +500,7 @@ EOF
 }
 
 # Check role assignments using kubectl auth can-i
-@test "Verify role assignments with kubectl auth can-i" {
+@test "Verify cert-manager ServiceAccount RBAC permissions" {
   run kubectl auth can-i get certificates.cert-manager.io --as=system:serviceaccount:cert-manager:cert-manager
   assert_success
   assert_output --partial "yes"

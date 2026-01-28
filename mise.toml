@@ -12,7 +12,8 @@ go = "1.23"
 bats = "1.11.0"    
 dyff = "1.9.0"    
 drone = "1.9.0"
-"ubi:google/addlicense" = "v1.1.1"     
+"ubi:google/addlicense" = "v1.1.1"
+gh = "2.86.0"
 
 # Development task definitions
 [tasks.add-license]
@@ -31,6 +32,7 @@ kustomize build katalog/cert-manager > /dev/null && echo "  ✅ cert-manager"
 kustomize build katalog/dual-nginx > /dev/null && echo "  ✅ dual-nginx"
 kustomize build katalog/forecastle > /dev/null && echo "  ✅ forecastle"
 kustomize build katalog/nginx > /dev/null && echo "  ✅ nginx"
+kustomize build katalog/haproxy/dual > /dev/null && echo "  ✅ haproxy/dual"
 echo "✅ All manifests validated!"
 '''
 
@@ -44,13 +46,31 @@ echo "✅ Development environment ready!"
 '''
 
 [tasks.e2e]
-description = "Run complete E2E test suite with Kind cluster (K8s 1.33)"
+description = "Run complete E2E test suite (create cluster, run tests, cleanup)"
 run = '''
 #!/bin/bash
 set -e
 
 echo "🚀 Starting E2E Test Suite for Module Ingress"
 echo "============================================="
+
+# Trap to ensure cleanup on exit (success or failure)
+trap 'mise run e2e-cleanup' EXIT
+
+mise run e2e-create
+mise run e2e-test
+
+echo "✅ E2E tests completed successfully!"
+'''
+
+[tasks.e2e-create]
+description = "Create Kind cluster for E2E tests (K8s 1.33)"
+run = '''
+#!/bin/bash
+set -e
+
+echo "📦 Creating E2E Test Environment"
+echo "================================="
 
 # Configuration
 KUBE_VERSION="1.33.0"
@@ -59,39 +79,95 @@ export DRONE_REPO_NAME="${DRONE_REPO_NAME:-module-ingress}"
 CLUSTER_NAME="${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-${KUBE_VERSION}"
 KUBECONFIG_PATH="$(pwd)/kubeconfig-e2e"
 
-# Cleanup function
-cleanup() {
-  echo "🧹 Cleaning up..."
-  kind delete cluster --name "${CLUSTER_NAME}" 2>/dev/null || true
-  rm -f "${KUBECONFIG_PATH}"
-  rm -f "config-${CLUSTER_NAME}.yaml"
-  rm -f "env-${CLUSTER_NAME}.env"
-}
+# Check if cluster already exists
+if kind get clusters 2>/dev/null | grep -q "^${CLUSTER_NAME}$"; then
+  echo "ℹ️  Cluster ${CLUSTER_NAME} already exists, reusing..."
+else
+  echo "📦 Creating Kind cluster (K8s ${KUBE_VERSION})..."
+  ./katalog/tests/kind/generate-template.sh ${KUBE_VERSION}
+  kind create cluster --config "./config-${CLUSTER_NAME}.yaml" --name "${CLUSTER_NAME}"
+fi
 
-# Trap to ensure cleanup on exit (success or failure)
-trap cleanup EXIT
-
-echo "📦 Step 1: Creating Kind cluster (K8s ${KUBE_VERSION})..."
-./katalog/tests/kind/generate-template.sh ${KUBE_VERSION}
-kind create cluster --config "./config-${CLUSTER_NAME}.yaml" --name "${CLUSTER_NAME}"
-
-echo "📋 Step 2: Setting up kubeconfig..."
+echo "📋 Setting up kubeconfig..."
 kind get kubeconfig --name "${CLUSTER_NAME}" > "${KUBECONFIG_PATH}"
 export KUBECONFIG="${KUBECONFIG_PATH}"
 
-echo "⏳ Step 3: Waiting for cluster to be ready..."
-until kubectl get serviceaccount default > /dev/null 2>&1; do 
-  echo "   Waiting for control-plane..." 
+echo "⏳ Waiting for cluster to be ready..."
+until kubectl get serviceaccount default > /dev/null 2>&1; do
+  echo "   Waiting for control-plane..."
   sleep 2
 done
 
-echo "🧪 Step 4: Running BATS E2E tests..."
+# Source the env file for port info
 source "./env-${CLUSTER_NAME}.env"
+
+echo ""
+echo "✅ Cluster is ready!"
+echo "===================="
+echo "KUBECONFIG=${KUBECONFIG_PATH}"
+echo "EXTERNAL_PORT=${EXTERNAL_PORT}"
+echo "INTERNAL_PORT=${INTERNAL_PORT}"
+echo "HAPROXY_EXTERNAL_PORT=${HAPROXY_EXTERNAL_PORT}"
+echo "HAPROXY_INTERNAL_PORT=${HAPROXY_INTERNAL_PORT}"
+echo ""
+echo "To use kubectl: export KUBECONFIG=${KUBECONFIG_PATH}"
+echo "To run tests:   mise run e2e-test"
+echo "To cleanup:     mise run e2e-cleanup"
+'''
+
+[tasks.e2e-test]
+description = "Run BATS E2E tests (requires cluster from e2e-create)"
+run = '''
+#!/bin/bash
+set -e
+
+echo "🧪 Running E2E Tests"
+echo "===================="
+
+# Configuration
+KUBE_VERSION="1.33.0"
+export DRONE_BUILD_NUMBER="${DRONE_BUILD_NUMBER:-9999}"
+export DRONE_REPO_NAME="${DRONE_REPO_NAME:-module-ingress}"
+CLUSTER_NAME="${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-${KUBE_VERSION}"
+KUBECONFIG_PATH="$(pwd)/kubeconfig-e2e"
+ENV_FILE="./env-${CLUSTER_NAME}.env"
+
+# Verify cluster exists
+if ! kind get clusters 2>/dev/null | grep -q "^${CLUSTER_NAME}$"; then
+  echo "❌ Error: Cluster ${CLUSTER_NAME} does not exist."
+  echo "   Run 'mise run e2e-create' first."
+  exit 1
+fi
+
+# Verify env file exists
+if [ ! -f "${ENV_FILE}" ]; then
+  echo "❌ Error: Environment file ${ENV_FILE} does not exist."
+  echo "   Run 'mise run e2e-create' first."
+  exit 1
+fi
+
+export KUBECONFIG="${KUBECONFIG_PATH}"
+source "${ENV_FILE}"
+
+echo "Running BATS tests..."
 bats -t ./katalog/tests/tests.bats
 
-echo "✅ E2E tests completed successfully!"
-=======
-mise run add-license
-mise run validate-manifests
-echo "✅ Development environment ready!"
+echo "✅ Tests completed!"
+'''
+
+[tasks.e2e-cleanup]
+description = "Cleanup the E2E test cluster and generated files"
+run = '''
+#!/bin/bash
+KUBE_VERSION="1.33.0"
+DRONE_BUILD_NUMBER="${DRONE_BUILD_NUMBER:-9999}"
+DRONE_REPO_NAME="${DRONE_REPO_NAME:-module-ingress}"
+CLUSTER_NAME="${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-${KUBE_VERSION}"
+
+echo "🧹 Cleaning up cluster ${CLUSTER_NAME}..."
+kind delete cluster --name "${CLUSTER_NAME}" 2>/dev/null || true
+rm -f "$(pwd)/kubeconfig-e2e"
+rm -f "config-${CLUSTER_NAME}.yaml"
+rm -f "env-${CLUSTER_NAME}.env"
+echo "✅ Cleanup complete!"
 '''
