@@ -6,23 +6,25 @@
 
 # This script generates a configuration file for Kubernetes using Kind with unique port numbers.
 # It accepts Kubernetes version and port numbers either as command line arguments or from environment variables.
-# Usage: 
-#   Command Line: sh generate-template.sh [v]X.Y.Z [DEFAULT_PORT1] [DEFAULT_PORT2]
-#   Environment Variables: KUBE_VERSION, PORT1, PORT2
+# Usage:
+#   Command Line: sh generate-template.sh [v]X.Y.Z [DEFAULT_PORT1] [DEFAULT_PORT2] [DEFAULT_PORT3] [DEFAULT_PORT4]
+#   Environment Variables: KUBE_VERSION, PORT1, PORT2, PORT3, PORT4
 # Examples:
 #   Command Line: sh generate-template.sh 1.26.3 or sh generate-template.sh v1.26.3
-#   Environment: export KUBE_VERSION=1.26.3; export PORT1=1080; export PORT2=2080; sh generate-template.sh
+#   Environment: export KUBE_VERSION=1.26.3; export PORT1=1080; export PORT2=2080; export PORT3=3080; export PORT4=4080; sh generate-template.sh
 # If an error occurs, the script will display a message indicating the correct usage.
 
 # Assign command line arguments to variables or read from environment
 KUBE_VERSION=${1:-$KUBE_VERSION}
-DEFAULT_PORT1=${2:-${PORT1:-1080}}  # Use command line argument, then environment variable, then 1080 as default
-DEFAULT_PORT2=${3:-${PORT2:-2080}}  # Use command line argument, then environment variable, then 2080 as default
+DEFAULT_PORT1=${2:-${PORT1:-1080}}  # Use command line argument, then environment variable, then 1080 as default (nginx external)
+DEFAULT_PORT2=${3:-${PORT2:-2080}}  # Use command line argument, then environment variable, then 2080 as default (nginx internal)
+DEFAULT_PORT3=${4:-${PORT3:-3080}}  # Use command line argument, then environment variable, then 3080 as default (haproxy external)
+DEFAULT_PORT4=${5:-${PORT4:-4080}}  # Use command line argument, then environment variable, then 4080 as default (haproxy internal)
 
 # Validate that the Kubernetes version argument has been provided
 if [ -z "$KUBE_VERSION" ]; then
     echo "Error: Kubernetes version is missing. Provide it as an argument or set the KUBE_VERSION environment variable."
-    echo "Usage: sh $0 [v]X.Y.Z [DEFAULT_PORT1] [DEFAULT_PORT2]"
+    echo "Usage: sh $0 [v]X.Y.Z [DEFAULT_PORT1] [DEFAULT_PORT2] [DEFAULT_PORT3] [DEFAULT_PORT4]"
     echo "Example: sh $0 1.26.3 or sh $0 v1.26.3"
     exit 1
 fi
@@ -52,10 +54,19 @@ fi
 # Calculate unique port numbers based on the major Kubernetes version, DRONE_BUILD_NUMBER, and default port values
 UNIQUE_PORT1=$((MAJOR_VERSION + DRONE_BUILD_NUMBER + DEFAULT_PORT1))
 UNIQUE_PORT2=$((MAJOR_VERSION + DRONE_BUILD_NUMBER + DEFAULT_PORT2))
+UNIQUE_PORT3=$((MAJOR_VERSION + DRONE_BUILD_NUMBER + DEFAULT_PORT3))
+UNIQUE_PORT4=$((MAJOR_VERSION + DRONE_BUILD_NUMBER + DEFAULT_PORT4))
 
 # Ensure unique ports are greater than 1024 and less than 30000
-if [ "$UNIQUE_PORT1" -le 1024 ] || [ "$UNIQUE_PORT1" -ge 30000 ] || [ "$UNIQUE_PORT2" -le 1024 ] || [ "$UNIQUE_PORT2" -ge 30000 ]; then
-    echo "Error: Calculated ports must be greater than 1024 and less than 30000. INTERNAL_PORT = $UNIQUE_PORT2 EXTERNAL_PORT = $UNIQUE_PORT1"
+if [ "$UNIQUE_PORT1" -le 1024 ] || [ "$UNIQUE_PORT1" -ge 30000 ] || \
+   [ "$UNIQUE_PORT2" -le 1024 ] || [ "$UNIQUE_PORT2" -ge 30000 ] || \
+   [ "$UNIQUE_PORT3" -le 1024 ] || [ "$UNIQUE_PORT3" -ge 30000 ] || \
+   [ "$UNIQUE_PORT4" -le 1024 ] || [ "$UNIQUE_PORT4" -ge 30000 ]; then
+    echo "Error: Calculated ports must be greater than 1024 and less than 30000."
+    echo "  EXTERNAL_PORT = $UNIQUE_PORT1"
+    echo "  INTERNAL_PORT = $UNIQUE_PORT2"
+    echo "  HAPROXY_EXTERNAL_PORT = $UNIQUE_PORT3"
+    echo "  HAPROXY_INTERNAL_PORT = $UNIQUE_PORT4"
     exit 4
 fi
 
@@ -85,6 +96,14 @@ nodes:
         hostPort: ${UNIQUE_PORT2}
         listenAddress: 127.0.0.1
         # This is the internal port
+      - containerPort: 30080 # haproxy ingress controller external http
+        hostPort: ${UNIQUE_PORT3}
+        listenAddress: 127.0.0.1
+        # This is the haproxy external port
+      - containerPort: 32680 # haproxy ingress controller internal http
+        hostPort: ${UNIQUE_PORT4}
+        listenAddress: 127.0.0.1
+        # This is the haproxy internal port
 EOF
 
 # Save details for Drone CI
@@ -93,12 +112,16 @@ DRONE_ENV_REF="${DEFAULT_OUTPUT}env-${CLUSTER_NAME}.env"
 cat > "$DRONE_ENV_REF" <<EOF
 export INTERNAL_PORT=$UNIQUE_PORT2
 export EXTERNAL_PORT=$UNIQUE_PORT1
+export HAPROXY_EXTERNAL_PORT=$UNIQUE_PORT3
+export HAPROXY_INTERNAL_PORT=$UNIQUE_PORT4
 export KIND_CONFIG=$CONFIG_FILE
 export KUBE_VERSION=$KUBE_VERSION
 EOF
 
 echo "External port configured: $UNIQUE_PORT1"
 echo "Internal port configured: $UNIQUE_PORT2"
+echo "HAProxy external port configured: $UNIQUE_PORT3"
+echo "HAProxy internal port configured: $UNIQUE_PORT4"
 echo "Kubernetes version used: $KUBE_VERSION"
 echo "Environment file saved in: $DRONE_ENV_REF"
 echo "Kind configuration file saved in: $CONFIG_FILE"
