@@ -10,3 +10,13 @@ resources:
   - internal
   - external
   - ../common
+
+patches:
+  # Remove duplicate CRD job - internal job is sufficient for both controllers
+  - patch: |-
+      $patch: delete
+      apiVersion: batch/v1
+      kind: Job
+      metadata:
+        name: haproxy-ingress-external-crdjob-1
+        namespace: ingress-haproxy

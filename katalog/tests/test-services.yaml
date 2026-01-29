@@ -1,0 +1,215 @@
+# Copyright (c) 2017-present SIGHUP s.r.l All rights reserved.
+# Use of this source code is governed by a BSD-style
+# license that can be found in the LICENSE file.
+
+# Test services with unique content for verifying ingress controller routing.
+# Each service returns distinct HTML content to verify correct routing.
+
+---
+# ConfigMap for nginx-external test service
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-external-content
+  namespace: default
+data:
+  index.html: |
+    <html><body><h1>NGINX-EXTERNAL</h1></body></html>
+---
+# Deployment for nginx-external test service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-nginx-external
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test-nginx-external
+  template:
+    metadata:
+      labels:
+        app: test-nginx-external
+    spec:
+      containers:
+        - name: nginx
+          image: registry.sighup.io/fury/nginxinc/nginx-unprivileged:1.27-alpine
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: html
+              mountPath: /usr/share/nginx/html
+      volumes:
+        - name: html
+          configMap:
+            name: nginx-external-content
+---
+# Service for nginx-external test service
+apiVersion: v1
+kind: Service
+metadata:
+  name: test-nginx-external
+  namespace: default
+spec:
+  ports:
+    - port: 80
+      targetPort: 8080
+  selector:
+    app: test-nginx-external
+---
+# ConfigMap for nginx-internal test service
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-internal-content
+  namespace: default
+data:
+  index.html: |
+    <html><body><h1>NGINX-INTERNAL</h1></body></html>
+---
+# Deployment for nginx-internal test service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-nginx-internal
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test-nginx-internal
+  template:
+    metadata:
+      labels:
+        app: test-nginx-internal
+    spec:
+      containers:
+        - name: nginx
+          image: registry.sighup.io/fury/nginxinc/nginx-unprivileged:1.27-alpine
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: html
+              mountPath: /usr/share/nginx/html
+      volumes:
+        - name: html
+          configMap:
+            name: nginx-internal-content
+---
+# Service for nginx-internal test service
+apiVersion: v1
+kind: Service
+metadata:
+  name: test-nginx-internal
+  namespace: default
+spec:
+  ports:
+    - port: 80
+      targetPort: 8080
+  selector:
+    app: test-nginx-internal
+---
+# ConfigMap for haproxy-external test service
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: haproxy-external-content
+  namespace: default
+data:
+  index.html: |
+    <html><body><h1>HAPROXY-EXTERNAL</h1></body></html>
+---
+# Deployment for haproxy-external test service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-haproxy-external
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test-haproxy-external
+  template:
+    metadata:
+      labels:
+        app: test-haproxy-external
+    spec:
+      containers:
+        - name: nginx
+          image: registry.sighup.io/fury/nginxinc/nginx-unprivileged:1.27-alpine
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: html
+              mountPath: /usr/share/nginx/html
+      volumes:
+        - name: html
+          configMap:
+            name: haproxy-external-content
+---
+# Service for haproxy-external test service
+apiVersion: v1
+kind: Service
+metadata:
+  name: test-haproxy-external
+  namespace: default
+spec:
+  ports:
+    - port: 80
+      targetPort: 8080
+  selector:
+    app: test-haproxy-external
+---
+# ConfigMap for haproxy-internal test service
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: haproxy-internal-content
+  namespace: default
+data:
+  index.html: |
+    <html><body><h1>HAPROXY-INTERNAL</h1></body></html>
+---
+# Deployment for haproxy-internal test service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-haproxy-internal
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test-haproxy-internal
+  template:
+    metadata:
+      labels:
+        app: test-haproxy-internal
+    spec:
+      containers:
+        - name: nginx
+          image: registry.sighup.io/fury/nginxinc/nginx-unprivileged:1.27-alpine
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: html
+              mountPath: /usr/share/nginx/html
+      volumes:
+        - name: html
+          configMap:
+            name: haproxy-internal-content
+---
+# Service for haproxy-internal test service
+apiVersion: v1
+kind: Service
+metadata:
+  name: test-haproxy-internal
+  namespace: default
+spec:
+  ports:
+    - port: 80
+      targetPort: 8080
+  selector:
+    app: test-haproxy-internal

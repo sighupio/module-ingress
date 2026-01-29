@@ -1,0 +1,95 @@
+# Copyright (c) 2017-present SIGHUP s.r.l All rights reserved.
+# Use of this source code is governed by a BSD-style
+# license that can be found in the LICENSE file.
+
+# Test ingresses with path stripping for verifying ingress controller routing.
+# Each ingress uses controller-specific annotations for path rewriting.
+
+---
+# Nginx external ingress with path rewriting
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: test-nginx-external
+  namespace: default
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  ingressClassName: external
+  rules:
+    - http:
+        paths:
+          - path: /nginx-external(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: test-nginx-external
+                port:
+                  number: 80
+---
+# Nginx internal ingress with path rewriting
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: test-nginx-internal
+  namespace: default
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  ingressClassName: internal
+  rules:
+    - http:
+        paths:
+          - path: /nginx-internal(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: test-nginx-internal
+                port:
+                  number: 80
+---
+# HAProxy external ingress with path rewriting
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: test-haproxy-external
+  namespace: default
+  annotations:
+    haproxy.org/ssl-redirect: "false"
+    haproxy.org/path-rewrite: "/haproxy-external(/?)(.*) /\\2"
+spec:
+  ingressClassName: haproxy-external
+  rules:
+    - http:
+        paths:
+          - path: /haproxy-external
+            pathType: Prefix
+            backend:
+              service:
+                name: test-haproxy-external
+                port:
+                  number: 80
+---
+# HAProxy internal ingress with path rewriting
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: test-haproxy-internal
+  namespace: default
+  annotations:
+    haproxy.org/ssl-redirect: "false"
+    haproxy.org/path-rewrite: "/haproxy-internal(/?)(.*) /\\2"
+spec:
+  ingressClassName: haproxy-internal
+  rules:
+    - http:
+        paths:
+          - path: /haproxy-internal
+            pathType: Prefix
+            backend:
+              service:
+                name: test-haproxy-internal
+                port:
+                  number: 80
