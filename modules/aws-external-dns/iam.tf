@@ -49,7 +49,7 @@ module "external_dns_public_iam_assumable_role" {
   role_name                     = "${var.cluster_name}-e-dns-public"
   provider_url                  = replace(data.aws_eks_cluster.this.identity.0.oidc.0.issuer, "https://", "")
   role_policy_arns              = [aws_iam_policy.external_dns_public.arn]
-  oidc_fully_qualified_subjects = ["system:serviceaccount:ingress-nginx:external-dns-public"]
+  oidc_fully_qualified_subjects = ["system:serviceaccount:external-dns:external-dns-public"]
 }
 
 
@@ -96,5 +96,5 @@ module "external_dns_private_iam_assumable_role" {
   role_name                     = "${var.cluster_name}-e-dns-private"
   provider_url                  = replace(data.aws_eks_cluster.this.identity.0.oidc.0.issuer, "https://", "")
   role_policy_arns              = [aws_iam_policy.external_dns_private[0].arn]
-  oidc_fully_qualified_subjects = ["system:serviceaccount:ingress-nginx:external-dns-private"]
+  oidc_fully_qualified_subjects = ["system:serviceaccount:external-dns:external-dns-private"]
 }
