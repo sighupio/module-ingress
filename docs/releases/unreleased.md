@@ -10,50 +10,52 @@ This release updates several packages included in the ingress module, to officia
 | ------------------ | ---------------------------------------------------------------------------------------- | :--------------: |
 | `aws-cert-manager` | N.A.                                                                                     |   `No update`    |
 | `aws-external-dns` | N.A.                                                                                     |   `No update`    |
-| `cert-manager`     | [`v1.19.2`](https://cert-manager.io/docs/releases/release-notes/release-notes-1.19/)     |     `v1.18.2`    |
-| `dual-nginx`       | [`v1.14.1`](https://github.com/kubernetes/ingress-nginx/releases/tag/controller-v1.14.1) |     `v1.13.3`    |
-| `external-dns`     | [`v0.20.0`](https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.20.0)        |     `v0.18.0`    |
+| `cert-manager`     | [`v1.19.2`](https://cert-manager.io/docs/releases/release-notes/release-notes-1.19/)     |    `v1.18.2`     |
+| `dual-nginx`       | [`v1.14.1`](https://github.com/kubernetes/ingress-nginx/releases/tag/controller-v1.14.1) |    `v1.13.3`     |
+| `external-dns`     | [`v0.20.0`](https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.20.0)        |    `v0.18.0`     |
 | `forecastle`       | [`v1.0.159`](https://github.com/stakater/Forecastle/releases/tag/v1.0.159)               |    `v1.0.157`    |
-| `nginx`            | [`v1.14.1`](https://github.com/kubernetes/ingress-nginx/releases/tag/controller-v1.14.1) |     `v1.13.3`    |
+| `haproxy`          | [`v3.2.4`](https://github.com/haproxytech/kubernetes-ingress/releases/tag/v3.2.4)        |      `New`       |
+| `dual-haproxy`     | [`v3.2.4`](https://github.com/haproxytech/kubernetes-ingress/releases/tag/v3.2.4)        |      `New`       |
+| `nginx`            | [`v1.14.1`](https://github.com/kubernetes/ingress-nginx/releases/tag/controller-v1.14.1) |    `v1.13.3`     |
 
 > Please refer the individual release notes to get a more detailed information on each release.
 
-## Kubernetes support 🚢
-
-| Kubernetes Version |   Compatibility    | Notes           |
-| ------------------ | :----------------: | --------------- |
-| `1.31.x`           | :white_check_mark: | No known issues |
-| `1.32.x`           | :white_check_mark: | No known issues |
-| `1.33.x`           | :white_check_mark: | No known issues |
-| `1.34.x`           | :white_check_mark: | No known issues |
-
 ## New features 🎉
 
-### NGINX Ingress Controller v1.14.1
+### HAProxy Ingress Controller v3.2.4
 
-For detailed information about changes in NGINX Ingress Controller v1.14.1, please refer to the upstream changelogs [v1.14.0](https://github.com/kubernetes/ingress-nginx/blob/main/changelog/controller-1.14.0.md) and [v1.14.1](https://github.com/kubernetes/ingress-nginx/blob/main/changelog/controller-1.14.1.md)
+Added HAProxy Ingress Controller as a new ingress option, supporting both single and dual deployment modes.
 
-### cert-manager v1.19.2
+Features include:
+- Single and dual (internal/external) deployment configurations
+- Grafana dashboard (ID 12693) for HAProxy metrics
+- PrometheusRule for alerting
+- TLS default certificate support
+- IngressClass configuration (`haproxy`, `haproxy-internal`, `haproxy-external`)
 
-Updated to cert-manager v1.19.2.
-
-For detailed information about changes in cert-manager v1.19.2, please refer to the [upstream release notes](https://cert-manager.io/docs/releases/release-notes/release-notes-1.19/).
-
-### external-dns v0.20.0
-
-Updated to external-dns v0.20.0.
-
-For detailed information about changes in external-dns v0.20.0, please refer to the [upstream release notes](https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.20.0).
-
-### forecastle v1.0.159
-
-Updated to forecastle v1.0.159.
-
-For detailed information about changes in forecastle v1.0.159, please refer to the [upstream release notes](https://github.com/stakater/Forecastle/releases/tag/v1.0.159).
+For detailed information about HAProxy Ingress Controller, please refer to the [upstream documentation](https://www.haproxy.com/documentation/kubernetes-ingress/).
 
 ## Breaking changes 💔
 
 ⚠️ **WARNING**
+
+### NGINX and HAProxy Log Format Changes
+
+The log formats for both NGINX and HAProxy ingress controllers have been updated to include the Host header:
+
+- **NGINX**: Log format now includes `$host` field
+- **HAProxy**: Log format now includes Host header capture
+
+This change requires module-logging v6.0.0 or later to parse logs correctly. Both modules must be upgraded together.
+
+**Compatibility Matrix:**
+
+| module-ingress | module-logging | Result |
+|----------------|----------------|--------|
+| < v5.0.0       | < v6.0.0       | Works  |
+| < v5.0.0       | v6.0.0+        | Logs don't parse |
+| v5.0.0+        | < v6.0.0       | Logs don't parse |
+| v5.0.0+        | v6.0.0+        | Works  |
 
 ### External DNS IPv6 ExternalIP as default
 
@@ -71,6 +73,15 @@ Forecastle has been moved from the `ingress-nginx` namespace to its own dedicate
 ### External-DNS namespace migration
 
 External-DNS has been moved from the `ingress-nginx` namespace to its own dedicated `external-dns` namespace. Both public and private variants now deploy to the same `external-dns` namespace. See the Upgrade Guide for detailed migration steps.
+
+## Kubernetes support 🚢
+
+| Kubernetes Version |   Compatibility    | Notes           |
+| ------------------ | :----------------: | --------------- |
+| `1.31.x`           | :white_check_mark: | No known issues |
+| `1.32.x`           | :white_check_mark: | No known issues |
+| `1.33.x`           | :white_check_mark: | No known issues |
+| `1.34.x`           | :white_check_mark: | No known issues |
 
 ## Upgrade Guide 🦮
 
