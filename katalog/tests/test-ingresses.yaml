@@ -18,7 +18,8 @@ metadata:
 spec:
   ingressClassName: external
   rules:
-    - http:
+    - host: nginx-ext.127.0.0.1.nip.io
+      http:
         paths:
           - path: /nginx-external(/|$)(.*)
             pathType: ImplementationSpecific
@@ -40,7 +41,8 @@ metadata:
 spec:
   ingressClassName: internal
   rules:
-    - http:
+    - host: nginx-int.127.0.0.1.nip.io
+      http:
         paths:
           - path: /nginx-internal(/|$)(.*)
             pathType: ImplementationSpecific
@@ -62,7 +64,8 @@ metadata:
 spec:
   ingressClassName: haproxy-external
   rules:
-    - http:
+    - host: haproxy-ext.127.0.0.1.nip.io
+      http:
         paths:
           - path: /haproxy-external
             pathType: Prefix
@@ -84,7 +87,8 @@ metadata:
 spec:
   ingressClassName: haproxy-internal
   rules:
-    - http:
+    - host: haproxy-int.127.0.0.1.nip.io
+      http:
         paths:
           - path: /haproxy-internal
             pathType: Prefix
