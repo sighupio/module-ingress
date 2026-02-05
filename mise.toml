@@ -171,3 +171,23 @@ rm -f "config-${CLUSTER_NAME}.yaml"
 rm -f "env-${CLUSTER_NAME}.env"
 echo "✅ Cleanup complete!"
 '''
+
+[tasks.e2e-send-curl]
+description = "Send one curl request to each ingress endpoint"
+run = '''
+#!/bin/bash
+echo "🌐 Sending requests to ingress endpoints..."
+FAILED=0
+
+curl -sf --resolve "nginx-ext.127.0.0.1.nip.io:11112:127.0.0.1" "http://nginx-ext.127.0.0.1.nip.io:11112/nginx-external" > /dev/null && echo "  ✅ Nginx external" || { echo "  ❌ Nginx external FAILED"; FAILED=$((FAILED+1)); }
+curl -sf --resolve "nginx-int.127.0.0.1.nip.io:12112:127.0.0.1" "http://nginx-int.127.0.0.1.nip.io:12112/nginx-internal" > /dev/null && echo "  ✅ Nginx internal" || { echo "  ❌ Nginx internal FAILED"; FAILED=$((FAILED+1)); }
+curl -sf --resolve "haproxy-ext.127.0.0.1.nip.io:13112:127.0.0.1" "http://haproxy-ext.127.0.0.1.nip.io:13112/haproxy-external" > /dev/null && echo "  ✅ HAProxy external" || { echo "  ❌ HAProxy external FAILED"; FAILED=$((FAILED+1)); }
+curl -sf --resolve "haproxy-int.127.0.0.1.nip.io:14112:127.0.0.1" "http://haproxy-int.127.0.0.1.nip.io:14112/haproxy-internal" > /dev/null && echo "  ✅ HAProxy internal" || { echo "  ❌ HAProxy internal FAILED"; FAILED=$((FAILED+1)); }
+
+if [ $FAILED -eq 0 ]; then
+  echo "✅ All endpoints OK!"
+else
+  echo "⚠️  $FAILED endpoint(s) failed"
+  exit 1
+fi
+'''

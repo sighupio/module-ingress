@@ -26,18 +26,19 @@ wait_for_settlement() {
 }
 
 # Helper function to check HTTP response code and content
-# Usage: check_http_and_content <port> <path> <expected_code> <expected_content>
+# Usage: check_http_and_content <port> <path> <expected_code> <expected_content> [hostname]
 check_http_and_content() {
   local port=$1
   local path=$2
   local expected_code=$3
   local expected_content=$4
+  local hostname=${5:-localhost}
   local response_file="/tmp/curl_response_$$"
 
-  http_code=$(curl -s -o "$response_file" -w "%{http_code}" "http://localhost:${port}${path}")
+  http_code=$(curl -s -o "$response_file" -w "%{http_code}" --resolve "${hostname}:${port}:127.0.0.1" "http://${hostname}:${port}${path}")
 
   if [ "$http_code" != "$expected_code" ]; then
-    echo "Expected HTTP $expected_code but got $http_code for localhost:${port}${path}" >&2
+    echo "Expected HTTP $expected_code but got $http_code for ${hostname}:${port}${path}" >&2
     rm -f "$response_file"
     return 1
   fi
@@ -161,7 +162,7 @@ check_http_and_content() {
 @test "Routing: nginx-external controller serves /nginx-external path" {
   info
   test() {
-    check_http_and_content "${EXTERNAL_PORT}" "/nginx-external" "200" "NGINX-EXTERNAL"
+    check_http_and_content "${EXTERNAL_PORT}" "/nginx-external" "200" "NGINX-EXTERNAL" "nginx-ext.127.0.0.1.nip.io"
   }
   loop_it test 30 2
   [[ "${loop_it_result}" -eq 0 ]]
@@ -171,7 +172,7 @@ check_http_and_content() {
 @test "Routing: nginx-internal controller serves /nginx-internal path" {
   info
   test() {
-    check_http_and_content "${INTERNAL_PORT}" "/nginx-internal" "200" "NGINX-INTERNAL"
+    check_http_and_content "${INTERNAL_PORT}" "/nginx-internal" "200" "NGINX-INTERNAL" "nginx-int.127.0.0.1.nip.io"
   }
   loop_it test 30 2
   [[ "${loop_it_result}" -eq 0 ]]
@@ -181,7 +182,7 @@ check_http_and_content() {
 @test "Routing: haproxy-external controller serves /haproxy-external path" {
   info
   test() {
-    check_http_and_content "${HAPROXY_EXTERNAL_PORT}" "/haproxy-external" "200" "HAPROXY-EXTERNAL"
+    check_http_and_content "${HAPROXY_EXTERNAL_PORT}" "/haproxy-external" "200" "HAPROXY-EXTERNAL" "haproxy-ext.127.0.0.1.nip.io"
   }
   loop_it test 45 2
   [[ "${loop_it_result}" -eq 0 ]]
@@ -191,7 +192,7 @@ check_http_and_content() {
 @test "Routing: haproxy-internal controller serves /haproxy-internal path" {
   info
   test() {
-    check_http_and_content "${HAPROXY_INTERNAL_PORT}" "/haproxy-internal" "200" "HAPROXY-INTERNAL"
+    check_http_and_content "${HAPROXY_INTERNAL_PORT}" "/haproxy-internal" "200" "HAPROXY-INTERNAL" "haproxy-int.127.0.0.1.nip.io"
   }
   loop_it test 45 2
   [[ "${loop_it_result}" -eq 0 ]]
@@ -201,44 +202,44 @@ check_http_and_content() {
 # Isolation Tests - Cross-controller (nginx ↔ haproxy)
 # ========================================
 
-# Verify nginx-external path is not served by haproxy-external
+# Verify nginx-external path is not served by haproxy-external (wrong hostname)
 @test "Isolation: haproxy-external rejects nginx paths" {
   info
   test() {
-    http_code=$(curl "http://localhost:${HAPROXY_EXTERNAL_PORT}/nginx-external" -s -o /dev/null -w "%{http_code}")
+    http_code=$(curl --resolve "nginx-ext.127.0.0.1.nip.io:${HAPROXY_EXTERNAL_PORT}:127.0.0.1" "http://nginx-ext.127.0.0.1.nip.io:${HAPROXY_EXTERNAL_PORT}/nginx-external" -s -o /dev/null -w "%{http_code}")
     if [ "${http_code}" -ne "404" ]; then return 1; fi
   }
   loop_it test 30 2
   [[ "${loop_it_result}" -eq 0 ]]
 }
 
-# Verify haproxy-external path is not served by nginx-external
+# Verify haproxy-external path is not served by nginx-external (wrong hostname)
 @test "Isolation: nginx-external rejects haproxy paths" {
   info
   test() {
-    http_code=$(curl "http://localhost:${EXTERNAL_PORT}/haproxy-external" -s -o /dev/null -w "%{http_code}")
+    http_code=$(curl --resolve "haproxy-ext.127.0.0.1.nip.io:${EXTERNAL_PORT}:127.0.0.1" "http://haproxy-ext.127.0.0.1.nip.io:${EXTERNAL_PORT}/haproxy-external" -s -o /dev/null -w "%{http_code}")
     if [ "${http_code}" -ne "404" ]; then return 1; fi
   }
   loop_it test 30 2
   [[ "${loop_it_result}" -eq 0 ]]
 }
 
-# Verify nginx-internal path is not served by haproxy-internal
+# Verify nginx-internal path is not served by haproxy-internal (wrong hostname)
 @test "Isolation: haproxy-internal rejects nginx paths" {
   info
   test() {
-    http_code=$(curl "http://localhost:${HAPROXY_INTERNAL_PORT}/nginx-internal" -s -o /dev/null -w "%{http_code}")
+    http_code=$(curl --resolve "nginx-int.127.0.0.1.nip.io:${HAPROXY_INTERNAL_PORT}:127.0.0.1" "http://nginx-int.127.0.0.1.nip.io:${HAPROXY_INTERNAL_PORT}/nginx-internal" -s -o /dev/null -w "%{http_code}")
     if [ "${http_code}" -ne "404" ]; then return 1; fi
   }
   loop_it test 30 2
   [[ "${loop_it_result}" -eq 0 ]]
 }
 
-# Verify haproxy-internal path is not served by nginx-internal
+# Verify haproxy-internal path is not served by nginx-internal (wrong hostname)
 @test "Isolation: nginx-internal rejects haproxy paths" {
   info
   test() {
-    http_code=$(curl "http://localhost:${INTERNAL_PORT}/haproxy-internal" -s -o /dev/null -w "%{http_code}")
+    http_code=$(curl --resolve "haproxy-int.127.0.0.1.nip.io:${INTERNAL_PORT}:127.0.0.1" "http://haproxy-int.127.0.0.1.nip.io:${INTERNAL_PORT}/haproxy-internal" -s -o /dev/null -w "%{http_code}")
     if [ "${http_code}" -ne "404" ]; then return 1; fi
   }
   loop_it test 30 2
@@ -249,44 +250,44 @@ check_http_and_content() {
 # Isolation Tests - Internal/External scope separation
 # ========================================
 
-# Verify nginx-external path is not served by nginx-internal
+# Verify nginx-external path is not served by nginx-internal (wrong controller)
 @test "Isolation: nginx-internal rejects external paths" {
   info
   test() {
-    http_code=$(curl "http://localhost:${INTERNAL_PORT}/nginx-external" -s -o /dev/null -w "%{http_code}")
+    http_code=$(curl --resolve "nginx-ext.127.0.0.1.nip.io:${INTERNAL_PORT}:127.0.0.1" "http://nginx-ext.127.0.0.1.nip.io:${INTERNAL_PORT}/nginx-external" -s -o /dev/null -w "%{http_code}")
     if [ "${http_code}" -ne "404" ]; then return 1; fi
   }
   loop_it test 30 2
   [[ "${loop_it_result}" -eq 0 ]]
 }
 
-# Verify nginx-internal path is not served by nginx-external
+# Verify nginx-internal path is not served by nginx-external (wrong controller)
 @test "Isolation: nginx-external rejects internal paths" {
   info
   test() {
-    http_code=$(curl "http://localhost:${EXTERNAL_PORT}/nginx-internal" -s -o /dev/null -w "%{http_code}")
+    http_code=$(curl --resolve "nginx-int.127.0.0.1.nip.io:${EXTERNAL_PORT}:127.0.0.1" "http://nginx-int.127.0.0.1.nip.io:${EXTERNAL_PORT}/nginx-internal" -s -o /dev/null -w "%{http_code}")
     if [ "${http_code}" -ne "404" ]; then return 1; fi
   }
   loop_it test 30 2
   [[ "${loop_it_result}" -eq 0 ]]
 }
 
-# Verify haproxy-external path is not served by haproxy-internal
+# Verify haproxy-external path is not served by haproxy-internal (wrong controller)
 @test "Isolation: haproxy-internal rejects external paths" {
   info
   test() {
-    http_code=$(curl "http://localhost:${HAPROXY_INTERNAL_PORT}/haproxy-external" -s -o /dev/null -w "%{http_code}")
+    http_code=$(curl --resolve "haproxy-ext.127.0.0.1.nip.io:${HAPROXY_INTERNAL_PORT}:127.0.0.1" "http://haproxy-ext.127.0.0.1.nip.io:${HAPROXY_INTERNAL_PORT}/haproxy-external" -s -o /dev/null -w "%{http_code}")
     if [ "${http_code}" -ne "404" ]; then return 1; fi
   }
   loop_it test 30 2
   [[ "${loop_it_result}" -eq 0 ]]
 }
 
-# Verify haproxy-internal path is not served by haproxy-external
+# Verify haproxy-internal path is not served by haproxy-external (wrong controller)
 @test "Isolation: haproxy-external rejects internal paths" {
   info
   test() {
-    http_code=$(curl "http://localhost:${HAPROXY_EXTERNAL_PORT}/haproxy-internal" -s -o /dev/null -w "%{http_code}")
+    http_code=$(curl --resolve "haproxy-int.127.0.0.1.nip.io:${HAPROXY_EXTERNAL_PORT}:127.0.0.1" "http://haproxy-int.127.0.0.1.nip.io:${HAPROXY_EXTERNAL_PORT}/haproxy-internal" -s -o /dev/null -w "%{http_code}")
     if [ "${http_code}" -ne "404" ]; then return 1; fi
   }
   loop_it test 30 2
