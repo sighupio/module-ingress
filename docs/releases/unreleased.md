@@ -11,12 +11,12 @@ This release updates several packages included in the ingress module, to officia
 | `aws-cert-manager` | N.A.                                                                                     |   `No update`    |
 | `aws-external-dns` | N.A.                                                                                     |   `No update`    |
 | `cert-manager`     | [`v1.19.2`](https://cert-manager.io/docs/releases/release-notes/release-notes-1.19/)     |    `v1.18.2`     |
-| `dual-nginx`       | [`v1.14.1`](https://github.com/kubernetes/ingress-nginx/releases/tag/controller-v1.14.1) |    `v1.13.3`     |
+| `dual-nginx`       | [`v1.14.3`](https://github.com/kubernetes/ingress-nginx/releases/tag/controller-v1.14.3) |    `v1.13.3`     |
 | `external-dns`     | [`v0.20.0`](https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.20.0)        |    `v0.18.0`     |
 | `forecastle`       | [`v1.0.159`](https://github.com/stakater/Forecastle/releases/tag/v1.0.159)               |    `v1.0.157`    |
 | `haproxy`          | [`v3.2.4`](https://github.com/haproxytech/kubernetes-ingress/releases/tag/v3.2.4)        |      `New`       |
 | `dual-haproxy`     | [`v3.2.4`](https://github.com/haproxytech/kubernetes-ingress/releases/tag/v3.2.4)        |      `New`       |
-| `nginx`            | [`v1.14.1`](https://github.com/kubernetes/ingress-nginx/releases/tag/controller-v1.14.1) |    `v1.13.3`     |
+| `nginx`            | [`v1.14.3`](https://github.com/kubernetes/ingress-nginx/releases/tag/controller-v1.14.3) |    `v1.13.3`     |
 
 > Please refer the individual release notes to get a more detailed information on each release.
 

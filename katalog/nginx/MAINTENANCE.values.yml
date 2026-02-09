@@ -10,7 +10,7 @@ controller:
   image:
     registry: registry.sighup.io
     image: fury/ingress-nginx/controller
-    tag: "v1.14.1"
+    tag: "v1.14.3"
     pullPolicy: Always
     digest: ""
   containerPort:
