@@ -16,7 +16,7 @@ labels:
 images:
   - name: k8s.gcr.io/ingress-nginx/controller
     newName: registry.sighup.io/fury/ingress-nginx/controller
-    newTag: v1.14.1
+    newTag: v1.14.3
 
 resources:
   - Certificate-ingress-nginx-admission.yml
