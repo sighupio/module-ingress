@@ -6,7 +6,7 @@ Ingress NGINX is an Ingress Controller for [NGINX][nginx-page] web server and re
 
 ## Requirements
 
-- Kubernetes >= `1.28.0`
+- Kubernetes >= `1.30.0`
 - Kustomize >= `v5.6.0`
 - `cert-manager`
 
@@ -33,7 +33,7 @@ Ingress NGINX single is deployed with the following default configuration:
 ```yaml
 bases:
   - name: ingress/nginx
-    version: "v4.0.0
+    version: "v5.0.0"
 ```
 
 > See `furyctl` [documentation][furyctl-repo] for additional details about `Furyfile.yml` format.
