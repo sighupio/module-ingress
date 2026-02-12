@@ -6,7 +6,7 @@ ExternalDNS synchronizes exposed Kubernetes Services and Ingresses with DNS prov
 
 ## Requirements
 
-- Kubernetes >= `1.22.0`
+- Kubernetes >= `1.21.0`
 - Kustomize >= `v5.6.0`
 
 ## Image repository and tag
