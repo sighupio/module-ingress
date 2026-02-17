@@ -41,7 +41,3 @@ patches:
       kind: ServiceMonitor
       name: haproxy-ingress-internal
     path: patch/servicemonitor-selector.yaml
-  - target:
-      kind: Job
-      name: haproxy-ingress-internal-crdjob-1
-    path: patch/crdjob-startup-probe.yaml

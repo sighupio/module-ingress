@@ -24,9 +24,3 @@ resources:
   - IngressClass-haproxy.yaml
   - Job-haproxy-ingress-crdjob-1.yaml
   - ../common
-
-patches:
-  - target:
-      kind: Job
-      name: haproxy-ingress-crdjob-1
-    path: patch/crdjob-startup-probe.yaml
