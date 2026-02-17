@@ -1,0 +1,23 @@
+# Copyright (c) 2017-present SIGHUP s.r.l All rights reserved.
+# Use of this source code is governed by a BSD-style
+# license that can be found in the LICENSE file.
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: haproxy-ingress-crdjob-1
+spec:
+  template:
+    spec:
+      containers:
+        - name: crd
+          startupProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - exit 0
+            initialDelaySeconds: 1
+            periodSeconds: 5
+            failureThreshold: 1
