@@ -1556,7 +1556,7 @@
           "pluginVersion": "11.6.1",
           "targets": [
             {
-              "expr": "sum(rate(sum(rate(haproxy_frontend_http_requests_total{namespace=\"ingress-haproxy\",pod=~\"$pod\",proxy=~\"$frontend\"}[$__rate_interval]))",
+              "expr": "sum(rate(haproxy_frontend_http_requests_total{namespace=\"ingress-haproxy\",pod=~\"$pod\",proxy=~\"$frontend\"}[$__rate_interval]))",
               "legendFormat": "Values",
               "refId": "A"
             }
@@ -1651,7 +1651,7 @@
           "pluginVersion": "11.6.1",
           "targets": [
             {
-              "expr": "sum(rate(sum(rate(haproxy_frontend_http_requests_total{namespace=\"ingress-haproxy\",pod=~\"$pod\",proxy=~\"$frontend\"}[$__rate_interval]))",
+              "expr": "sum(rate(haproxy_frontend_http_requests_total{namespace=\"ingress-haproxy\",pod=~\"$pod\",proxy=~\"$frontend\"}[$__rate_interval]))",
               "legendFormat": "Values",
               "refId": "A"
             }
@@ -1842,7 +1842,7 @@
           "pluginVersion": "11.6.1",
           "targets": [
             {
-              "expr": "sum(rate(sum(rate(haproxy_frontend_http_requests_total{namespace=\"ingress-haproxy\",pod=~\"$pod\",proxy=~\"$frontend\"}[$__rate_interval]))",
+              "expr": "sum(rate(haproxy_server_http_responses_total{namespace=\"ingress-haproxy\",pod=~\"$pod\",proxy=~\"$frontend\"}[$__rate_interval]))",
               "legendFormat": "Values",
               "refId": "A"
             }
@@ -1937,7 +1937,7 @@
           "pluginVersion": "11.6.1",
           "targets": [
             {
-              "expr": "sum(rate(sum(rate(haproxy_frontend_http_requests_total{namespace=\"ingress-haproxy\",pod=~\"$pod\",proxy=~\"$frontend\"}[$__rate_interval]))",
+              "expr": "sum(rate(haproxy_frontend_http_requests_total{namespace=\"ingress-haproxy\",pod=~\"$pod\",proxy=~\"$frontend\"}[$__rate_interval]))",
               "legendFormat": "Values",
               "refId": "A"
             }
@@ -2048,8 +2048,8 @@
               "refId": "A"
             },
             {
-              "expr": "sum(rate(haproxy_frontend_http_responses_total{namespace=\"ingress-haproxy\",pod=~\"$pod\",proxy!~\"$pub_front_exclude\"}[$__rate_interval]))",
-              "legendFormat": "Responses",
+              "expr": "sum(rate(haproxy_frontend_responses_denied_total{namespace=\"ingress-haproxy\",pod=~\"$pod\",proxy!~\"$pub_front_exclude\"}[$__rate_interval]))",
+              "legendFormat": "Responses denied",
               "refId": "B"
             }
           ],
@@ -2141,8 +2141,8 @@
           "pluginVersion": "11.6.1",
           "targets": [
             {
-              "expr": "sum(rate(sum(rate(haproxy_frontend_http_requests_total{namespace=\"ingress-haproxy\",pod=~\"$pod\",proxy=~\"$frontend\"}[$__rate_interval]))",
-              "legendFormat": "Values",
+              "expr": "sum(rate(haproxy_backend_responses_denied_total{namespace=\"ingress-haproxy\",pod=~\"$pod\",proxy=~\"$frontend\"}[$__rate_interval]))",
+              "legendFormat": "Responses denied",
               "refId": "A"
             }
           ],
@@ -2235,8 +2235,8 @@
           "pluginVersion": "11.6.1",
           "targets": [
             {
-              "expr": "sum(rate(sum(rate(haproxy_frontend_http_requests_total{namespace=\"ingress-haproxy\",pod=~\"$pod\",proxy=~\"$frontend\"}[$__rate_interval]))",
-              "legendFormat": "Values",
+              "expr": "sum(rate(haproxy_server_responses_denied_total{namespace=\"ingress-haproxy\",pod=~\"$pod\",proxy=~\"$frontend\"}[$__rate_interval]))",
+              "legendFormat": "Responses denied",
               "refId": "A"
             }
           ],
@@ -2341,12 +2341,17 @@
           "pluginVersion": "11.6.1",
           "targets": [
             {
-              "expr": "sum(rate(sum(rate(haproxy_frontend_http_requests_total{namespace=\"ingress-haproxy\",pod=~\"$pod\",proxy=~\"$frontend\"}[$__rate_interval]))",
-              "legendFormat": "Values",
+              "expr": "sum(rate(haproxy_backend_redispatch_warnings_total{namespace=\"ingress-haproxy\",pod=~\"$pod\",proxy=~\"$frontend\"}[$__rate_interval]))",
+              "legendFormat": "Redispatch",
               "refId": "A"
+            },
+            {
+              "expr": "sum(rate(haproxy_backend_retry_warnings_total{namespace=\"ingress-haproxy\",pod=~\"$pod\",proxy=~\"$frontend\"}[$__rate_interval]))",
+              "legendFormat": "Retry",
+              "refId": "B"
             }
           ],
-          "title": "Back - Error / Redispatch / Retry",
+          "title": "Back - Redispatch / Retry",
           "type": "timeseries"
         },
         {
@@ -2447,10 +2452,16 @@
           },
           "pluginVersion": "11.6.1",
           "targets": [
+
             {
-              "expr": "sum(rate(sum(rate(haproxy_frontend_http_requests_total{namespace=\"ingress-haproxy\",pod=~\"$pod\",proxy=~\"$frontend\"}[$__rate_interval]))",
-              "legendFormat": "Values",
+              "expr": "sum(rate(haproxy_server_redispatch_warnings_total{namespace=\"ingress-haproxy\",pod=~\"$pod\",proxy=~\"$frontend\"}[$__rate_interval]))",
+              "legendFormat": "Redispatch",
               "refId": "A"
+            },
+            {
+              "expr": "sum(rate(haproxy_server_retry_warnings_total{namespace=\"ingress-haproxy\",pod=~\"$pod\",proxy=~\"$frontend\"}[$__rate_interval]))",
+              "legendFormat": "Retry",
+              "refId": "B"
             }
           ],
           "title": "Server - Error / Redispatch / Retry",
@@ -2573,7 +2584,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_frontend_bytes_in_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$frontend\",instance=\"$pod\"}[$__rate_interval])*8",
+              "expr": "rate(haproxy_frontend_bytes_in_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$frontend\"}[$__rate_interval])*8",
               "interval": "$interval",
               "legendFormat": "IN {{ proxy }}",
               "metric": "",
@@ -2587,7 +2598,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_frontend_bytes_out_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$frontend\",instance=\"$pod\"}[$__rate_interval])*8",
+              "expr": "rate(haproxy_frontend_bytes_out_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$frontend\"}[$__rate_interval])*8",
               "interval": "$interval",
               "legendFormat": "OUT {{ proxy }}",
               "range": true,
@@ -2701,7 +2712,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_backend_bytes_in_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",instance=\"$pod\"}[$__rate_interval])*8",
+              "expr": "rate(haproxy_backend_bytes_in_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\"}[$__rate_interval])*8",
               "interval": "$interval",
               "legendFormat": "IN {{ proxy }}",
               "metric": "haproxy_backend_",
@@ -2715,7 +2726,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_backend_bytes_out_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",instance=\"$pod\"}[$__rate_interval])*8",
+              "expr": "rate(haproxy_backend_bytes_out_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\"}[$__rate_interval])*8",
               "interval": "$interval",
               "legendFormat": "OUT {{ proxy }}",
               "range": true,
@@ -2830,7 +2841,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_server_bytes_in_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\",instance=\"$pod\"}[$__rate_interval])*8",
+              "expr": "rate(haproxy_server_bytes_in_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\"}[$__rate_interval])*8",
               "interval": "$interval",
               "legendFormat": "IN {{ proxy }} / {{ server }}",
               "metric": "",
@@ -2844,7 +2855,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_server_bytes_out_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\",instance=\"$pod\"}[$__rate_interval])*8",
+              "expr": "rate(haproxy_server_bytes_out_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\"}[$__rate_interval])*8",
               "interval": "$interval",
               "legendFormat": "OUT {{ proxy }} / {{ server }}",
               "range": true,
@@ -2958,7 +2969,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_frontend_connections_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$frontend\",instance=\"$pod\"}[$__rate_interval])",
+              "expr": "rate(haproxy_frontend_connections_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$frontend\"}[$__rate_interval])",
               "interval": "$interval",
               "legendFormat": "Accepted {{ proxy }}",
               "metric": "haproxy_backe",
@@ -2972,7 +2983,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_frontend_denied_connections_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$frontend\",instance=\"$pod\"}[$__rate_interval])",
+              "expr": "rate(haproxy_frontend_denied_connections_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$frontend\"}[$__rate_interval])",
               "interval": "$interval",
               "legendFormat": "Denied {{ proxy }}",
               "metric": "haproxy_backe",
@@ -3087,7 +3098,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_backend_connection_attempts_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",instance=\"$pod\"}[$__rate_interval])",
+              "expr": "rate(haproxy_backend_connection_attempts_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\"}[$__rate_interval])",
               "interval": "$interval",
               "legendFormat": "Attempt {{ proxy }}",
               "metric": "",
@@ -3101,7 +3112,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_backend_connection_errors_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",instance=\"$pod\"}[$__rate_interval])",
+              "expr": "rate(haproxy_backend_connection_errors_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\"}[$__rate_interval])",
               "interval": "$interval",
               "legendFormat": "Error {{ proxy }}",
               "range": true,
@@ -3216,7 +3227,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_server_connection_attempts_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\",instance=\"$pod\"}[$__rate_interval])",
+              "expr": "rate(haproxy_server_connection_attempts_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\"}[$__rate_interval])",
               "interval": "$interval",
               "legendFormat": "Attempts {{ proxy }} / {{ server }}",
               "metric": "",
@@ -3230,7 +3241,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_server_connection_errors_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\",instance=\"$pod\"}[$__rate_interval])",
+              "expr": "rate(haproxy_server_connection_errors_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\"}[$__rate_interval])",
               "interval": "$interval",
               "legendFormat": "Error {{ proxy }} / {{ server }}",
               "range": true,
@@ -3331,7 +3342,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_backend_connection_reuses_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",instance=\"$pod\"}[$__rate_interval])",
+              "expr": "rate(haproxy_backend_connection_reuses_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\"}[$__rate_interval])",
               "interval": "$interval",
               "legendFormat": "{{ proxy }}",
               "range": true,
@@ -3433,7 +3444,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_server_connection_reuses_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\",instance=\"$pod\"}[$__rate_interval])",
+              "expr": "rate(haproxy_server_connection_reuses_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\"}[$__rate_interval])",
               "interval": "$interval",
               "legendFormat": "Reuses {{ proxy }} / {{ server }}",
               "range": true,
@@ -3561,7 +3572,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_frontend_sessions_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$frontend\",instance=\"$pod\"}[$__rate_interval])",
+              "expr": "rate(haproxy_frontend_sessions_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$frontend\"}[$__rate_interval])",
               "interval": "$interval",
               "legendFormat": "Total {{ proxy }}",
               "metric": "",
@@ -3575,7 +3586,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_frontend_denied_sessions_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$frontend\",instance=\"$pod\"}[$__rate_interval])",
+              "expr": "rate(haproxy_frontend_denied_sessions_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$frontend\"}[$__rate_interval])",
               "interval": "$interval",
               "legendFormat": "Denied {{ proxy }}",
               "metric": "",
@@ -3589,7 +3600,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_frontend_current_sessions{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$frontend\",instance=\"$pod\"}",
+              "expr": "haproxy_frontend_current_sessions{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$frontend\"}",
               "hide": true,
               "interval": "$interval",
               "legendFormat": "Current active {{ proxy }}",
@@ -3692,7 +3703,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_backend_sessions_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",instance=\"$pod\"}[$__rate_interval])",
+              "expr": "rate(haproxy_backend_sessions_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\"}[$__rate_interval])",
               "interval": "$interval",
               "legendFormat": "Total {{ proxy }}",
               "metric": "",
@@ -3706,7 +3717,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_backend_current_sessions{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",instance=\"$pod\"}",
+              "expr": "haproxy_backend_current_sessions{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\"}",
               "hide": true,
               "interval": "$interval",
               "legendFormat": "Current active {{ proxy }}",
@@ -3810,7 +3821,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_server_sessions_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\",instance=\"$pod\"}[$__rate_interval])",
+              "expr": "rate(haproxy_server_sessions_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\"}[$__rate_interval])",
               "interval": "$interval",
               "legendFormat": "{{ proxy }} / {{ server }}",
               "metric": "",
@@ -3923,7 +3934,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "max_over_time(haproxy_frontend_current_sessions{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$frontend\",instance=\"$pod\"}[$__rate_interval]) / haproxy_frontend_limit_sessions{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$frontend\",instance=\"$pod\"} * 100",
+              "expr": "max_over_time(haproxy_frontend_current_sessions{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$frontend\"}[$__rate_interval]) / haproxy_frontend_limit_sessions{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$frontend\"} * 100",
               "interval": "$interval",
               "legendFormat": "{{ proxy }}",
               "range": true,
@@ -4035,7 +4046,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "max_over_time(haproxy_backend_current_sessions{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",instance=\"$pod\"}[$__rate_interval]) / haproxy_backend_limit_sessions{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",instance=\"$pod\"} * 100",
+              "expr": "max_over_time(haproxy_backend_current_sessions{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\"}[$__rate_interval]) / haproxy_backend_limit_sessions{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\"} * 100",
               "interval": "$interval",
               "legendFormat": "{{ proxy }}",
               "range": true,
@@ -4136,7 +4147,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_frontend_max_sessions{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$frontend\",instance=\"$pod\"}",
+              "expr": "haproxy_frontend_max_sessions{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$frontend\"}",
               "interval": "$interval",
               "legendFormat": "{{ proxy }}",
               "metric": "",
@@ -4150,7 +4161,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_frontend_current_sessions{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$frontend\",instance=\"$pod\"}",
+              "expr": "haproxy_frontend_current_sessions{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$frontend\"}",
               "hide": true,
               "interval": "$interval",
               "legendFormat": "Current active {{ proxy }}",
@@ -4253,7 +4264,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_backend_max_sessions{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",instance=\"$pod\"}",
+              "expr": "haproxy_backend_max_sessions{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\"}",
               "interval": "$interval",
               "legendFormat": "{{ proxy }}",
               "metric": "",
@@ -4267,7 +4278,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_backend_current_sessions{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",instance=\"$pod\"}",
+              "expr": "haproxy_backend_current_sessions{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\"}",
               "hide": true,
               "interval": "$interval",
               "legendFormat": "Current active {{ proxy }}",
@@ -4371,7 +4382,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_server_max_sessions{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\",instance=\"$pod\"}",
+              "expr": "haproxy_server_max_sessions{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\"}",
               "interval": "$interval",
               "legendFormat": "{{ proxy }} / {{ server }}",
               "metric": "",
@@ -4473,7 +4484,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_frontend_failed_header_rewriting_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$frontend\",instance=\"$pod\"}[$__rate_interval])",
+              "expr": "rate(haproxy_frontend_failed_header_rewriting_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$frontend\"}[$__rate_interval])",
               "interval": "$interval",
               "legendFormat": "{{ proxy }}",
               "metric": "",
@@ -4575,7 +4586,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_backend_failed_header_rewriting_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",instance=\"$pod\"}[$__rate_interval])",
+              "expr": "rate(haproxy_backend_failed_header_rewriting_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\"}[$__rate_interval])",
               "interval": "$interval",
               "legendFormat": "{{ proxy }}",
               "metric": "",
@@ -4678,7 +4689,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_server_failed_header_rewriting_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\",instance=\"$pod\"}[$__rate_interval])",
+              "expr": "rate(haproxy_server_failed_header_rewriting_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\"}[$__rate_interval])",
               "interval": "$interval",
               "legendFormat": "{{ proxy }} /  {{ server }}",
               "metric": "",
@@ -4793,7 +4804,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_backend_client_aborts_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",instance=\"$pod\"}[$__rate_interval])",
+              "expr": "rate(haproxy_backend_client_aborts_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\"}[$__rate_interval])",
               "interval": "$interval",
               "legendFormat": "Client {{ proxy }}",
               "metric": "",
@@ -4807,7 +4818,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_backend_server_aborts_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",instance=\"$pod\"}[$__rate_interval])",
+              "expr": "rate(haproxy_backend_server_aborts_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\"}[$__rate_interval])",
               "interval": "$interval",
               "legendFormat": "Server {{ proxy }}",
               "metric": "",
@@ -4923,7 +4934,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_server_client_aborts_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\",instance=\"$pod\"}[$__rate_interval])",
+              "expr": "rate(haproxy_server_client_aborts_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\"}[$__rate_interval])",
               "interval": "$interval",
               "legendFormat": "Client {{ proxy }} / {{ server }}",
               "metric": "",
@@ -4937,7 +4948,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_server_server_aborts_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\",instance=\"$pod\"}[$__rate_interval])",
+              "expr": "rate(haproxy_server_server_aborts_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\"}[$__rate_interval])",
               "interval": "$interval",
               "legendFormat": "Server {{ proxy }} / {{ server }}",
               "metric": "",
@@ -5053,7 +5064,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_backend_connect_time_average_seconds{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",instance=\"$pod\"}",
+              "expr": "haproxy_backend_connect_time_average_seconds{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\"}",
               "interval": "$interval",
               "legendFormat": "{{ proxy }}",
               "metric": "haproxy_backend_current_queue",
@@ -5155,7 +5166,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_backend_total_time_average_seconds{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",instance=\"$pod\"}",
+              "expr": "haproxy_backend_total_time_average_seconds{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\"}",
               "interval": "$interval",
               "legendFormat": "{{ proxy }}",
               "metric": "haproxy_backend_current_queue",
@@ -5257,7 +5268,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_server_connect_time_average_seconds{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\",instance=\"$pod\"}",
+              "expr": "haproxy_server_connect_time_average_seconds{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\"}",
               "interval": "$interval",
               "legendFormat": "{{ proxy }} / {{ server }}",
               "metric": "haproxy_backend_current_queue",
@@ -5359,7 +5370,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_server_total_time_average_seconds{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\",instance=\"$pod\"}",
+              "expr": "haproxy_server_total_time_average_seconds{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\"}",
               "interval": "$interval",
               "legendFormat": "{{ proxy }} / {{ server }}",
               "metric": "haproxy_backend_current_queue",
@@ -5461,7 +5472,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_backend_response_time_average_seconds{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",instance=\"$pod\"}",
+              "expr": "haproxy_backend_response_time_average_seconds{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\"}",
               "interval": "$interval",
               "legendFormat": "{{ proxy }}",
               "metric": "haproxy_backend_current_queue",
@@ -5563,7 +5574,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_backend_queue_time_average_seconds{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",instance=\"$pod\"}",
+              "expr": "haproxy_backend_queue_time_average_seconds{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\"}",
               "interval": "$interval",
               "legendFormat": "{{ proxy }}",
               "metric": "",
@@ -5665,7 +5676,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_server_response_time_average_seconds{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\",instance=\"$pod\"}",
+              "expr": "haproxy_server_response_time_average_seconds{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\"}",
               "interval": "$interval",
               "legendFormat": "{{ proxy }} / {{ server }}",
               "metric": "haproxy_backend_current_queue",
@@ -5767,7 +5778,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_server_queue_time_average_seconds{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\",instance=\"$pod\"}",
+              "expr": "haproxy_server_queue_time_average_seconds{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\"}",
               "interval": "$interval",
               "legendFormat": "{{ proxy }} / {{ server }}",
               "metric": "",
@@ -5883,7 +5894,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_backend_check_up_down_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",instance=\"$pod\"}[$__rate_interval])",
+              "expr": "rate(haproxy_backend_check_up_down_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\"}[$__rate_interval])",
               "interval": "$interval",
               "legendFormat": "{{ proxy }}",
               "metric": "",
@@ -5998,7 +6009,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_backend_weight{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",instance=\"$pod\"}",
+              "expr": "haproxy_backend_weight{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\"}",
               "interval": "$interval",
               "legendFormat": "{{ proxy }}",
               "metric": "",
@@ -6012,7 +6023,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_backend_uweight{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",instance=\"$pod\"} - haproxy_backend_weight{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",instance=\"$pod\"}",
+              "expr": "haproxy_backend_uweight{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\"} - haproxy_backend_weight{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\"}",
               "interval": "$interval",
               "legendFormat": "User diff - {{ proxy }}",
               "metric": "",
@@ -6115,7 +6126,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_server_check_up_down_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\",instance=\"$pod\"}[$__rate_interval])",
+              "expr": "rate(haproxy_server_check_up_down_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\"}[$__rate_interval])",
               "interval": "$interval",
               "legendFormat": "{{ proxy }} / {{ server }}",
               "metric": "",
@@ -6230,7 +6241,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_server_weight{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\",instance=\"$pod\"}",
+              "expr": "haproxy_server_weight{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\"}",
               "interval": "$interval",
               "legendFormat": "{{ proxy }} / {{ server }}",
               "metric": "",
@@ -6244,7 +6255,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_server_uweight{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\",instance=\"$pod\"} - haproxy_server_weight{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\",instance=\"$pod\"}",
+              "expr": "haproxy_server_uweight{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\"} - haproxy_server_weight{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\"}",
               "interval": "$interval",
               "legendFormat": "User diff - {{ proxy }} / {{ server }}",
               "metric": "",
@@ -6347,7 +6358,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_server_check_failures_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\",instance=\"$pod\"}[$__rate_interval])",
+              "expr": "rate(haproxy_server_check_failures_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\"}[$__rate_interval])",
               "interval": "$interval",
               "legendFormat": "{{ proxy }} / {{ server }}",
               "metric": "",
@@ -6449,7 +6460,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_server_check_duration_seconds{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\",instance=\"$pod\"}",
+              "expr": "haproxy_server_check_duration_seconds{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\"}",
               "interval": "$interval",
               "legendFormat": "{{ proxy }} / {{ server }}",
               "metric": "",
@@ -6552,7 +6563,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_server_last_session_seconds{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\",instance=\"$pod\"}",
+              "expr": "haproxy_server_last_session_seconds{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\"}",
               "interval": "$interval",
               "legendFormat": "{{ proxy }} / {{ server }}",
               "metric": "",
@@ -6681,7 +6692,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_frontend_http_cache_lookups_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$frontend\",instance=\"$pod\"}[$__rate_interval])",
+              "expr": "rate(haproxy_frontend_http_cache_lookups_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$frontend\"}[$__rate_interval])",
               "interval": "$interval",
               "legendFormat": "Lookups {{ proxy }} ",
               "metric": "",
@@ -6695,7 +6706,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_frontend_http_cache_hits_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$frontend\",instance=\"$pod\"}[$__rate_interval])",
+              "expr": "rate(haproxy_frontend_http_cache_hits_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$frontend\"}[$__rate_interval])",
               "interval": "$interval",
               "legendFormat": "Hits {{ proxy }} ",
               "metric": "",
@@ -6810,7 +6821,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_backend_http_cache_lookups_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",instance=\"$pod\"}[$__rate_interval])",
+              "expr": "rate(haproxy_backend_http_cache_lookups_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\"}[$__rate_interval])",
               "interval": "$interval",
               "legendFormat": "Lookups {{ proxy }} ",
               "metric": "",
@@ -6824,7 +6835,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_backend_http_cache_hits_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",instance=\"$pod\"}[$__rate_interval])",
+              "expr": "rate(haproxy_backend_http_cache_hits_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\"}[$__rate_interval])",
               "interval": "$interval",
               "legendFormat": "Hits {{ proxy }} ",
               "metric": "",
@@ -6951,7 +6962,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_frontend_http_comp_bytes_in_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$frontend\",instance=\"$pod\"}[$__rate_interval])*8",
+              "expr": "rate(haproxy_frontend_http_comp_bytes_in_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$frontend\"}[$__rate_interval])*8",
               "interval": "$interval",
               "legendFormat": "IN {{ proxy }} ",
               "metric": "",
@@ -6965,7 +6976,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_frontend_http_comp_bytes_out_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$frontend\",instance=\"$pod\"}[$__rate_interval])*8",
+              "expr": "rate(haproxy_frontend_http_comp_bytes_out_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$frontend\"}[$__rate_interval])*8",
               "interval": "$interval",
               "legendFormat": "OUT {{ proxy }} ",
               "metric": "",
@@ -6979,7 +6990,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_frontend_http_comp_bytes_bypassed_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$frontend\",instance=\"$pod\"}[$__rate_interval])*8",
+              "expr": "rate(haproxy_frontend_http_comp_bytes_bypassed_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$frontend\"}[$__rate_interval])*8",
               "interval": "$interval",
               "legendFormat": "Bypass  {{ proxy }} ",
               "metric": "",
@@ -7106,7 +7117,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_backend_http_comp_bytes_in_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",instance=\"$pod\"}[$__rate_interval])*8",
+              "expr": "rate(haproxy_backend_http_comp_bytes_in_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\"}[$__rate_interval])*8",
               "interval": "$interval",
               "legendFormat": "IN {{ proxy }} ",
               "metric": "",
@@ -7120,7 +7131,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_backend_http_comp_bytes_out_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",instance=\"$pod\"}[$__rate_interval])*8",
+              "expr": "rate(haproxy_backend_http_comp_bytes_out_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\"}[$__rate_interval])*8",
               "interval": "$interval",
               "legendFormat": "OUT {{ proxy }} ",
               "metric": "",
@@ -7134,7 +7145,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_backend_http_comp_bytes_bypassed_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",instance=\"$pod\"}[$__rate_interval])*8",
+              "expr": "rate(haproxy_backend_http_comp_bytes_bypassed_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\"}[$__rate_interval])*8",
               "interval": "$interval",
               "legendFormat": "Bypass  {{ proxy }} ",
               "metric": "",
@@ -7236,7 +7247,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_frontend_http_comp_responses_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$frontend\",instance=\"$pod\"}[$__rate_interval])",
+              "expr": "rate(haproxy_frontend_http_comp_responses_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$frontend\"}[$__rate_interval])",
               "interval": "$interval",
               "legendFormat": "{{ proxy }} ",
               "metric": "",
@@ -7339,7 +7350,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_backend_http_comp_responses_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",instance=\"$pod\"}[$__rate_interval])",
+              "expr": "rate(haproxy_backend_http_comp_responses_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\"}[$__rate_interval])",
               "interval": "$interval",
               "legendFormat": "{{ proxy }} ",
               "metric": "",
@@ -7468,7 +7479,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_frontend_status{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$frontend\",instance=\"$pod\",state=\"UP\"}",
+              "expr": "haproxy_frontend_status{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$frontend\",state=\"UP\"}",
               "interval": "$interval",
               "legendFormat": "{{ proxy }} ",
               "metric": "",
@@ -7583,7 +7594,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_backend_status{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",instance=\"$pod\",state=\"UP\"}",
+              "expr": "haproxy_backend_status{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",state=\"UP\"}",
               "interval": "$interval",
               "legendFormat": "{{ proxy }} ",
               "metric": "",
@@ -7701,7 +7712,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_server_status{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\",instance=\"$pod\",state=\"UP\"}",
+              "expr": "haproxy_server_status{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\",state=\"UP\"}",
               "interval": "$interval",
               "legendFormat": "{{ proxy }} / {{ server }}",
               "metric": "",
@@ -7808,7 +7819,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_server_status{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\",instance=\"$pod\",state!~\"UP|DOWN\"}",
+              "expr": "haproxy_server_status{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",server=~\"$server\",state!~\"UP|DOWN\"}",
               "interval": "$interval",
               "legendFormat": "{{ proxy }} / {{ server }} - {{state}}",
               "metric": "",
@@ -7910,7 +7921,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_frontend_internal_errors_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$frontend\",instance=\"$pod\"}[$__rate_interval])",
+              "expr": "rate(haproxy_frontend_internal_errors_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$frontend\"}[$__rate_interval])",
               "interval": "$interval",
               "legendFormat": "{{ proxy }}",
               "metric": "",
@@ -8012,7 +8023,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_backend_internal_errors_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",instance=\"$pod\"}[$__rate_interval])",
+              "expr": "rate(haproxy_backend_internal_errors_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\"}[$__rate_interval])",
               "interval": "$interval",
               "legendFormat": "{{ proxy }}",
               "metric": "",
@@ -8113,7 +8124,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_server_internal_errors_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",instance=\"$pod\"}[$__rate_interval])",
+              "expr": "rate(haproxy_server_internal_errors_total{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\"}[$__rate_interval])",
               "interval": "$interval",
               "legendFormat": "{{ proxy }} / {{ server }}",
               "metric": "",
@@ -8123,121 +8134,6 @@
             }
           ],
           "title": "Server - Internal errors",
-          "type": "timeseries"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisBorderShow": false,
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "barWidthFactor": 0.6,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "insertNulls": false,
-                "lineInterpolation": "linear",
-                "lineWidth": 2,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "never",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "links": [],
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green"
-                  }
-                ]
-              },
-              "unit": "short"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 11,
-            "w": 12,
-            "x": 0,
-            "y": 16372
-          },
-          "id": 173,
-          "options": {
-            "legend": {
-              "calcs": [
-                "min",
-                "mean",
-                "max"
-              ],
-              "displayMode": "table",
-              "placement": "bottom",
-              "showLegend": true
-            },
-            "tooltip": {
-              "hideZeros": false,
-              "mode": "multi",
-              "sort": "desc"
-            }
-          },
-          "pluginVersion": "11.6.1",
-          "targets": [
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
-              },
-              "editorMode": "code",
-              "expr": "haproxy_sticktable_size{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",instance=\"$pod\"}",
-              "interval": "$interval",
-              "legendFormat": "{{ proxy }}",
-              "metric": "",
-              "range": true,
-              "refId": "A",
-              "step": 240
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
-              },
-              "editorMode": "code",
-              "expr": "haproxy_sticktable_used{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",instance=\"$pod\"}",
-              "interval": "$interval",
-              "legendFormat": "{{ proxy }}",
-              "metric": "",
-              "range": true,
-              "refId": "B",
-              "step": 240
-            }
-          ],
-          "title": "Sticktable usage",
           "type": "timeseries"
         },
         {
@@ -8329,7 +8225,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_backend_active_servers{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",instance=\"$pod\"}",
+              "expr": "haproxy_backend_active_servers{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\"}",
               "interval": "$interval",
               "legendFormat": "{{ proxy }}",
               "metric": "",
@@ -8430,7 +8326,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_backend_backup_servers{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\",instance=\"$pod\"}",
+              "expr": "haproxy_backend_backup_servers{namespace=~\"$namespace\",pod=~\"$pod\",proxy=~\"$backend\"}",
               "interval": "",
               "legendFormat": "{{ proxy }}",
               "range": true,
@@ -8574,7 +8470,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_process_max_connection_rate{namespace=~\"$namespace\",pod=~\"$pod\",instance=\"$pod\"}",
+              "expr": "haproxy_process_max_connection_rate{namespace=~\"$namespace\",pod=~\"$pod\"}",
               "interval": "$interval",
               "legendFormat": "Highest ConnRate reached on this worker process since started (in connections per second)",
               "metric": "",
@@ -8588,7 +8484,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_process_limit_connection_rate{namespace=~\"$namespace\",pod=~\"$pod\",instance=\"$pod\"}",
+              "expr": "haproxy_process_limit_connection_rate{namespace=~\"$namespace\",pod=~\"$pod\"}",
               "interval": "$interval",
               "legendFormat": "Hard limit for ConnRate (global.maxconnrate)",
               "metric": "",
@@ -8720,7 +8616,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_process_current_connections{namespace=~\"$namespace\",pod=~\"$pod\",instance=\"$pod\"}",
+              "expr": "haproxy_process_current_connections{namespace=~\"$namespace\",pod=~\"$pod\"}",
               "interval": "$interval",
               "legendFormat": "Current number of connections on this worker process",
               "metric": "",
@@ -8734,7 +8630,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_process_hard_max_connections{namespace=~\"$namespace\",pod=~\"$pod\",instance=\"$pod\"}",
+              "expr": "haproxy_process_hard_max_connections{namespace=~\"$namespace\",pod=~\"$pod\"}",
               "interval": "$interval",
               "legendFormat": "Hard limit on the number of per-process connections (imposed by Memmax_MB or ulimit -n)",
               "metric": "",
@@ -8865,7 +8761,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_process_max_session_rate{namespace=~\"$namespace\",pod=~\"$pod\",instance=\"$pod\"}",
+              "expr": "haproxy_process_max_session_rate{namespace=~\"$namespace\",pod=~\"$pod\"}",
               "interval": "$interval",
               "legendFormat": "Highest SessRate reached on this worker process since started (in sessions per second)",
               "metric": "",
@@ -8879,7 +8775,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_process_limit_session_rate{namespace=~\"$namespace\",pod=~\"$pod\",instance=\"$pod\"}",
+              "expr": "haproxy_process_limit_session_rate{namespace=~\"$namespace\",pod=~\"$pod\"}",
               "interval": "$interval",
               "legendFormat": "Hard limit for SessRate (global.maxsessrate)",
               "metric": "",
@@ -9015,7 +8911,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_process_max_ssl_rate{namespace=~\"$namespace\",pod=~\"$pod\",instance=\"$pod\"}",
+              "expr": "haproxy_process_max_ssl_rate{namespace=~\"$namespace\",pod=~\"$pod\"}",
               "interval": "$interval",
               "legendFormat": "Highest ConnRate reached on this worker process since started (in connections per second)",
               "metric": "",
@@ -9029,7 +8925,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_process_limit_ssl_rate{namespace=~\"$namespace\",pod=~\"$pod\",instance=\"$pod\"}",
+              "expr": "haproxy_process_limit_ssl_rate{namespace=~\"$namespace\",pod=~\"$pod\"}",
               "interval": "$interval",
               "legendFormat": "Hard limit for SslRate (global.maxsslrate)",
               "metric": "",
@@ -9165,7 +9061,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_process_current_ssl_connections{namespace=~\"$namespace\",pod=~\"$pod\",instance=\"$pod\"}",
+              "expr": "haproxy_process_current_ssl_connections{namespace=~\"$namespace\",pod=~\"$pod\"}",
               "interval": "$interval",
               "legendFormat": "SSL endpoints",
               "metric": "",
@@ -9179,7 +9075,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_process_max_ssl_connections{namespace=~\"$namespace\",pod=~\"$pod\",instance=\"$pod\"}",
+              "expr": "haproxy_process_max_ssl_connections{namespace=~\"$namespace\",pod=~\"$pod\"}",
               "interval": "$interval",
               "legendFormat": "Hard limit  SSL endpoints",
               "metric": "",
@@ -9305,7 +9201,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_process_current_frontend_ssl_key_rate{namespace=~\"$namespace\",pod=~\"$pod\",instance=\"$pod\"}",
+              "expr": "haproxy_process_current_frontend_ssl_key_rate{namespace=~\"$namespace\",pod=~\"$pod\"}",
               "interval": "$interval",
               "legendFormat": "SSL keys created on frontends",
               "metric": "",
@@ -9319,7 +9215,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_process_current_backend_ssl_key_rate{namespace=~\"$namespace\",pod=~\"$pod\",instance=\"$pod\"}",
+              "expr": "haproxy_process_current_backend_ssl_key_rate{namespace=~\"$namespace\",pod=~\"$pod\"}",
               "interval": "$interval",
               "legendFormat": "SSL keys created on backend",
               "metric": "",
@@ -9445,7 +9341,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_process_ssl_cache_lookups_total{namespace=~\"$namespace\",pod=~\"$pod\",instance=\"$pod\"}[$__rate_interval])",
+              "expr": "rate(haproxy_process_ssl_cache_lookups_total{namespace=~\"$namespace\",pod=~\"$pod\"}[$__rate_interval])",
               "interval": "$interval",
               "legendFormat": "Lookups",
               "metric": "",
@@ -9459,7 +9355,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_process_ssl_cache_misses_total{namespace=~\"$namespace\",pod=~\"$pod\",instance=\"$pod\"}[$__rate_interval])",
+              "expr": "rate(haproxy_process_ssl_cache_misses_total{namespace=~\"$namespace\",pod=~\"$pod\"}[$__rate_interval])",
               "interval": "$interval",
               "legendFormat": "Miss",
               "metric": "",
@@ -9473,7 +9369,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_process_ssl_connections_total{namespace=~\"$namespace\",pod=~\"$pod\",instance=\"$pod\"}[$__rate_interval])",
+              "expr": "rate(haproxy_process_ssl_connections_total{namespace=~\"$namespace\",pod=~\"$pod\"}[$__rate_interval])",
               "interval": "$interval",
               "legendFormat": "SSL Connections",
               "metric": "",
@@ -9574,7 +9470,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_process_frontend_ssl_reuse{namespace=~\"$namespace\",pod=~\"$pod\",instance=\"$pod\"}",
+              "expr": "haproxy_process_frontend_ssl_reuse{namespace=~\"$namespace\",pod=~\"$pod\"}",
               "interval": "$interval",
               "legendFormat": "Frontend SSL connections which did not require a new key",
               "metric": "",
@@ -9710,7 +9606,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_process_current_zlib_memory{namespace=~\"$namespace\",pod=~\"$pod\",instance=\"$pod\"}",
+              "expr": "haproxy_process_current_zlib_memory{namespace=~\"$namespace\",pod=~\"$pod\"}",
               "interval": "$interval",
               "legendFormat": "Amount of memory currently used by HTTP compression",
               "metric": "",
@@ -9724,7 +9620,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_process_max_zlib_memory{namespace=~\"$namespace\",pod=~\"$pod\",instance=\"$pod\"}",
+              "expr": "haproxy_process_max_zlib_memory{namespace=~\"$namespace\",pod=~\"$pod\"}",
               "interval": "$interval",
               "legendFormat": "Limit memory used by HTTP compression,  above is auto disabled (in bytes, see global.maxzlibmem)",
               "metric": "",
@@ -9856,7 +9752,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_process_failed_resolutions{namespace=~\"$namespace\",pod=~\"$pod\",instance=\"$pod\"}[$__rate_interval])",
+              "expr": "rate(haproxy_process_failed_resolutions{namespace=~\"$namespace\",pod=~\"$pod\"}[$__rate_interval])",
               "interval": "$interval",
               "legendFormat": "Total number of failed DNS resolutions in current worker process since started",
               "metric": "",
@@ -9998,7 +9894,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_process_max_pipes{namespace=~\"$namespace\",pod=~\"$pod\",instance=\"$pod\"}",
+              "expr": "haproxy_process_max_pipes{namespace=~\"$namespace\",pod=~\"$pod\"}",
               "interval": "$interval",
               "legendFormat": "Hard limit on the number of pipes for splicing, 0=unlimited",
               "metric": "",
@@ -10012,7 +9908,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_process_pipes_used_total{namespace=~\"$namespace\",pod=~\"$pod\",instance=\"$pod\"}[$__rate_interval])",
+              "expr": "rate(haproxy_process_pipes_used_total{namespace=~\"$namespace\",pod=~\"$pod\"}[$__rate_interval])",
               "interval": "$interval",
               "legendFormat": "Used pipes",
               "metric": "",
@@ -10026,7 +9922,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_process_pipes_free_total{namespace=~\"$namespace\",pod=~\"$pod\",instance=\"$pod\"}[$__rate_interval])",
+              "expr": "rate(haproxy_process_pipes_free_total{namespace=~\"$namespace\",pod=~\"$pod\"}[$__rate_interval])",
               "interval": "$interval",
               "legendFormat": "Free pipes",
               "metric": "",
@@ -10128,7 +10024,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_process_listeners{namespace=~\"$namespace\",pod=~\"$pod\",instance=\"$pod\"}",
+              "expr": "haproxy_process_listeners{namespace=~\"$namespace\",pod=~\"$pod\"}",
               "interval": "$interval",
               "legendFormat": "Current number of active listeners",
               "metric": "",
@@ -10259,7 +10155,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_process_max_memory_bytes{namespace=~\"$namespace\",pod=~\"$pod\",instance=\"$pod\"}",
+              "expr": "haproxy_process_max_memory_bytes{namespace=~\"$namespace\",pod=~\"$pod\"}",
               "interval": "$interval",
               "legendFormat": "Memory limit; 0=unset",
               "metric": "",
@@ -10273,7 +10169,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_process_pool_allocated_bytes{namespace=~\"$namespace\",pod=~\"$pod\",instance=\"$pod\"}",
+              "expr": "haproxy_process_pool_allocated_bytes{namespace=~\"$namespace\",pod=~\"$pod\"}",
               "interval": "$interval",
               "legendFormat": "Memory allocated in pools",
               "metric": "",
@@ -10287,7 +10183,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_process_pool_used_bytes{namespace=~\"$namespace\",pod=~\"$pod\",instance=\"$pod\"}",
+              "expr": "haproxy_process_pool_used_bytes{namespace=~\"$namespace\",pod=~\"$pod\"}",
               "interval": "$interval",
               "legendFormat": "Memory used in pools",
               "metric": "",
@@ -10389,7 +10285,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_process_pool_failures_total{namespace=~\"$namespace\",pod=~\"$pod\",instance=\"$pod\"}[$__rate_interval])",
+              "expr": "rate(haproxy_process_pool_failures_total{namespace=~\"$namespace\",pod=~\"$pod\"}[$__rate_interval])",
               "interval": "$interval",
               "legendFormat": "Failed pool allocations",
               "metric": "",
@@ -10491,7 +10387,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_process_jobs{namespace=~\"$namespace\",pod=~\"$pod\",instance=\"$pod\"}",
+              "expr": "haproxy_process_jobs{namespace=~\"$namespace\",pod=~\"$pod\"}",
               "interval": "$interval",
               "legendFormat": "Current number of active jobs (listeners, sessions, open devices)",
               "metric": "",
@@ -10505,7 +10401,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_process_unstoppable_jobs{namespace=~\"$namespace\",pod=~\"$pod\",instance=\"$pod\"}",
+              "expr": "haproxy_process_unstoppable_jobs{namespace=~\"$namespace\",pod=~\"$pod\"}",
               "interval": "$interval",
               "legendFormat": "Current number of active jobs that can't be stopped during a soft stop",
               "metric": "",
@@ -10606,7 +10502,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_process_nbthread{namespace=~\"$namespace\",pod=~\"$pod\",instance=\"$pod\"}",
+              "expr": "haproxy_process_nbthread{namespace=~\"$namespace\",pod=~\"$pod\"}",
               "interval": "$interval",
               "legendFormat": "Threads",
               "metric": "",
@@ -10620,7 +10516,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_process_nbproc{namespace=~\"$namespace\",pod=~\"$pod\",instance=\"$pod\"}",
+              "expr": "haproxy_process_nbproc{namespace=~\"$namespace\",pod=~\"$pod\"}",
               "interval": "$interval",
               "legendFormat": "Processes",
               "metric": "",
@@ -10721,7 +10617,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_process_dropped_logs_total{namespace=~\"$namespace\",pod=~\"$pod\",instance=\"$pod\"}[$__rate_interval])",
+              "expr": "rate(haproxy_process_dropped_logs_total{namespace=~\"$namespace\",pod=~\"$pod\"}[$__rate_interval])",
               "interval": "$interval",
               "legendFormat": "Total number of dropped logs",
               "metric": "",
@@ -10735,7 +10631,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "rate(haproxy_process_recv_logs_total{namespace=~\"$namespace\",pod=~\"$pod\",instance=\"$pod\"}[$__rate_interval])",
+              "expr": "rate(haproxy_process_recv_logs_total{namespace=~\"$namespace\",pod=~\"$pod\"}[$__rate_interval])",
               "interval": "$interval",
               "legendFormat": "Total number of log messages received by log-forwarding listeners",
               "metric": "",
@@ -10836,7 +10732,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_process_active_peers{namespace=~\"$namespace\",pod=~\"$pod\",instance=\"$pod\"}",
+              "expr": "haproxy_process_active_peers{namespace=~\"$namespace\",pod=~\"$pod\"}",
               "interval": "$interval",
               "legendFormat": "Active peers",
               "metric": "",
@@ -10850,7 +10746,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_process_connected_peers{namespace=~\"$namespace\",pod=~\"$pod\",instance=\"$pod\"}",
+              "expr": "haproxy_process_connected_peers{namespace=~\"$namespace\",pod=~\"$pod\"}",
               "interval": "$interval",
               "legendFormat": "Connected peers",
               "metric": "",
@@ -10951,7 +10847,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_process_current_tasks{namespace=~\"$namespace\",pod=~\"$pod\",instance=\"$pod\"}",
+              "expr": "haproxy_process_current_tasks{namespace=~\"$namespace\",pod=~\"$pod\"}",
               "interval": "$interval",
               "legendFormat": "Total number of tasks in the current worker process (active + sleeping)",
               "metric": "",
@@ -10965,7 +10861,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_process_current_run_queue{namespace=~\"$namespace\",pod=~\"$pod\",instance=\"$pod\"}",
+              "expr": "haproxy_process_current_run_queue{namespace=~\"$namespace\",pod=~\"$pod\"}",
               "interval": "$interval",
               "legendFormat": "Total number of active tasks+tasklets in the current worker process",
               "metric": "",
@@ -11067,7 +10963,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_process_idle_time_percent{namespace=~\"$namespace\",pod=~\"$pod\",instance=\"$pod\"}",
+              "expr": "haproxy_process_idle_time_percent{namespace=~\"$namespace\",pod=~\"$pod\"}",
               "interval": "$interval",
               "legendFormat": "Idle to total ratio over last sample (percent)",
               "metric": "",
@@ -11081,7 +10977,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_process_stopping{namespace=~\"$namespace\",pod=~\"$pod\",instance=\"$pod\"}",
+              "expr": "haproxy_process_stopping{namespace=~\"$namespace\",pod=~\"$pod\"}",
               "interval": "$interval",
               "legendFormat": "Non zero means stopping in progress",
               "metric": "",
@@ -11182,7 +11078,7 @@
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "haproxy_process_uptime_seconds{namespace=~\"$namespace\",pod=~\"$pod\",instance=\"$pod\"}",
+              "expr": "haproxy_process_uptime_seconds{namespace=~\"$namespace\",pod=~\"$pod\"}",
               "interval": "$interval",
               "legendFormat": "How long ago this worker process was started",
               "metric": "",
@@ -11405,8 +11301,8 @@
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "HAProxy",
-  "uid": "rEqu1u5ue",
+  "title": "HAProxy Ingress Controller",
+  "uid": "EWvdW26dZ",
   "version": 26,
   "weekStart": "",
   "gnetId": 12693
