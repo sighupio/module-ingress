@@ -2,18 +2,31 @@
 
 Welcome to the latest release of `Ingress` module of [`SIGHUP Distribution`](https://github.com/sighupio/fury-distribution) maintained by team SIGHUP.
 
-## Component versions 🚢
+This release is for: CVSS Rating: 8.8 (Medium) CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H
 
-| Component          | Supported Version | Previous Version |
-| ------------------ | ----------------- | :--------------: |
+A security issue was discovered in ingress-nginx where a combination of Ingress annotations can be used to inject configuration into nginx. This can lead to arbitrary code execution in the context of the ingress-nginx controller, and disclosure of Secrets accessible to the controller.
 
-## New features 🎉
+## Component Images 🚢
 
-## Breaking changes 💔
+| Component          | Supported Version                                                                        | Previous Version |
+| ------------------ | ---------------------------------------------------------------------------------------- | :--------------: |
+| `aws-cert-manager` | N.A.                                                                                     |   `No update`    |
+| `aws-external-dns` | N.A.                                                                                     |   `No update`    |
+| `cert-manager`     | [`v1.19.2`](https://cert-manager.io/docs/releases/release-notes/release-notes-1.19/)     |    `No update`     |
+| `dual-nginx`       | [`v1.14.3`](https://github.com/kubernetes/ingress-nginx/releases/tag/controller-v1.14.3) |    `No update`     |
+| `external-dns`     | [`v0.20.0`](https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.20.0)        |    `No update`     |
+| `forecastle`       | [`v1.0.159`](https://github.com/stakater/Forecastle/releases/tag/v1.0.159)               |    `No update`    |
+| `haproxy`          | [`v3.2.4`](https://github.com/haproxytech/kubernetes-ingress/releases/tag/v3.2.4)        |      `No update`       |
+| `nginx`            | [`v1.15.1`](https://github.com/kubernetes/ingress-nginx/releases/tag/controller-v1.15.1) |    `v1.14.3`     |
 
-## Kubernetes support 🚢
+> Please refer the individual release notes to get a more detailed information on each release.
 
-| Kubernetes Version |   Compatibility    | Notes           |
-| ------------------ | :----------------: | --------------- |
+## Update Guide 🦮
 
-## Upgrade Guide 🦮
+### Process
+
+To upgrade this core module from `v5.0.0` to `v5.0.1`, you need to download this new version, and apply the instructions below.
+
+```bash
+kustomize build <your-project-path> | kubectl apply -f -
+```
