@@ -2,9 +2,10 @@
 
 Welcome to the latest release of `Ingress` module of [`SIGHUP Distribution`](https://github.com/sighupio/fury-distribution) maintained by team SIGHUP.
 
-This release is for: CVSS Rating: 8.8 (Medium) CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H
+This release addresses two security vulnerabilities in ingress-nginx where a combination of Ingress annotations can be used to inject configuration into nginx, leading to arbitrary code execution in the context of the ingress-nginx controller and disclosure of Secrets accessible to the controller.
 
-A security issue was discovered in ingress-nginx where a combination of Ingress annotations can be used to inject configuration into nginx. This can lead to arbitrary code execution in the context of the ingress-nginx controller, and disclosure of Secrets accessible to the controller.
+- [CVE-2026-4342](https://groups.google.com/g/kubernetes-security-announce/c/E9bLHAD6-eg): ingress-nginx comment-based nginx configuration injection (CVSS 8.8 - CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H)
+- [CVE-2026-3288](https://groups.google.com/g/kubernetes-security-announce/c/hIAkgZb8MJ0): ingress-nginx rewrite-target nginx configuration injection (CVSS 8.8 - CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H)
 
 ## Component Images 🚢
 
