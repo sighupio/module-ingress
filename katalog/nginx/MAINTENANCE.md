@@ -1,8 +1,8 @@
 # Ingress NGINX controller package maintenance guide
 
-**Current Version**: v1.14.3 (Helm Chart 4.14.3)
+**Current Version**: v1.15.1 (Helm Chart 4.15.1)
 **Previous Version**: v1.14.1 (Helm Chart 4.14.1)
-**Last Updated**: February 2026
+**Last Updated**: April 2026
 
 To update Ingress NGINX controller, follow the next steps (or update and use the [upgrade.sh](./upgrade.sh) script to automate it):
 
