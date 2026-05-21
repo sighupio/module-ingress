@@ -1,8 +1,16 @@
 # Ingress NGINX controller package maintenance guide
 
-**Current Version**: v1.15.1 (Helm Chart 4.15.1)
-**Previous Version**: v1.14.1 (Helm Chart 4.14.1)
-**Last Updated**: April 2026
+**Current Version**: v1.15.5-chainguard (Helm Chart 4.15.5)
+**Previous Version**: v1.15.1 (Helm Chart 4.15.1)
+**Last Updated**: May 2026
+
+> ℹ️ **Image source**: starting from `v1.15.5-chainguard`, the controller image is
+> built in-house from the Chainguard-maintained fork ([`chainguard-forks/ingress-nginx`](https://github.com/chainguard-forks/ingress-nginx))
+> through the [`container-image-sync`](https://github.com/sighupio/container-image-sync) repository
+> (see `modules/chainguard-forks/` there). The upstream `kubernetes/ingress-nginx`
+> project is archived; the upgrade procedure below still uses the upstream Helm
+> chart as a template for the Kubernetes manifests but the controller image tag
+> tracked here follows fork releases (`controller-vX.Y.Z` tags on the fork).
 
 To update Ingress NGINX controller, follow the next steps (or update and use the [upgrade.sh](./upgrade.sh) script to automate it):
 
@@ -20,12 +28,12 @@ kustomize build . > current-release.yaml
 
 ## Upgrade files
 
-1. Go to the [ingress NGINX controller repository](https://github.com/kubernetes/ingress-nginx/) and check the latest release.
+1. Go to the [ingress NGINX controller repository (Chainguard fork)](https://github.com/chainguard-forks/ingress-nginx/) and check the latest release. The fork uses the same `controller-vX.Y.Z` tag scheme as the (archived) [upstream](https://github.com/kubernetes/ingress-nginx/).
 
 > 💡 TIP
 > Controller releases are published as `controller-vX.Y.Z` tags and chart releases with `helm-chart-X.Y.Z`.
 >
-> You can also find a compatibility table in the project's [main README file](https://github.com/kubernetes/ingress-nginx?tab=readme-ov-file#supported-versions-table).
+> The upstream `kubernetes/ingress-nginx` compatibility table ([main README](https://github.com/kubernetes/ingress-nginx?tab=readme-ov-file#supported-versions-table)) is no longer maintained since the upstream archive; the fork may publish its own — verify at each bump.
 
 1. Helm template the content using the following command:
 

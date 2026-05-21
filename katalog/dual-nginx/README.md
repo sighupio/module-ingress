@@ -12,8 +12,9 @@ Ingress NGINX is an Ingress Controller for [NGINX][nginx-page] webserver and rev
 
 ## Image repository and tag
 
-- Ingress NGINX image: `k8s.gcr.io/ingress-nginx/controller:v1.15.1`
-- Ingress NGINX repo: [https://github.com/kubernetes/ingress-nginx](https://github.com/kubernetes/ingress-nginx)
+- Ingress NGINX image: `registry.sighup.io/fury/ingress-nginx/controller:v1.15.5-chainguard` (built in-house from the Chainguard-maintained fork)
+- Ingress NGINX upstream repo (archived): [https://github.com/kubernetes/ingress-nginx](https://github.com/kubernetes/ingress-nginx)
+- Ingress NGINX fork repo (maintained): [https://github.com/chainguard-forks/ingress-nginx](https://github.com/chainguard-forks/ingress-nginx)
 
 ## Configuration
 

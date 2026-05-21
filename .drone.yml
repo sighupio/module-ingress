@@ -62,7 +62,7 @@ steps:
       - render
     commands:
       # we use --ignore-deprecations because we don't want the CI to fail when the API has not been removed yet.
-      - /pluto detect $${KUBERNETES_MANIFESTS} --ignore-deprecations --target-versions=k8s=v1.34.0
+      - /pluto detect $${KUBERNETES_MANIFESTS} --ignore-deprecations --target-versions=k8s=v1.35.0
     environment:
       KUBERNETES_MANIFESTS: cert-manager.yml
 
@@ -163,7 +163,7 @@ steps:
         path: /mise-data
     commands:
       - |
-        mise use bats@1.1.0 kubectl@$${KUBECTL_VERSION} kustomize@5.6.0
+        mise use bats@1.11.0 kubectl@$${KUBECTL_VERSION} kustomize@5.6.0
         eval "$(mise activate bash --shims)"
       - . ./env-$${CLUSTER_NAME}.env
       - until kubectl get serviceaccount default > /dev/null 2>&1; do echo "waiting for control-plane" && sleep 1; done
@@ -270,7 +270,7 @@ steps:
         path: /mise-data
     commands:
       - |
-        mise use bats@1.1.0 kubectl@$${KUBECTL_VERSION} kustomize@5.6.0
+        mise use bats@1.11.0 kubectl@$${KUBECTL_VERSION} kustomize@5.6.0
         eval "$(mise activate bash --shims)"
       - . ./env-$${CLUSTER_NAME}.env
       - until kubectl get serviceaccount default > /dev/null 2>&1; do echo "waiting for control-plane" && sleep 1; done
@@ -377,7 +377,7 @@ steps:
         path: /mise-data
     commands:
       - |
-        mise use bats@1.1.0 kubectl@$${KUBECTL_VERSION} kustomize@5.6.0
+        mise use bats@1.11.0 kubectl@$${KUBECTL_VERSION} kustomize@5.6.0
         eval "$(mise activate bash --shims)"
       - . ./env-$${CLUSTER_NAME}.env
       - until kubectl get serviceaccount default > /dev/null 2>&1; do echo "waiting for control-plane" && sleep 1; done
@@ -484,7 +484,7 @@ steps:
         path: /mise-data
     commands:
       - |
-        mise use bats@1.1.0 kubectl@$${KUBECTL_VERSION} kustomize@5.6.0
+        mise use bats@1.11.0 kubectl@$${KUBECTL_VERSION} kustomize@5.6.0
         eval "$(mise activate bash --shims)"
       - . ./env-$${CLUSTER_NAME}.env
       - until kubectl get serviceaccount default > /dev/null 2>&1; do echo "waiting for control-plane" && sleep 1; done
@@ -556,7 +556,7 @@ steps:
       MISE_DATA_DIR: /mise-data
       MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
       KIND_VERSION: "0.31.0"
-      KUBECTL_VERSION: "1.35.0"
+      KUBECTL_VERSION: "1.35.5"
       CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.35.0
       GITHUB_TOKEN:
         from_secret: github_token
@@ -581,7 +581,7 @@ steps:
     environment:
       MISE_DATA_DIR: /mise-data
       MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
-      KUBECTL_VERSION: "1.35.0"
+      KUBECTL_VERSION: "1.35.5"
       KUBECONFIG: ./kubeconfig-${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.35.0
       CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.35.0
       GITHUB_TOKEN:
@@ -591,7 +591,7 @@ steps:
         path: /mise-data
     commands:
       - |
-        mise use bats@1.1.0 kubectl@$${KUBECTL_VERSION} kustomize@5.6.0
+        mise use bats@1.11.0 kubectl@$${KUBECTL_VERSION} kustomize@5.6.0
         eval "$(mise activate bash --shims)"
       - . ./env-$${CLUSTER_NAME}.env
       - until kubectl get serviceaccount default > /dev/null 2>&1; do echo "waiting for control-plane" && sleep 1; done
@@ -606,7 +606,7 @@ steps:
       MISE_DATA_DIR: /mise-data
       MISE_OVERRIDE_CONFIG_FILENAMES: "mise.ci.toml"
       KIND_VERSION: "0.31.0"
-      KUBECTL_VERSION: "1.35.0"
+      KUBECTL_VERSION: "1.35.5"
       CLUSTER_NAME: ${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-1.35.0
       GITHUB_TOKEN:
         from_secret: github_token
