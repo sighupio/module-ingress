@@ -12,8 +12,8 @@ metadata:
   labels:
     app.kubernetes.io/name: kubernetes-ingress
     app.kubernetes.io/instance: haproxy-ingress
-    helm.sh/chart: kubernetes-ingress-1.47.4
-    app.kubernetes.io/version: "3.2.4"
+    helm.sh/chart: kubernetes-ingress-1.51.1
+    app.kubernetes.io/version: "3.2.8"
     app.kubernetes.io/managed-by: Helm
 spec:
   minReadySeconds: 0
@@ -41,7 +41,7 @@ spec:
         runAsGroup: 1000
       containers:
         - name: kubernetes-ingress-controller
-          image: "registry.sighup.io/fury/haproxytech/kubernetes-ingress:3.2.4"
+          image: "registry.sighup.io/fury/haproxytech/kubernetes-ingress:3.2.8"
           imagePullPolicy: Always
           args:
             - --default-ssl-certificate=ingress-haproxy/haproxy-ingress-default-cert
@@ -53,9 +53,6 @@ spec:
             - --log=info
             - --prometheus
           securityContext:
-            runAsNonRoot: true
-            runAsUser: 1000
-            runAsGroup: 1000
             allowPrivilegeEscalation: false
             capabilities:
               drop:

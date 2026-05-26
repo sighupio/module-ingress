@@ -22,5 +22,8 @@ resources:
   - Service-haproxy-ingress-admin.yaml
   - ServiceMonitor-haproxy-ingress.yaml
   - IngressClass-haproxy.yaml
-  - Job-haproxy-ingress-crdjob-1.yaml
+  - ServiceAccount-haproxy-ingress-crdjob.yaml
+  - ClusterRole-haproxy-ingress-crdjob.yaml
+  - ClusterRoleBinding-haproxy-ingress-crdjob.yaml
+  - Job-haproxy-ingress-crdjob.yaml
   - ../common

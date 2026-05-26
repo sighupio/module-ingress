@@ -17,7 +17,10 @@ resources:
   - Service-haproxy-ingress-external-metrics.yaml
   - ServiceMonitor-haproxy-ingress-external.yaml
   - IngressClass-haproxy-external.yaml
-  - Job-haproxy-ingress-external-crdjob-1.yaml
+  - ServiceAccount-haproxy-ingress-external-crdjob.yaml
+  - ClusterRole-haproxy-ingress-external-crdjob.yaml
+  - ClusterRoleBinding-haproxy-ingress-external-crdjob.yaml
+  - Job-haproxy-ingress-external-crdjob.yaml
 
 patches:
   - target:
