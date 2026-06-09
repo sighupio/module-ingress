@@ -4,7 +4,7 @@
 # license that can be found in the LICENSE file.
 
 # Remember to change the helm chart version
-VERSION=1.47.4
+VERSION=1.51.1
 
 CHART_REPO="https://haproxytech.github.io/helm-charts"
 CHART_NAME="kubernetes-ingress"

@@ -7,34 +7,39 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: haproxy-ingress-internal-crdjob-1
+  name: haproxy-ingress-external-crdjob
   namespace: ingress-haproxy
   labels:
-    app.kubernetes.io/name: haproxy-ingress-internal-proxy
+    app.kubernetes.io/name: haproxy-ingress-external-proxy
     app.kubernetes.io/instance: haproxy-ingress
-    helm.sh/chart: kubernetes-ingress-1.47.4
-    app.kubernetes.io/version: "3.2.4"
+    helm.sh/chart: kubernetes-ingress-1.51.1
+    app.kubernetes.io/version: "3.2.8"
     app.kubernetes.io/managed-by: Helm
+  annotations:
+    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded
+    helm.sh/hook: post-install,pre-upgrade
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
 spec:
   ttlSecondsAfterFinished: 600
   backoffLimit: 0
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: haproxy-ingress-internal-proxy
+        app.kubernetes.io/name: haproxy-ingress-external-proxy
         app.kubernetes.io/instance: haproxy-ingress
         k8s-app: haproxy-ingress
-        type: internal
+        type: external
     spec:
       restartPolicy: Never
-      serviceAccountName: haproxy-ingress
+      serviceAccountName: haproxy-ingress-external-crdjob
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
         runAsGroup: 1000
       containers:
         - name: crd
-          image: "registry.sighup.io/fury/haproxytech/kubernetes-ingress:3.2.4"
+          image: "registry.sighup.io/fury/haproxytech/kubernetes-ingress:3.2.8"
           imagePullPolicy: Always
           command:
             - /haproxy-ingress-controller

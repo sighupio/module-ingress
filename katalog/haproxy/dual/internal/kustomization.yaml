@@ -22,7 +22,10 @@ resources:
   - Service-haproxy-ingress-internal-metrics.yaml
   - ServiceMonitor-haproxy-ingress-internal.yaml
   - IngressClass-haproxy-internal.yaml
-  - Job-haproxy-ingress-internal-crdjob-1.yaml
+  - ServiceAccount-haproxy-ingress-internal-crdjob.yaml
+  - ClusterRole-haproxy-ingress-internal-crdjob.yaml
+  - ClusterRoleBinding-haproxy-ingress-internal-crdjob.yaml
+  - Job-haproxy-ingress-internal-crdjob.yaml
 
 patches:
   - target:

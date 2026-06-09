@@ -12,11 +12,31 @@ resources:
   - ../common
 
 patches:
-  # Remove duplicate CRD job - internal job is sufficient for both controllers
+  # Remove the duplicate external CRD job and its dedicated RBAC - the internal
+  # crdjob is sufficient to install the cluster-scoped CRDs for both controllers.
   - patch: |-
       $patch: delete
       apiVersion: batch/v1
       kind: Job
       metadata:
-        name: haproxy-ingress-external-crdjob-1
+        name: haproxy-ingress-external-crdjob
         namespace: ingress-haproxy
+  - patch: |-
+      $patch: delete
+      apiVersion: v1
+      kind: ServiceAccount
+      metadata:
+        name: haproxy-ingress-external-crdjob
+        namespace: ingress-haproxy
+  - patch: |-
+      $patch: delete
+      apiVersion: rbac.authorization.k8s.io/v1
+      kind: ClusterRole
+      metadata:
+        name: haproxy-ingress-external-crdjob
+  - patch: |-
+      $patch: delete
+      apiVersion: rbac.authorization.k8s.io/v1
+      kind: ClusterRoleBinding
+      metadata:
+        name: haproxy-ingress-external-crdjob

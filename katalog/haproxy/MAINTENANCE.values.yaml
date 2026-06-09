@@ -22,7 +22,7 @@ controller:
     secret: "haproxy-ingress-default-cert"
   image:
     repository: registry.sighup.io/fury/haproxytech/kubernetes-ingress
-    tag: "3.2.4"
+    tag: "3.2.8"
     pullPolicy: Always
   containerPort:
     http: 8080
@@ -70,8 +70,10 @@ controller:
         interval: 10s
   podLabels:
     k8s-app: haproxy-ingress
-  extraArgs:
-    - --prometheus
+  prometheus:
+    enabled: true
+  pprof:
+    enabled: false
   resources:
     requests:
       cpu: 250m

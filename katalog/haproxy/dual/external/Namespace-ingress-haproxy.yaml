@@ -11,7 +11,6 @@ metadata:
   labels:
     app.kubernetes.io/name: kubernetes-ingress
     app.kubernetes.io/instance: haproxy-ingress
-    helm.sh/chart: kubernetes-ingress-1.47.4
-    app.kubernetes.io/version: "3.2.4"
+    helm.sh/chart: kubernetes-ingress-1.51.1
+    app.kubernetes.io/version: "3.2.8"
     app.kubernetes.io/managed-by: Helm
-

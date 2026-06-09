@@ -12,7 +12,7 @@
 
 ## Image repository and tag
 
-- HAProxy Ingress Controller image: `registry.sighup.io/fury/haproxytech/kubernetes-ingress:3.2.4`
+- HAProxy Ingress Controller image: `registry.sighup.io/fury/haproxytech/kubernetes-ingress:3.2.8`
 - HAProxy Ingress Controller repo: [https://github.com/haproxytech/kubernetes-ingress](https://github.com/haproxytech/kubernetes-ingress)
 
 ## Configuration

@@ -4,7 +4,24 @@ Welcome to the latest release of `Ingress` module of [`SIGHUP Distribution`](htt
 
 This release switches the `nginx-ingress` controller image to a custom build of the Chainguard fork, produced in-house in [`container-image-sync`](https://github.com/sighupio/container-image-sync). The published tag now carries a `-chainguard` suffix (`v1.15.5-chainguard`).
 
-This release also validates the module against **Kubernetes 1.35.x** (added to the e2e test matrix).
+This release also validates the module against **Kubernetes 1.35.x** (added to the e2e test matrix) and bumps the HAProxy ingress controller to `v3.2.8`.
+
+## Breaking Changes 💔
+
+The HAProxy chart bump (`v3.2.4` → `v3.2.8`) restructured the CRD-installer Job:
+
+- It was **renamed**: `haproxy-ingress-crdjob-1` → `haproxy-ingress-crdjob`
+  (in dual mode `haproxy-ingress-internal-crdjob-1` → `haproxy-ingress-internal-crdjob`).
+- The CRD-installer now ships **dedicated RBAC** (`ServiceAccount`, `ClusterRole`,
+  `ClusterRoleBinding` named `*-crdjob`), instead of reusing the controller's main
+  ServiceAccount.
+
+If you patch or reference these resources by name (e.g. to add `nodeSelector`/
+`tolerations`, or in GitOps/RBAC tooling), update the references to the new names.
+
+In **dual** mode only the `internal` CRD-installer runs — the `external` crdjob and its
+RBAC are removed, since CRDs are cluster-scoped and installing them once is enough.
+Patches in dual mode must target `haproxy-ingress-internal-crdjob`.
 
 ## Component Images 🚢
 
@@ -16,7 +33,7 @@ This release also validates the module against **Kubernetes 1.35.x** (added to t
 | `dual-nginx`       | [`v1.15.5-chainguard`](https://github.com/chainguard-forks/ingress-nginx/releases/tag/controller-v1.15.5) |    `v1.14.3`     |
 | `external-dns`     | [`v0.20.0`](https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.20.0)                       |   `No update`    |
 | `forecastle`       | [`v1.0.159`](https://github.com/stakater/Forecastle/releases/tag/v1.0.159)                              |   `No update`    |
-| `haproxy`          | [`v3.2.4`](https://github.com/haproxytech/kubernetes-ingress/releases/tag/v3.2.4)                       |   `No update`    |
+| `haproxy`          | [`v3.2.8`](https://github.com/haproxytech/kubernetes-ingress/releases/tag/v3.2.8)                       |    `v3.2.4`      |
 | `nginx`            | [`v1.15.5-chainguard`](https://github.com/chainguard-forks/ingress-nginx/releases/tag/controller-v1.15.5) |    `v1.15.1`     |
 
 > Please refer the individual release notes to get a more detailed information on each release.
