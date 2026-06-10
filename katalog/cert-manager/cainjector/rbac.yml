@@ -14,7 +14,12 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: cert-manager-cainjector
-  labels: {}
+  labels:
+    app: cainjector
+    app.kubernetes.io/name: cainjector
+    app.kubernetes.io/instance: cert-manager
+    app.kubernetes.io/component: "cainjector"
+    app.kubernetes.io/version: "v1.20.2"
 rules:
   - apiGroups: ["cert-manager.io"]
     resources: ["certificates"]
@@ -39,7 +44,12 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: cert-manager-cainjector
-  labels: {}
+  labels:
+    app: cainjector
+    app.kubernetes.io/name: cainjector
+    app.kubernetes.io/instance: cert-manager
+    app.kubernetes.io/component: "cainjector"
+    app.kubernetes.io/version: "v1.20.2"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -53,7 +63,12 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: cert-manager-cainjector:leaderelection
-  labels: {}
+  labels:
+    app: cainjector
+    app.kubernetes.io/name: cainjector
+    app.kubernetes.io/instance: cert-manager
+    app.kubernetes.io/component: "cainjector"
+    app.kubernetes.io/version: "v1.20.2"
 rules:
   # Used for leader election by the controller
   # cert-manager-cainjector-leader-election is used by the CertificateBased injector controller
@@ -78,7 +93,12 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: cert-manager-cainjector:leaderelection
-  labels: {}
+  labels:
+    app: cainjector
+    app.kubernetes.io/name: cainjector
+    app.kubernetes.io/instance: cert-manager
+    app.kubernetes.io/component: "cainjector"
+    app.kubernetes.io/version: "v1.20.2"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
