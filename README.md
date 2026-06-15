@@ -9,7 +9,7 @@
 </h1>
 <!-- markdownlint-enable MD033 -->
 
-![Release](https://img.shields.io/badge/Latest%20Release-v5.0.1-blue)
+![Release](https://img.shields.io/badge/Latest%20Release-v5.1.0-blue)
 ![License](https://img.shields.io/github/license/sighupio/fury-kubernetes-ingress?label=License)
 ![Slack](https://img.shields.io/badge/slack-@kubernetes/fury-yellow.svg?logo=slack&label=Slack)
 
@@ -43,12 +43,12 @@ Ingress Module provides the following packages:
 
 | Package                                       | Version    | Description                                                                                                                   |
 | --------------------------------------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| [nginx](katalog/nginx)                        | `v1.15.1`  | The NGINX Ingress Controller for Kubernetes provides delivery services for Kubernetes applications.                           |
-| [dual-nginx](katalog/dual-nginx)              | `v1.15.1`  | It deploys two identical NGINX ingress controllers but with two different scopes: public/external and private/internal.       |
-| [cert-manager](katalog/cert-manager)          | `v1.19.2`  | cert-manager is a Kubernetes add-on to automate the management and issuance of TLS certificates from various issuing sources. |
-| [external-dns](katalog/external-dns)          | `v0.20.0`  | external-dns allows you to manage DNS records natively from Kubernetes.                                                       |
-| [haproxy](katalog/haproxy)                    | `v3.2.4`   | The HAProxy Ingress Controller for Kubernetes, supporting single and dual deployment modes.                                   |
-| [dual-haproxy](katalog/haproxy)               | `v3.2.4`   | It deploys two HAProxy ingress controllers with two different scopes: public/external and private/internal.                   |
+| [nginx](katalog/nginx)                        | `v1.15.5-chainguard`  | The NGINX Ingress Controller for Kubernetes provides delivery services for Kubernetes applications.                           |
+| [dual-nginx](katalog/dual-nginx)              | `v1.15.5-chainguard`  | It deploys two identical NGINX ingress controllers but with two different scopes: public/external and private/internal.       |
+| [cert-manager](katalog/cert-manager)          | `v1.20.2`  | cert-manager is a Kubernetes add-on to automate the management and issuance of TLS certificates from various issuing sources. |
+| [external-dns](katalog/external-dns)          | `v0.21.0`  | external-dns allows you to manage DNS records natively from Kubernetes.                                                       |
+| [haproxy](katalog/haproxy)                    | `v3.2.8`   | The HAProxy Ingress Controller for Kubernetes, supporting single and dual deployment modes.                                   |
+| [dual-haproxy](katalog/haproxy)               | `v3.2.8`   | It deploys two HAProxy ingress controllers with two different scopes: public/external and private/internal.                   |
 | [forecastle](katalog/forecastle)              | `v1.0.159` | Forecastle gives you access to a control panel where you can see your ingresses and access them on Kubernetes.                |
 | [aws-cert-manager](modules/aws-cert-manager/) | -          | Terraform modules for managing IAM permissions on AWS for cert-manager                                                        |
 | [aws-external-dns](modules/aws-external-dns/) | -          | Terraform modules for managing IAM permissions on AWS for external-dns                                                        |
@@ -57,7 +57,6 @@ Ingress Module provides the following packages:
 
 | Kubernetes Version |   Compatibility    | Notes           |
 | ------------------ | :----------------: | --------------- |
-| `1.31.x`           | :white_check_mark: | No known issues |
 | `1.32.x`           | :white_check_mark: | No known issues |
 | `1.33.x`           | :white_check_mark: | No known issues |
 | `1.34.x`           | :white_check_mark: | No known issues |
@@ -135,9 +134,9 @@ To deploy the `cert-manager` package:
 ```yaml
 bases:
   - name: ingress/dual-nginx
-    version: "v5.0.1"
+    version: "v5.1.0"
   - name: ingress/cert-manager
-    version: "v5.0.1"
+    version: "v5.1.0"
 ```
 
 2. Execute `furyctl vendor -H` to download the packages
@@ -196,7 +195,7 @@ Single Ingress:
 ```yaml
 bases:
   - name: ingress/nginx
-    version: "v5.0.1"
+    version: "v5.1.0"
 ```
 
 Dual Ingress:
@@ -206,9 +205,9 @@ Dual Ingress:
 ```yaml
 bases:
   - name: ingress/nginx
-    version: "v5.0.1"
+    version: "v5.1.0"
   - name: ingress/dual-nginx
-    version: "v5.0.1"
+    version: "v5.1.0"
 ```
 
 > See `furyctl` [documentation][furyctl-repo] for additional details about `Furyfile.yml` format.
@@ -280,11 +279,11 @@ To deploy the `forecastle` package:
 ```yaml
 bases:
   - name: ingress/dual-nginx
-    version: "v5.0.1"
+    version: "v5.1.0"
   - name: ingress/cert-manager
-    version: "v5.0.1"
+    version: "v5.1.0"
   - name: ingress/forecastle
-    version: "v5.0.1"
+    version: "v5.1.0"
 ```
 
 2. Execute `furyctl legacy vendor -H` to download the packages
