@@ -1,81 +1,22 @@
-# ExternalDNS package
+# ExternalDNS
 
 <!-- <SD-DOCS> -->
 
-ExternalDNS synchronizes exposed Kubernetes Services and Ingresses with DNS providers.
+## Overview
 
-## Requirements
+ExternalDNS synchronizes exposed Kubernetes Services and Ingresses with DNS providers. In the Ingress Module it is deployed in two flavors, one for "private" records and one for "public" records, and it relies on cloud resources (for example an IAM role and Route53 zones on AWS) that the distribution provisions automatically through the accompanying Terraform modules.
 
-- Kubernetes >= `1.21.0`
-- Kustomize >= `v5.6.0`
+## Upstream project
 
-## Image repository and tag
-
-- ExternalDNS image: `k8s.gcr.io/external-dns/external-dns:v0.21.0`
-- ExternalDNS repo: [https://github.com/kubernetes-sigs/external-dns](https://github.com/kubernetes-sigs/external-dns)
+This package is based on the upstream [ExternalDNS][external-dns-github].
 
 ## Deployment
 
-This package provides two deployments of external-dns, one for "private" records and one for "public" records. The only thing that differs between the two packages is the
-suffix used on kustomize to generate all the resources.
+This package is deployed and managed internally as part of **Ingress Module** when you create a cluster with `furyctl`. It is not meant to be configured directly: it has no dedicated options in the `furyctl.yaml` schema, and its DNS providers and credentials (for example the AWS IAM role and Route53 zones) are derived from your cluster configuration and provisioned automatically by the distribution. See the [module documentation](../../README.md) to learn how the Ingress Module is installed.
 
-The package itself cannot be used without patches, and in this module we provide terraform modules to generate the required cloud resources and kustomize patches.
+<!-- Links -->
 
-You can deploy ExternalDNS in your cluster by including the package in your kustomize project:
-
-`kustomization.yaml` file extract:
-```yaml
-...
-
-resources:
-  - katalog/external-dns/private
-  - katalog/external-dns/public
-
-...
-```
-
-Refer to the Terraform module [aws-eternal-dns](../../modules/aws-external-dns) to create the
-IAM role and the required Kustomize patches automatically. For now the only supported cloud provider is AWS with Route53.
-
-If you want to still create everything manually without using our Terraform Module, you need to patch the service accounts follows:
-
-`sa-patch.yaml`
-```yaml
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::123456789123:role/your-role-name-public
-  name: external-dns-public
-  namespace: external-dns
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::123456789123:role/your-role-name-private
-  name: external-dns-private
-  namespace: external-dns
-```
-
-and then add on the `kustomization.yaml` file the patches:
-
-`kustomization.yaml` file extract:
-```yaml
-...
-
-patchesStrategicMerge:
-  - sa-patch.yaml
-
-...
-```
-
-You can then apply your kustomize project by running the following command:
-
-```bash
-kustomize build | kubectl apply -f -
-```
+[external-dns-github]: https://github.com/kubernetes-sigs/external-dns
 
 <!-- </SD-DOCS> -->
 
