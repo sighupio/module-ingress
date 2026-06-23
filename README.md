@@ -67,7 +67,7 @@ Check the [compatibility matrix][compatibility-matrix] for additional informatio
 
 ### Configuration
 
-The module is deployed with sensible defaults. Configuration is **optional**: you can customize its packages under `spec.distribution.modules.ingress` in your `furyctl.yaml`. If you omit the block, the defaults are applied.
+You configure the module under `spec.distribution.modules.ingress` in your `furyctl.yaml`. You set the `baseDomain` and choose the ingress controller via `nginx.type` (or `haproxy.type`): `single`, `dual`, or `none` to disable it. The other fields are optional and fall back to sensible defaults.
 
 ```yaml
 apiVersion: kfd.sighup.io/v1alpha2
