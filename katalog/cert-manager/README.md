@@ -2,89 +2,30 @@
 
 <!-- <SD-DOCS> -->
 
-cert-manager is an automation tool to manage and issue TLS certificates from various issuing resources in a Kubernetes native way. It ensures that certificates are valid and attempts to renew them before expiry.
+## Overview
 
-This package deploys cert-manager to be used with [Let's Encrypt](https://letsencrypt.org/) as the Certificate Authority.
+cert-manager is a Kubernetes add-on that automates the management and issuance of TLS certificates from various issuing sources. It ensures certificates are valid and attempts to renew them before they expire. In the Ingress Module it is configured to use [Let's Encrypt][lets-encrypt] as the Certificate Authority, with `ClusterIssuer` as the default issuer kind.
 
-## Requirements
+## Upstream project
 
-- Kubernetes `1.32` -> `1.35`
-- Kustomize >= `v5.6.0`
-
-## Image repository and tag
-
-- Cert Manager image: `quay.io/jetstack/cert-manager-controller:v1.20.2`
-- Cert Manager repo: [https://github.com/jetstack/cert-manager](https://github.com/jetstack/cert-manager)
-- Cert Manager documentation: [https://cert-manager.io/docs/](https://cert-manager.io/docs/)
-
-## Configuration
-
-`cert-manager` is deployed with the following configuration:
-
-- The default issuer kind is `ClusterIssuer`
-- The default issuer is `letsencrypt`
+This package is based on the upstream [cert-manager][cert-manager-github].
 
 ## Deployment
 
-To deploy the `cert-manager` package:
+This package is deployed as part of **Ingress Module** when you create a cluster with `furyctl`.
 
-1. Add the package to your bases inside the `Furyfile.yml`:
+You can customize it under `spec.distribution.modules.ingress.certManager` in your `furyctl.yaml`. See the [module documentation](../../README.md) and the configuration reference ([EKSCluster][schema-reference-eks], [KFDDistribution][schema-reference-kfd], [OnPremises][schema-reference-onprem]) for the available options.
 
-```yaml
-resources:
-  - name: ingress/dual-nginx
-    version: "v5.1.0"
-  - name: ingress/cert-manager
-    version: "v5.1.0"
-```
+<!-- Links -->
 
-2. Execute `furyctl legacy vendor -H` to download the packages
-
-3. Inspect the download packages under `./vendor/katalog/ingress/cert-manager`.
-
-4. Define a `kustomization.yaml` that includes the `./vendor/katalog/ingress/cert-manager` directory as resource.
-
-```yaml
-resources:
-- ./vendor/katalog/ingress/cert-manager
-```
-
-For the `dual-nginx` you will need to patch the `ClusterIssuer` resource with the right ingress class:
-
-```yml
----
-patchesJson6902:
-    - target:
-          group: cert-manager.io
-          version: v1
-          kind: ClusterIssuer
-          name: letsencrypt-staging
-      path: patches/dual-nginx.yml
-    - target:
-          group: cert-manager.io
-          version: v1
-          kind: ClusterIssuer
-          name: letsencrypt-prod
-      path: patches/dual-nginx.yml
-```
-
-and in the `patches/dual-nginx.yml`:
-
-```yml
----
-- op: "replace"
-  path: "/spec/acme/solvers/0/http01/ingress/class"
-  value: "external"
-```
-
-5. Finally, execute the following command to deploy the package:
-
-```shell
-kustomize build . | kubectl apply -f -
-```
+[cert-manager-github]: https://github.com/cert-manager/cert-manager
+[lets-encrypt]: https://letsencrypt.org/
+[schema-reference-eks]: https://docs.sighup.io/docs/reference/ekscluster#specdistributionmodulesingress
+[schema-reference-kfd]: https://docs.sighup.io/docs/reference/kfddistribution#specdistributionmodulesingress
+[schema-reference-onprem]: https://docs.sighup.io/docs/reference/onpremises#specdistributionmodulesingress
 
 <!-- </SD-DOCS> -->
 
 ## License
 
-For license details please see [LICENSE](../../LICENSE).
+For license details please see [LICENSE](../../LICENSE)

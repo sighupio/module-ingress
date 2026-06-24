@@ -1,8 +1,11 @@
 # IAM for AWS cert-manager
 
-This Terraform module provides an easy way to generate cert-manager required IAM permissions.
+**This Terraform module generates the IAM permissions required by cert-manager on AWS.**
 
-> ⚠️ **Warning**: this module uses ["IAM Roles for ServiceAccount"](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html) to inject AWS credentials inside cluster autoscaler pods
+> **Note**: This module is part of [SIGHUP Distribution (SD)](https://github.com/sighupio/distribution) and is consumed automatically by `furyctl` when you create a cluster. You don't need to use it directly: its inputs are derived from your `furyctl.yaml`. The reference below is intended for maintainers and contributors.
+
+> [!WARNING]
+> This module uses ["IAM Roles for ServiceAccount"](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html) to inject AWS credentials inside cert-manager pods
 
 ## Requirements
 
@@ -44,14 +47,3 @@ This Terraform module provides an easy way to generate cert-manager required IAM
 | ----------------------------- | ----------------------------------------- |
 | cert\_manager\_iam\_role\_arn | cert-manager IAM role                     |
 | cert\_manager\_patches        | cert-manager Kubernetes resources patches |
-
-## Usage
-
-```hcl
-module "cert_manager_iam_role" {
-  source             = "../vendor/modules/ingress/aws-cert-manager"
-  cluster_name       = "myekscluster"
-  public_zone_id     = "Z1BM4RA99PG48O"
-  tags               = {"mykey": "myvalue"}
-}
-```
