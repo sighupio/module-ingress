@@ -4,7 +4,7 @@
 
 ## Overview
 
-HAProxy Ingress Controller is an Ingress Controller for the [HAProxy][haproxy-main] load balancer, managing HAProxy in a Kubernetes native manner. This package supports both single and dual (internal/external) deployment modes. The default configuration enables SSL redirect with status code `301`, deploys as a `DaemonSet`, exposes metrics via a ServiceMonitor, includes a Grafana dashboard, and uses a TLS default certificate managed by cert-manager.
+HAProxy Kubernetes Ingress Controller is an Ingress Controller for the [HAProxy][haproxy-main] load balancer, managing HAProxy in a Kubernetes native manner. This package supports both single and dual (internal/external) deployment modes. The default configuration enables SSL redirect with status code `301`, deploys as a `DaemonSet`, exposes metrics via a ServiceMonitor, includes a Grafana dashboard, and uses a TLS default certificate managed by cert-manager.
 
 ## Upstream project
 
