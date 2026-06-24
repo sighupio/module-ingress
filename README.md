@@ -27,6 +27,28 @@ The module also includes additional tools like [Forecastle][forecastle-repo], a 
 
 ### Architecture
 
+The reference architecture used to deploy the Ingress Module is shown below:
+
+```mermaid
+flowchart LR
+    User([End users])
+    LB[Load Balancer]
+    subgraph cluster[Kubernetes Cluster]
+        direction LR
+        IC[Ingress Controller]
+        SVC[Service]
+        P1[Pod 1]
+        P2[Pod 2]
+        P3[Pod 3]
+        IC --> SVC
+        SVC --> P1
+        SVC --> P2
+        SVC --> P3
+    end
+    User --> LB
+    LB --> IC
+```
+
 - The traffic from end users arrives first at a Load Balancer that distributes the traffic between the available Ingress Controllers (usually, one for each availability zone).
 - Once the traffic reaches the Ingress Controller, the Ingress proxies the traffic to the Kubernetes service based on the URL path of the request.
 - The `service` is a Kubernetes abstraction that makes the traffic arrive at the pods where the actual application is running, usually using `iptables` rules.
