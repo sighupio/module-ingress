@@ -8,7 +8,7 @@ HAProxy Kubernetes Ingress Controller is an Ingress Controller for the [HAProxy]
 
 ## Upstream project
 
-This package is based on the upstream [HAProxy Ingress Controller][haproxy-github].
+This package is based on the upstream [HAProxy Kubernetes Ingress Controller][haproxy-github].
 
 ## Deployment
 
