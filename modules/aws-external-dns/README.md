@@ -1,8 +1,12 @@
 # IAM for AWS external-dns
 
-This terraform module provides an easy way to generate external-dns (public and private) required IAM permissions.
+**This Terraform module generates the IAM permissions required by external-dns (public and private) on AWS.**
 
-> ⚠️ **Warning**: this module uses ["IAM Roles for ServiceAccount"](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html) to inject AWS credentials inside cluster autoscaler pods.
+> [!NOTE]
+> This module is part of [SIGHUP Distribution (SD)](https://github.com/sighupio/distribution) and is consumed automatically by `furyctl` when you create a cluster. You don't need to use it directly: its inputs are derived from your `furyctl.yaml`. The reference below is intended for maintainers and contributors.
+
+> [!WARNING]
+> This module uses ["IAM Roles for ServiceAccount"](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html) to inject AWS credentials inside external-dns pods.
 
 ## Requirements
 
@@ -50,16 +54,3 @@ This terraform module provides an easy way to generate external-dns (public and 
 | external\_dns\_private\_patches        | external-dns-private Kubernetes resources patches |
 | external\_dns\_public\_iam\_role\_arn  | external-dns-public IAM role                      |
 | external\_dns\_public\_patches         | external-dns-public Kubernetes resources patches  |
-
-## Usage
-
-```hcl
-module "external_dns_iam_role" {
-  source             = "../vendor/modules/ingress/aws-external-dns"
-  cluster_name       = "myekscluster"
-  public_zone_id     = "Z1BM4RA99PG48O"
-  private_zone_id    = "Z1BM4RA99PG499"
-  enable_private     = true
-  tags               = {"mykey": "myvalue"}
-}
-```
