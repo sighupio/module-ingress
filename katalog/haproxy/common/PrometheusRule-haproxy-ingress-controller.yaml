@@ -279,7 +279,7 @@ spec:
             doc: This alert fires if health check failures are detected for a server over a 5 minute period.
 
         - alert: HaproxyIngressConfigSyncFailed
-          expr: haproxy_unable_to_sync_configuration{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"} == 1
+          expr: haproxy_unable_to_sync_configuration{job=~"haproxy-ingress(-internal|-external)?-admin"} == 1
           for: 10m
           labels:
             severity: warning

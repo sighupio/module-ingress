@@ -11,6 +11,7 @@ metadata:
   labels:
     app.kubernetes.io/name: kubernetes-ingress
     app.kubernetes.io/instance: haproxy-ingress
+    app.kubernetes.io/component: admin
     k8s-app: haproxy-ingress
 spec:
   type: ClusterIP

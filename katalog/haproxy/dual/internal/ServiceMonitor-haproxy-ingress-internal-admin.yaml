@@ -3,25 +3,27 @@
 # license that can be found in the LICENSE file.
 
 ---
-apiVersion: v1
-kind: Service
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
 metadata:
   name: haproxy-ingress-internal-admin
   namespace: ingress-haproxy
   labels:
     app.kubernetes.io/name: kubernetes-ingress
     app.kubernetes.io/instance: haproxy-ingress
-    app.kubernetes.io/component: admin
     k8s-app: haproxy-ingress
     type: internal
 spec:
-  type: ClusterIP
-  ports:
-    - name: admin
-      port: 6060
-      protocol: TCP
-      targetPort: admin
+  endpoints:
+    - interval: 10s
+      path: /metrics
+      port: admin
+      scheme: http
+  namespaceSelector:
+    matchNames:
+      - ingress-haproxy
   selector:
-    app.kubernetes.io/name: kubernetes-ingress
-    app.kubernetes.io/instance: haproxy-ingress
-    type: internal
+    matchLabels:
+      app.kubernetes.io/component: admin
+      k8s-app: haproxy-ingress
+      type: internal
