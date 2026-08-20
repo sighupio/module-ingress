@@ -109,9 +109,9 @@ spec:
             max_over_time(haproxy_backend_total_time_average_seconds{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}[5m])
               * on (job, proxy) group_left (svc_namespace, svc_service) haproxy_ingress:proxy_svc_labels
 
-        - record: haproxy_ingress:server_healthcheck_failures_5m
+        - record: haproxy_ingress:server_status_down
           expr: |
-            increase(haproxy_server_check_failures_total{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}[5m])
+            haproxy_server_status{job=~"haproxy-ingress(-internal|-external)?(-metrics)?",state="DOWN"}
               * on (job, proxy) group_left (svc_namespace, svc_service) haproxy_ingress:proxy_svc_labels
 
         - alert: HaproxyIngressTargetDown
@@ -265,18 +265,18 @@ spec:
         - alert: HaproxyServerHealthcheckFailure
           expr: |
             (
-              haproxy_ingress:server_healthcheck_failures_5m
+              haproxy_ingress:server_status_down
                 * on (job, proxy) group_left (ingress, host) haproxy_ingress:proxy_to_ingress
               or on (job, proxy, server)
-              haproxy_ingress:server_healthcheck_failures_5m
-            ) > 0
+              haproxy_ingress:server_status_down
+            ) == 1
           for: 5m
           labels:
             severity: warning
           annotations:
-            summary: 'HAProxy server healthcheck failures ({{ $labels.server }}){{ if $labels.ingress }} [ns: {{ $labels.svc_namespace }}/{{ $labels.ingress }}]{{ end }}'
-            description: 'Health checks are failing for server {{ $labels.server }}{{ if $labels.ingress }} (namespace: {{ $labels.svc_namespace }}, ingress: {{ $labels.ingress }}, host: {{ $labels.host }}){{ end }}.'
-            doc: This alert fires if health check failures are detected for a server over a 5 minute period.
+            summary: 'HAProxy server down ({{ $labels.server }}){{ if $labels.ingress }} [ns: {{ $labels.svc_namespace }}/{{ $labels.ingress }}]{{ end }}'
+            description: 'Server {{ $labels.server }} is DOWN{{ if $labels.ingress }} (namespace: {{ $labels.svc_namespace }}, ingress: {{ $labels.ingress }}, host: {{ $labels.host }}){{ end }}.'
+            doc: This alert fires if a HAProxy backend server remains DOWN for 5 minutes.
 
         - alert: HaproxyIngressConfigSyncFailed
           expr: haproxy_unable_to_sync_configuration{job=~"haproxy-ingress(-internal|-external)?-admin"} == 1
