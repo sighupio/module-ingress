@@ -32,7 +32,7 @@ spec:
               )
             )
 
-        # Given a backend's (svc_namespace, svc_service), returns its Ingress (ingress, host).
+        # Given a backend's (svc_namespace, svc_service), returns its Ingress and Host
         # Same Service targeted by multiple Ingresses fall back to the original HAProxy labels.
         - record: haproxy_ingress:backend_to_ingress
           expr: |
@@ -53,7 +53,7 @@ spec:
               "svc_namespace", "$1", "proxy", "^([a-z0-9-]+)_svc_([a-z0-9-]+)_([a-z0-9-]+)$"),
               "svc_service", "$2", "proxy", "^([a-z0-9-]+)_svc_([a-z0-9-]+)_([a-z0-9-]+)$")
 
-        # Given a HAProxy backend's (job, proxy), returns its Ingress (ingress, host).
+        # Given a HAProxy backend's (job, proxy), returns its Ingress and Host
         - record: haproxy_ingress:proxy_to_ingress
           expr: |
             haproxy_ingress:proxy_svc_labels
@@ -96,12 +96,13 @@ spec:
           for: 15m
           labels:
             severity: critical
+            component: ingress
           annotations:
             summary: HAProxy Ingress metrics target down ({{ $labels.namespace }})
             description: Prometheus cannot scrape haproxy-ingress metrics endpoints for 15 minutes.
             doc: This alert fires if Prometheus target discovery was not able to reach haproxy-ingress metrics in the last 15 minutes.
 
-        - alert: HaproxyHighHttp5xxErrorRateBackend
+        - alert: HaproxyIngressHighHttp5xxErrorRateBackend
           expr: |
             (
               haproxy_ingress:http_5xx_error_rate_backend
@@ -112,12 +113,13 @@ spec:
           for: 10m
           labels:
             severity: critical
+            component: ingress
           annotations:
             summary: 'HAProxy backend high 5xx rate ({{ $labels.proxy }}){{ if $labels.ingress }} [ns: {{ $labels.svc_namespace }}/{{ $labels.ingress }}]{{ end }}'
             description: 'Too many HTTP 5xx responses (>10%) on backend {{ $labels.proxy }}{{ if $labels.ingress }} (namespace: {{ $labels.svc_namespace }}, ingress: {{ $labels.ingress }}, host: {{ $labels.host }}){{ end }}.'
             doc: This alert fires if the 5xx error rate measured on a 2 minute window exceeds 10% for 10 minutes.
 
-        - alert: HaproxyServerResponseErrors
+        - alert: HaproxyIngressServerResponseErrors
           expr: |
             (
               haproxy_ingress:server_response_error_rate
@@ -128,12 +130,13 @@ spec:
           for: 5m
           labels:
             severity: warning
+            component: ingress
           annotations:
             summary: 'HAProxy server response errors ({{ $labels.proxy }}/{{ $labels.server }}){{ if $labels.ingress }} [ns: {{ $labels.svc_namespace }}/{{ $labels.ingress }}]{{ end }}'
             description: 'Response errors exceed 5% on server {{ $labels.proxy }}/{{ $labels.server }}{{ if $labels.ingress }} (namespace: {{ $labels.svc_namespace }}, ingress: {{ $labels.ingress }}, host: {{ $labels.host }}){{ end }}.'
             doc: This alert fires if a specific backend server has response error rate exceeding 5% for 5 minutes.
 
-        - alert: HaproxyBackendConnectionErrors
+        - alert: HaproxyIngressBackendConnectionErrors
           expr: |
             (
               haproxy_ingress:backend_connection_errors_rate
@@ -144,12 +147,13 @@ spec:
           for: 5m
           labels:
             severity: warning
+            component: ingress
           annotations:
             summary: 'HAProxy backend connection errors ({{ $labels.proxy }}){{ if $labels.ingress }} [ns: {{ $labels.svc_namespace }}/{{ $labels.ingress }}]{{ end }}'
             description: 'Backend {{ $labels.proxy }}{{ if $labels.ingress }} (namespace: {{ $labels.svc_namespace }}, ingress: {{ $labels.ingress }}, host: {{ $labels.host }}){{ end }} sees more than 100 connection errors per second.'
             doc: This alert fires if connection errors exceed 100 per second for 5 minutes on a backend.
 
-        - alert: HaproxyBackendPendingRequests
+        - alert: HaproxyIngressBackendPendingRequests
           expr: |
             (
               haproxy_ingress:backend_pending_requests
@@ -160,22 +164,24 @@ spec:
           for: 5m
           labels:
             severity: warning
+            component: ingress
           annotations:
             summary: 'HAProxy backend pending requests ({{ $labels.proxy }}){{ if $labels.ingress }} [ns: {{ $labels.svc_namespace }}/{{ $labels.ingress }}]{{ end }}'
             description: 'Requests are pending in queue for backend {{ $labels.proxy }}{{ if $labels.ingress }} (namespace: {{ $labels.svc_namespace }}, ingress: {{ $labels.ingress }}, host: {{ $labels.host }}){{ end }}.'
             doc: This alert fires if requests have been queued for a backend for more than 5 minutes.
 
-        - alert: HaproxyFrontendSecurityBlockedRequests
+        - alert: HaproxyIngressFrontendSecurityBlockedRequests
           expr: sum by (job, proxy) (rate(haproxy_frontend_denied_connections_total{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}[2m])) > 10
           for: 2m
           labels:
             severity: warning
+            component: ingress
           annotations:
             summary: HAProxy frontend security blocked requests ({{ $labels.proxy }})
             description: Security rules are blocking requests on frontend {{ $labels.proxy }}.
             doc: This alert fires if more than 10 connections per second are being denied on a frontend for 2 minutes.
 
-        - alert: HaproxyServerHealthcheckFailure
+        - alert: HaproxyIngressServerHealthcheckFailure
           expr: |
             (
               haproxy_ingress:server_status_down
@@ -186,6 +192,7 @@ spec:
           for: 5m
           labels:
             severity: warning
+            component: ingress
           annotations:
             summary: 'HAProxy server down ({{ $labels.server }}){{ if $labels.ingress }} [ns: {{ $labels.svc_namespace }}/{{ $labels.ingress }}]{{ end }}'
             description: 'Server {{ $labels.server }} is DOWN{{ if $labels.ingress }} (namespace: {{ $labels.svc_namespace }}, ingress: {{ $labels.ingress }}, host: {{ $labels.host }}){{ end }}.'
@@ -196,6 +203,7 @@ spec:
           for: 10m
           labels:
             severity: warning
+            component: ingress
           annotations:
             summary: HAProxy Ingress configuration sync failed
             description: HAProxy Ingress has a pending configuration that is not valid.
