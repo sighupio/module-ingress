@@ -60,14 +60,6 @@ spec:
               * on (svc_namespace, svc_service) group_left (ingress, host)
             haproxy_ingress:backend_to_ingress
 
-        - record: haproxy_ingress:http_4xx_error_rate_backend
-          expr: |
-            (
-              (sum by (job, proxy) (rate(haproxy_backend_http_responses_total{job=~"haproxy-ingress(-internal|-external)?(-metrics)?",code=~"4.."}[2m])) /
-               sum by (job, proxy) (rate(haproxy_backend_http_responses_total{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}[2m]))) * 100
-            )
-              * on (job, proxy) group_left (svc_namespace, svc_service) haproxy_ingress:proxy_svc_labels
-
         - record: haproxy_ingress:http_5xx_error_rate_backend
           expr: |
             (
@@ -99,16 +91,6 @@ spec:
             sum by (job, proxy) (haproxy_backend_current_queue{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"})
               * on (job, proxy) group_left (svc_namespace, svc_service) haproxy_ingress:proxy_svc_labels
 
-        - record: haproxy_ingress:backend_latency_avg_5m
-          expr: |
-            max_over_time(haproxy_backend_response_time_average_seconds{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}[5m])
-              * on (job, proxy) group_left (svc_namespace, svc_service) haproxy_ingress:proxy_svc_labels
-
-        - record: haproxy_ingress:backend_latency_total_5m
-          expr: |
-            max_over_time(haproxy_backend_total_time_average_seconds{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}[5m])
-              * on (job, proxy) group_left (svc_namespace, svc_service) haproxy_ingress:proxy_svc_labels
-
         - record: haproxy_ingress:server_status_down
           expr: |
             haproxy_server_status{job=~"haproxy-ingress(-internal|-external)?(-metrics)?",state="DOWN"}
@@ -123,22 +105,6 @@ spec:
             summary: HAProxy Ingress metrics target down ({{ $labels.namespace }})
             description: Prometheus cannot scrape haproxy-ingress metrics endpoints for 15 minutes.
             doc: This alert fires if Prometheus target discovery was not able to reach haproxy-ingress metrics in the last 15 minutes.
-
-        - alert: HaproxyHighHttp4xxErrorRateBackend
-          expr: |
-            (
-              haproxy_ingress:http_4xx_error_rate_backend
-                * on (job, proxy) group_left (ingress, host) haproxy_ingress:proxy_to_ingress
-              or on (job, proxy)
-              haproxy_ingress:http_4xx_error_rate_backend
-            ) > 10
-          for: 5m
-          labels:
-            severity: warning
-          annotations:
-            summary: 'HAProxy backend high 4xx rate ({{ $labels.proxy }}){{ if $labels.ingress }} [ns: {{ $labels.svc_namespace }}/{{ $labels.ingress }}]{{ end }}'
-            description: 'Too many HTTP 4xx responses (>10%) on backend {{ $labels.proxy }}{{ if $labels.ingress }} (namespace: {{ $labels.svc_namespace }}, ingress: {{ $labels.ingress }}, host: {{ $labels.host }}){{ end }}.'
-            doc: This alert fires if the 4xx error rate measured on a 2 minute window exceeds 10% for 5 minutes.
 
         - alert: HaproxyHighHttp5xxErrorRateBackend
           expr: |
@@ -229,38 +195,6 @@ spec:
             summary: HAProxy frontend security blocked requests ({{ $labels.proxy }})
             description: Security rules are blocking requests on frontend {{ $labels.proxy }}.
             doc: This alert fires if more than 10 connections per second are being denied on a frontend for 2 minutes.
-
-        - alert: HaproxyBackendLatencyHigh
-          expr: |
-            (
-              haproxy_ingress:backend_latency_avg_5m
-                * on (job, proxy) group_left (ingress, host) haproxy_ingress:proxy_to_ingress
-              or on (job, proxy)
-              haproxy_ingress:backend_latency_avg_5m
-            ) > 5
-          for: 10m
-          labels:
-            severity: warning
-          annotations:
-            summary: 'HAProxy backend latency high ({{ $labels.proxy }}){{ if $labels.ingress }} [ns: {{ $labels.svc_namespace }}/{{ $labels.ingress }}]{{ end }}'
-            description: 'Average response time for backend {{ $labels.proxy }}{{ if $labels.ingress }} (namespace: {{ $labels.svc_namespace }}, ingress: {{ $labels.ingress }}, host: {{ $labels.host }}){{ end }} exceeded 5s.'
-            doc: This alert fires if average backend response time exceeds 5 seconds for 10 minutes.
-
-        - alert: HaproxyBackendLatencyCritical
-          expr: |
-            (
-              haproxy_ingress:backend_latency_total_5m
-                * on (job, proxy) group_left (ingress, host) haproxy_ingress:proxy_to_ingress
-              or on (job, proxy)
-              haproxy_ingress:backend_latency_total_5m
-            ) > 10
-          for: 10m
-          labels:
-            severity: critical
-          annotations:
-            summary: 'HAProxy backend latency critical ({{ $labels.proxy }}){{ if $labels.ingress }} [ns: {{ $labels.svc_namespace }}/{{ $labels.ingress }}]{{ end }}'
-            description: 'Average total time for backend {{ $labels.proxy }}{{ if $labels.ingress }} (namespace: {{ $labels.svc_namespace }}, ingress: {{ $labels.ingress }}, host: {{ $labels.host }}){{ end }} exceeded 10s.'
-            doc: This alert fires if average total time (including queue time) exceeds 10 seconds for 10 minutes.
 
         - alert: HaproxyServerHealthcheckFailure
           expr: |
