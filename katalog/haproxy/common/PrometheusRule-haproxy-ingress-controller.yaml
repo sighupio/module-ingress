@@ -81,11 +81,6 @@ spec:
             sum by (job, proxy) (rate(haproxy_backend_connection_errors_total{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}[1m]))
               * on (job, proxy) group_left (svc_namespace, svc_service) haproxy_ingress:proxy_svc_labels
 
-        - record: haproxy_ingress:backend_alive_servers_total
-          expr: |
-            (haproxy_backend_active_servers{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"} + haproxy_backend_backup_servers{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"})
-              * on (job, proxy) group_left (svc_namespace, svc_service) haproxy_ingress:proxy_svc_labels
-
         - record: haproxy_ingress:backend_pending_requests
           expr: |
             sum by (job, proxy) (haproxy_backend_current_queue{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"})
@@ -153,22 +148,6 @@ spec:
             summary: 'HAProxy backend connection errors ({{ $labels.proxy }}){{ if $labels.ingress }} [ns: {{ $labels.svc_namespace }}/{{ $labels.ingress }}]{{ end }}'
             description: 'Backend {{ $labels.proxy }}{{ if $labels.ingress }} (namespace: {{ $labels.svc_namespace }}, ingress: {{ $labels.ingress }}, host: {{ $labels.host }}){{ end }} sees more than 100 connection errors per second.'
             doc: This alert fires if connection errors exceed 100 per second for 5 minutes on a backend.
-
-        - alert: HaproxyBackendNoAliveServers
-          expr: |
-            (
-              haproxy_ingress:backend_alive_servers_total
-                * on (job, proxy) group_left (ingress, host) haproxy_ingress:proxy_to_ingress
-              or on (job, proxy)
-              haproxy_ingress:backend_alive_servers_total
-            ) == 0
-          for: 0m
-          labels:
-            severity: critical
-          annotations:
-            summary: 'HAProxy backend has no alive servers ({{ $labels.proxy }}){{ if $labels.ingress }} [ns: {{ $labels.svc_namespace }}/{{ $labels.ingress }}]{{ end }}'
-            description: 'No active or backup servers available on backend {{ $labels.proxy }}{{ if $labels.ingress }} (namespace: {{ $labels.svc_namespace }}, ingress: {{ $labels.ingress }}, host: {{ $labels.host }}){{ end }}.'
-            doc: This alert fires immediately when a backend has no healthy servers available.
 
         - alert: HaproxyBackendPendingRequests
           expr: |
