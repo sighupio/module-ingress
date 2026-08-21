@@ -177,9 +177,9 @@ spec:
             severity: warning
             component: ingress
           annotations:
-            summary: HAProxy frontend security blocked requests ({{ $labels.proxy }})
-            description: Security rules are blocking requests on frontend {{ $labels.proxy }}.
-            doc: This alert fires if more than 10 connections per second are being denied on a frontend for 2 minutes.
+            summary: HAProxy Ingress denied TCP connections ({{ $labels.proxy }})
+            description: HAProxy Ingress is denying TCP connections on the {{ $labels.proxy }} frontend before Ingress routing.
+            doc: This alert fires if tcp-request connection rules deny more than 10 connections per second on a frontend for 2 minutes.
 
         - alert: HaproxyIngressServerHealthcheckFailure
           expr: |
