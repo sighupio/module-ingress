@@ -197,3 +197,31 @@ spec:
             summary: HAProxy Ingress denied TCP connections ({{ $labels.proxy }})
             description: HAProxy Ingress is denying TCP connections on the {{ $labels.proxy }} frontend before Ingress routing.
             doc: This alert fires if tcp-request connection rules deny more than 10 connections per second on a frontend for 2 minutes.
+
+        - alert: HaproxyIngressBackendLatencyHigh
+          expr: |
+            (
+              label_replace(
+                max without (namespace) (
+                  max_over_time(haproxy_backend_response_time_average_seconds{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}[5m])
+                ),
+                "namespace", "$1", "proxy", "^([a-z0-9-]+)_svc_([a-z0-9-]+)_([a-z0-9-]+)$"
+              )
+                * on (job, proxy) group_left (svc_service, ingress, host) haproxy_ingress:proxy_to_ingress
+              or on (job, proxy)
+              label_replace(
+                max without (namespace) (
+                  max_over_time(haproxy_backend_response_time_average_seconds{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}[5m])
+                ),
+                "namespace", "$1", "proxy", "^([a-z0-9-]+)_svc_([a-z0-9-]+)_([a-z0-9-]+)$"
+              )
+                * on (job, proxy) group_left (svc_service) haproxy_ingress:proxy_svc_labels
+            ) > 5
+          for: 10m
+          labels:
+            severity: warning
+            component: ingress
+          annotations:
+            summary: 'HAProxy backend latency high ({{ $labels.proxy }}){{ if $labels.namespace }} [ns: {{ $labels.namespace }}{{ if $labels.ingress }}/{{ $labels.ingress }}{{ end }}]{{ end }}'
+            description: 'HAProxy rolling average response time exceeds 5 seconds for backend {{ $labels.proxy }}{{ if $labels.namespace }} (namespace: {{ $labels.namespace }}{{ if $labels.ingress }}, ingress: {{ $labels.ingress }}, host: {{ $labels.host }}{{ end }}){{ end }}.'
+            doc: This alert fires if the HAProxy rolling average response time from the last 1024 successful backend connections exceeds 5 seconds for 10 minutes.
