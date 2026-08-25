@@ -19,42 +19,42 @@ spec:
   groups:
     - name: haproxy-ingress
       rules:
-        # Reshapes kube_ingress_path (one row per Ingress path) into the same (namespace, svc_service)
+        # Reshapes kube_ingress_path (one row per Ingress path) into the same (namespace, backend_service)
         # key that HAProxy backends use, so it can be looked up by backend_to_ingress below.
         # kube_ingress_path.service_port is not used in the match because kube-state-metrics reports
         # it as "0" for named Ingress backend ports, while HAProxy's proxy label carries the name.
         - record: haproxy_ingress:backend_to_ingress_candidate
           expr: |
-            max by (namespace, svc_service, ingress, host) (
-              label_replace(kube_ingress_path, "svc_service", "$1", "service_name", "(.*)")
+            max by (namespace, backend_service, ingress, host) (
+              label_replace(kube_ingress_path, "backend_service", "$1", "service_name", "(.*)")
             )
 
-        # Given a backend's (namespace, svc_service), returns its Ingress and Host
+        # Given a backend's (namespace, backend_service), returns its Ingress and Host
         # Same Service targeted by multiple Ingresses fall back to the original HAProxy labels.
         - record: haproxy_ingress:backend_to_ingress
           expr: |
             haproxy_ingress:backend_to_ingress_candidate
-              and on (namespace, svc_service)
+              and on (namespace, backend_service)
             (
-              count by (namespace, svc_service) (haproxy_ingress:backend_to_ingress_candidate) == 1
+              count by (namespace, backend_service) (haproxy_ingress:backend_to_ingress_candidate) == 1
             )
 
-        # Single source of truth for namespace/svc_service, derived once from a metric that
+        # Single source of truth for namespace/backend_service, derived once from a metric that
         # always exists for every configured backend regardless of traffic (haproxy_backend_status).
         # Normalized to a constant 1 ("* 0 + 1") so joining it below via group_left never changes
         # the value of the metric it's attached to.
-        - record: haproxy_ingress:proxy_svc_labels
+        - record: haproxy_ingress:proxy_backend_labels
           expr: |
             label_replace(label_replace(
               count by (job, proxy) (haproxy_backend_status{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}) * 0 + 1,
               "namespace", "$1", "proxy", "^([a-z0-9-]+)_svc_([a-z0-9-]+)_([a-z0-9-]+)$"),
-              "svc_service", "$2", "proxy", "^([a-z0-9-]+)_svc_([a-z0-9-]+)_([a-z0-9-]+)$")
+              "backend_service", "$2", "proxy", "^([a-z0-9-]+)_svc_([a-z0-9-]+)_([a-z0-9-]+)$")
 
         # Given a HAProxy backend's (job, proxy), returns its Ingress and Host
         - record: haproxy_ingress:proxy_to_ingress
           expr: |
-            haproxy_ingress:proxy_svc_labels
-              * on (namespace, svc_service) group_left (ingress, host)
+            haproxy_ingress:proxy_backend_labels
+              * on (namespace, backend_service) group_left (ingress, host)
             haproxy_ingress:backend_to_ingress
 
         - alert: HaproxyIngressHighHttp5xxErrorRateBackend
@@ -64,13 +64,13 @@ spec:
                 (sum by (job, proxy) (rate(haproxy_backend_http_responses_total{job=~"haproxy-ingress(-internal|-external)?(-metrics)?",code=~"5.."}[2m])) /
                  sum by (job, proxy) (rate(haproxy_backend_http_responses_total{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}[2m]))) * 100
               )
-                * on (job, proxy) group_left (namespace, svc_service, ingress, host) haproxy_ingress:proxy_to_ingress
+                * on (job, proxy) group_left (namespace, backend_service, ingress, host) haproxy_ingress:proxy_to_ingress
               or on (job, proxy)
               (
                 (sum by (job, proxy) (rate(haproxy_backend_http_responses_total{job=~"haproxy-ingress(-internal|-external)?(-metrics)?",code=~"5.."}[2m])) /
                  sum by (job, proxy) (rate(haproxy_backend_http_responses_total{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}[2m]))) * 100
               )
-                * on (job, proxy) group_left (namespace, svc_service) haproxy_ingress:proxy_svc_labels
+                * on (job, proxy) group_left (namespace, backend_service) haproxy_ingress:proxy_backend_labels
             ) > 10
           for: 10m
           labels:
@@ -88,13 +88,13 @@ spec:
                 (sum by (job, proxy, server) (rate(haproxy_server_response_errors_total{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}[2m])) /
                  sum by (job, proxy, server) (rate(haproxy_server_http_responses_total{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}[2m]))) * 100
               )
-                * on (job, proxy) group_left (namespace, svc_service, ingress, host) haproxy_ingress:proxy_to_ingress
+                * on (job, proxy) group_left (namespace, backend_service, ingress, host) haproxy_ingress:proxy_to_ingress
               or on (job, proxy, server)
               (
                 (sum by (job, proxy, server) (rate(haproxy_server_response_errors_total{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}[2m])) /
                  sum by (job, proxy, server) (rate(haproxy_server_http_responses_total{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}[2m]))) * 100
               )
-                * on (job, proxy) group_left (namespace, svc_service) haproxy_ingress:proxy_svc_labels
+                * on (job, proxy) group_left (namespace, backend_service) haproxy_ingress:proxy_backend_labels
             ) > 25
           for: 5m
           labels:
@@ -109,10 +109,10 @@ spec:
           expr: |
             (
               sum by (job, proxy) (rate(haproxy_backend_connection_errors_total{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}[1m]))
-                * on (job, proxy) group_left (namespace, svc_service, ingress, host) haproxy_ingress:proxy_to_ingress
+                * on (job, proxy) group_left (namespace, backend_service, ingress, host) haproxy_ingress:proxy_to_ingress
               or on (job, proxy)
               sum by (job, proxy) (rate(haproxy_backend_connection_errors_total{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}[1m]))
-                * on (job, proxy) group_left (namespace, svc_service) haproxy_ingress:proxy_svc_labels
+                * on (job, proxy) group_left (namespace, backend_service) haproxy_ingress:proxy_backend_labels
             ) > 100
           for: 5m
           labels:
@@ -127,10 +127,10 @@ spec:
           expr: |
             (
               sum by (job, proxy) (haproxy_backend_current_queue{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"})
-                * on (job, proxy) group_left (namespace, svc_service, ingress, host) haproxy_ingress:proxy_to_ingress
+                * on (job, proxy) group_left (namespace, backend_service, ingress, host) haproxy_ingress:proxy_to_ingress
               or on (job, proxy)
               sum by (job, proxy) (haproxy_backend_current_queue{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"})
-                * on (job, proxy) group_left (namespace, svc_service) haproxy_ingress:proxy_svc_labels
+                * on (job, proxy) group_left (namespace, backend_service) haproxy_ingress:proxy_backend_labels
             ) > 0
           for: 5m
           labels:
@@ -148,13 +148,13 @@ spec:
                 max without (namespace) (haproxy_server_status{job=~"haproxy-ingress(-internal|-external)?(-metrics)?",state="DOWN"}),
                 "namespace", "$1", "proxy", "^([a-z0-9-]+)_svc_([a-z0-9-]+)_([a-z0-9-]+)$"
               )
-                * on (job, proxy) group_left (svc_service, ingress, host) haproxy_ingress:proxy_to_ingress
+                * on (job, proxy) group_left (backend_service, ingress, host) haproxy_ingress:proxy_to_ingress
               or on (job, proxy, server)
               label_replace(
                 max without (namespace) (haproxy_server_status{job=~"haproxy-ingress(-internal|-external)?(-metrics)?",state="DOWN"}),
                 "namespace", "$1", "proxy", "^([a-z0-9-]+)_svc_([a-z0-9-]+)_([a-z0-9-]+)$"
               )
-                * on (job, proxy) group_left (svc_service) haproxy_ingress:proxy_svc_labels
+                * on (job, proxy) group_left (backend_service) haproxy_ingress:proxy_backend_labels
             ) == 1
           for: 5m
           labels:
@@ -207,7 +207,7 @@ spec:
                 ),
                 "namespace", "$1", "proxy", "^([a-z0-9-]+)_svc_([a-z0-9-]+)_([a-z0-9-]+)$"
               )
-                * on (job, proxy) group_left (svc_service, ingress, host) haproxy_ingress:proxy_to_ingress
+                * on (job, proxy) group_left (backend_service, ingress, host) haproxy_ingress:proxy_to_ingress
               or on (job, proxy)
               label_replace(
                 max without (namespace) (
@@ -215,7 +215,7 @@ spec:
                 ),
                 "namespace", "$1", "proxy", "^([a-z0-9-]+)_svc_([a-z0-9-]+)_([a-z0-9-]+)$"
               )
-                * on (job, proxy) group_left (svc_service) haproxy_ingress:proxy_svc_labels
+                * on (job, proxy) group_left (backend_service) haproxy_ingress:proxy_backend_labels
             ) > 5
           for: 10m
           labels:
