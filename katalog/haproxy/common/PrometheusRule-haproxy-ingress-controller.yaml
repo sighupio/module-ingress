@@ -95,15 +95,15 @@ spec:
                  sum by (job, proxy, server) (rate(haproxy_server_http_responses_total{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}[2m]))) * 100
               )
                 * on (job, proxy) group_left (namespace, svc_service) haproxy_ingress:proxy_svc_labels
-            ) > 5
+            ) > 25
           for: 5m
           labels:
             severity: warning
             component: ingress
           annotations:
             summary: 'HAProxy server response errors ({{ $labels.proxy }}/{{ $labels.server }}){{ if $labels.namespace }} [ns: {{ $labels.namespace }}{{ if $labels.ingress }}/{{ $labels.ingress }}{{ end }}]{{ end }}'
-            description: 'Response errors exceed 5% on server {{ $labels.proxy }}/{{ $labels.server }}{{ if $labels.namespace }} (namespace: {{ $labels.namespace }}{{ if $labels.ingress }}, ingress: {{ $labels.ingress }}, host: {{ $labels.host }}{{ end }}){{ end }}.'
-            doc: This alert fires if a specific backend server has response error rate exceeding 5% for 5 minutes.
+            description: 'Response errors exceed 25% on server {{ $labels.proxy }}/{{ $labels.server }}{{ if $labels.namespace }} (namespace: {{ $labels.namespace }}{{ if $labels.ingress }}, ingress: {{ $labels.ingress }}, host: {{ $labels.host }}{{ end }}){{ end }}.'
+            doc: This alert fires if a specific backend server has response error rate exceeding 25% for 5 minutes.
 
         - alert: HaproxyIngressBackendConnectionErrors
           expr: |
