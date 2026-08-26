@@ -145,13 +145,13 @@ spec:
           expr: |
             (
               label_replace(
-                max without (namespace) (haproxy_server_status{job=~"haproxy-ingress(-internal|-external)?(-metrics)?",state="DOWN"}),
+                max by (job, proxy, server) (haproxy_server_status{job=~"haproxy-ingress(-internal|-external)?(-metrics)?",state="DOWN"}),
                 "namespace", "$1", "proxy", "^([a-z0-9-]+)_svc_([a-z0-9-]+)_([a-z0-9-]+)$"
               )
                 * on (job, proxy) group_left (backend_service, ingress, host) haproxy_ingress:proxy_to_ingress
               or on (job, proxy, server)
               label_replace(
-                max without (namespace) (haproxy_server_status{job=~"haproxy-ingress(-internal|-external)?(-metrics)?",state="DOWN"}),
+                max by (job, proxy, server) (haproxy_server_status{job=~"haproxy-ingress(-internal|-external)?(-metrics)?",state="DOWN"}),
                 "namespace", "$1", "proxy", "^([a-z0-9-]+)_svc_([a-z0-9-]+)_([a-z0-9-]+)$"
               )
                 * on (job, proxy) group_left (backend_service) haproxy_ingress:proxy_backend_labels
@@ -202,7 +202,7 @@ spec:
           expr: |
             (
               label_replace(
-                max without (namespace) (
+                max by (job, proxy) (
                   max_over_time(haproxy_backend_response_time_average_seconds{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}[5m])
                 ),
                 "namespace", "$1", "proxy", "^([a-z0-9-]+)_svc_([a-z0-9-]+)_([a-z0-9-]+)$"
@@ -210,7 +210,7 @@ spec:
                 * on (job, proxy) group_left (backend_service, ingress, host) haproxy_ingress:proxy_to_ingress
               or on (job, proxy)
               label_replace(
-                max without (namespace) (
+                max by (job, proxy) (
                   max_over_time(haproxy_backend_response_time_average_seconds{job=~"haproxy-ingress(-internal|-external)?(-metrics)?"}[5m])
                 ),
                 "namespace", "$1", "proxy", "^([a-z0-9-]+)_svc_([a-z0-9-]+)_([a-z0-9-]+)$"
