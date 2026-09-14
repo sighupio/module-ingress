@@ -3,14 +3,14 @@
 # license that can be found in the LICENSE file.
 
 [tools]
-kind = "0.31.0"
-kubectl = "1.35.5"
+kind = "0.33.0"
+kubectl = "1.36.4"
 kustomize = "5.6.0"
-helm = "3.15.0"    
+helm = "3.21.2"    
 yq = "4.43.1"      
 go = "1.23"        
 bats = "1.11.0"    
-dyff = "1.9.0"    
+dyff = "1.12.0"    
 drone = "1.9.0"
 "ubi:google/addlicense" = "v1.1.1"
 gh = "2.86.0"
@@ -64,7 +64,7 @@ echo "✅ E2E tests completed successfully!"
 '''
 
 [tasks.e2e-create]
-description = "Create Kind cluster for E2E tests (K8s 1.35)"
+description = "Create Kind cluster for E2E tests (K8s 1.36)"
 run = '''
 #!/bin/bash
 set -e
@@ -73,7 +73,7 @@ echo "📦 Creating E2E Test Environment"
 echo "================================="
 
 # Configuration
-KUBE_VERSION="1.35.0"
+KUBE_VERSION="1.36.4"
 export DRONE_BUILD_NUMBER="${DRONE_BUILD_NUMBER:-9999}"
 export DRONE_REPO_NAME="${DRONE_REPO_NAME:-module-ingress}"
 CLUSTER_NAME="${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-${KUBE_VERSION}"
@@ -125,7 +125,7 @@ echo "🧪 Running E2E Tests"
 echo "===================="
 
 # Configuration
-KUBE_VERSION="1.35.0"
+KUBE_VERSION="1.36.4"
 export DRONE_BUILD_NUMBER="${DRONE_BUILD_NUMBER:-9999}"
 export DRONE_REPO_NAME="${DRONE_REPO_NAME:-module-ingress}"
 CLUSTER_NAME="${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-${KUBE_VERSION}"
@@ -159,7 +159,7 @@ echo "✅ Tests completed!"
 description = "Cleanup the E2E test cluster and generated files"
 run = '''
 #!/bin/bash
-KUBE_VERSION="1.35.0"
+KUBE_VERSION="1.36.4"
 DRONE_BUILD_NUMBER="${DRONE_BUILD_NUMBER:-9999}"
 DRONE_REPO_NAME="${DRONE_REPO_NAME:-module-ingress}"
 CLUSTER_NAME="${DRONE_REPO_NAME}-${DRONE_BUILD_NUMBER}-${KUBE_VERSION}"
