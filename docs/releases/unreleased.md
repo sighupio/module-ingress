@@ -14,7 +14,7 @@ This release also validates the module against Kubernetes 1.36, removes the supp
 | `dual-nginx`       | [`v1.15.10-chainguard`](https://github.com/chainguard-forks/ingress-nginx/releases/tag/controller-v1.15.10) |    `v1.15.5`     |
 | `external-dns`     | [`v0.21.0`](https://github.com/kubernetes-sigs/external-dns/releases/tag/v0.21.0)                       |   `v0.20.0`    |
 | `forecastle`       | [`v1.0.159`](https://github.com/stakater/Forecastle/releases/tag/v1.0.159)                              |   `No update`    |
-| `haproxy`          | [`v3.2.8`](https://github.com/haproxytech/kubernetes-ingress/releases/tag/v3.2.8)                       |    `v3.2.4`      |
+| `haproxy`          | [`v3.2.15`](https://github.com/haproxytech/kubernetes-ingress/releases/tag/v3.2.15)                       |    `v3.2.8`      |
 | `nginx`            | [`v1.15.10-chainguard`](https://github.com/chainguard-forks/ingress-nginx/releases/tag/controller-v1.15.10) |    `v1.15.5`     |
 
 > Please refer the individual release notes to get a more detailed information on each release.

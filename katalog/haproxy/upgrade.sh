@@ -4,7 +4,8 @@
 # license that can be found in the LICENSE file.
 
 # Remember to change the helm chart version
-VERSION=1.51.1
+VERSION=1.54.0
+CONTROLLER_VERSION=3.2.15
 
 CHART_REPO="https://haproxytech.github.io/helm-charts"
 CHART_NAME="kubernetes-ingress"
@@ -40,6 +41,13 @@ generate_mode() {
   echo "Created manifests in $output_dir"
 }
 
+sync_manifest_metadata() {
+  find single dual -type f -name '*.yaml' -exec sed -i.bak \
+    -e "s|helm.sh/chart: kubernetes-ingress-[^[:space:]]*|helm.sh/chart: kubernetes-ingress-$VERSION|" \
+    -e "s|app.kubernetes.io/version: \"[^\"]*\"|app.kubernetes.io/version: \"$CONTROLLER_VERSION\"|" {} +
+  find single dual -type f -name '*.bak' -delete
+}
+
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$SCRIPT_DIR"
@@ -58,6 +66,8 @@ generate_mode "internal" \
 generate_mode "external" \
   "--values $SCRIPT_DIR/MAINTENANCE.values.yaml --values $SCRIPT_DIR/MAINTENANCE.external.values.yaml" \
   "$SCRIPT_DIR/dual/external"
+
+sync_manifest_metadata
 
 echo ""
 echo "Adding license headers"
