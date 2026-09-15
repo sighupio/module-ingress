@@ -61,8 +61,8 @@ The following packages are included in Ingress Module:
 
 | Package                                       | Version              | Description                                                                                                                   |
 | --------------------------------------------- | -------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| [nginx](katalog/nginx)                        | `v1.15.5-chainguard` | The NGINX Ingress Controller for Kubernetes provides delivery services for Kubernetes applications.                           |
-| [dual-nginx](katalog/dual-nginx)              | `v1.15.5-chainguard` | Deploys two identical NGINX ingress controllers but with two different scopes: public/external and private/internal.          |
+| [nginx](katalog/nginx)                        | `v1.15.10-chainguard` | The NGINX Ingress Controller for Kubernetes provides delivery services for Kubernetes applications.                           |
+| [dual-nginx](katalog/dual-nginx)              | `v1.15.10-chainguard` | Deploys two identical NGINX ingress controllers but with two different scopes: public/external and private/internal.          |
 | [cert-manager](katalog/cert-manager)          | `v1.20.2`            | cert-manager is a Kubernetes add-on to automate the management and issuance of TLS certificates from various issuing sources. |
 | [external-dns](katalog/external-dns)          | `v0.21.0`            | external-dns allows you to manage DNS records natively from Kubernetes.                                                       |
 | [haproxy](katalog/haproxy)                    | `v3.2.8`             | The HAProxy Ingress Controller for Kubernetes, supporting single and dual deployment modes.                                   |
@@ -76,10 +76,10 @@ Click on each package to see its full documentation.
 
 | Kubernetes Version |   Compatibility    | Notes           |
 | ------------------ | :----------------: | --------------- |
-| `1.32.x`           | :white_check_mark: | No known issues |
 | `1.33.x`           | :white_check_mark: | No known issues |
 | `1.34.x`           | :white_check_mark: | No known issues |
 | `1.35.x`           | :white_check_mark: | No known issues |
+| `1.36.x`           | :white_check_mark: | No known issues |
 
 Check the [compatibility matrix][compatibility-matrix] for additional information about previous releases of the module.
 

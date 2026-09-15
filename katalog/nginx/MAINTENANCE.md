@@ -1,7 +1,7 @@
 # Ingress NGINX controller package maintenance guide
 
-**Current Version**: v1.15.5-chainguard (Helm Chart 4.15.5)
-**Previous Version**: v1.15.1 (Helm Chart 4.15.1)
+**Current Version**: v1.15.10-chainguard (Helm Chart 4.15.10)
+**Previous Version**: v1.15.5-chainguard (Helm Chart 4.15.5)
 **Last Updated**: May 2026
 
 > ℹ️ **Image source**: starting from `v1.15.5-chainguard`, the controller image is
