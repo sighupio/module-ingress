@@ -46,7 +46,7 @@ spec:
         fsGroup: 101
       containers:
         - name: controller
-          image: registry.sighup.io/fury/ingress-nginx/controller:v1.15.5-chainguard
+          image: registry.sighup.io/fury/ingress-nginx/controller:v1.15.10-chainguard
           imagePullPolicy: Always
           lifecycle:
             preStop:
