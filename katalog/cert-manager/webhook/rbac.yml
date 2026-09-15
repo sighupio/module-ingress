@@ -4,11 +4,16 @@
 
 ---
 apiVersion: v1
-automountServiceAccountToken: true
 kind: ServiceAccount
+automountServiceAccountToken: true
 metadata:
   name: cert-manager-webhook
-  labels: {}
+  labels:
+    app: webhook
+    app.kubernetes.io/name: webhook
+    app.kubernetes.io/instance: cert-manager
+    app.kubernetes.io/component: "webhook"
+    app.kubernetes.io/version: "v1.21.2"
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -19,7 +24,7 @@ metadata:
     app.kubernetes.io/name: webhook
     app.kubernetes.io/instance: cert-manager
     app.kubernetes.io/component: "webhook"
-    app.kubernetes.io/version: "v1.20.2"
+    app.kubernetes.io/version: "v1.21.2"
 rules:
 - apiGroups: ["authorization.k8s.io"]
   resources: ["subjectaccessreviews"]
@@ -34,14 +39,14 @@ metadata:
     app.kubernetes.io/name: webhook
     app.kubernetes.io/instance: cert-manager
     app.kubernetes.io/component: "webhook"
-    app.kubernetes.io/version: "v1.20.2"
+    app.kubernetes.io/version: "v1.21.2"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: cert-manager-webhook:subjectaccessreviews
 subjects:
-- kind: ServiceAccount
-  name: cert-manager-webhook
+  - kind: ServiceAccount
+    name: cert-manager-webhook
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -52,7 +57,7 @@ metadata:
     app.kubernetes.io/name: webhook
     app.kubernetes.io/instance: cert-manager
     app.kubernetes.io/component: "webhook"
-    app.kubernetes.io/version: "v1.20.2"
+    app.kubernetes.io/version: "v1.21.2"
 rules:
 - apiGroups: [""]
   resources: ["secrets"]
@@ -73,11 +78,11 @@ metadata:
     app.kubernetes.io/name: webhook
     app.kubernetes.io/instance: cert-manager
     app.kubernetes.io/component: "webhook"
-    app.kubernetes.io/version: "v1.20.2"
+    app.kubernetes.io/version: "v1.21.2"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
   name: cert-manager-webhook:dynamic-serving
 subjects:
-- kind: ServiceAccount
-  name: cert-manager-webhook
+  - kind: ServiceAccount
+    name: cert-manager-webhook
