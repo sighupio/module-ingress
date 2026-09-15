@@ -65,7 +65,7 @@ The following packages are included in Ingress Module:
 | [dual-nginx](katalog/dual-nginx)              | `v1.15.10-chainguard` | Deploys two identical NGINX ingress controllers but with two different scopes: public/external and private/internal.          |
 | [cert-manager](katalog/cert-manager)          | `v1.20.2`            | cert-manager is a Kubernetes add-on to automate the management and issuance of TLS certificates from various issuing sources. |
 | [external-dns](katalog/external-dns)          | `v0.21.0`            | external-dns allows you to manage DNS records natively from Kubernetes.                                                       |
-| [haproxy](katalog/haproxy)                    | `v3.2.8`             | The HAProxy Ingress Controller for Kubernetes, supporting single and dual deployment modes.                                   |
+| [haproxy](katalog/haproxy)                    | `v3.2.15`            | The HAProxy Ingress Controller for Kubernetes, supporting single and dual deployment modes.                                   |
 | [forecastle](katalog/forecastle)              | `v1.0.159`           | Forecastle gives you access to a control panel where you can see your ingresses and access them on Kubernetes.                |
 | [aws-cert-manager](modules/aws-cert-manager)  | `-`                  | Terraform module for managing IAM permissions on AWS for cert-manager.                                                        |
 | [aws-external-dns](modules/aws-external-dns)  | `-`                  | Terraform module for managing IAM permissions on AWS for external-dns.                                                        |
