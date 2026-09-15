@@ -22,7 +22,6 @@ The `cert-manager-edit` ClusterRole removes `create` on ACME `Challenge` resourc
 
 The cert-manager controller Service metrics port is renamed from `tcp-prometheus-servicemonitor` to `http-metrics`. Custom configurations must reference `http-metrics`.
 
-
 ## Component Images 🚢
 
 | Component          | Supported Version                                                                                       | Previous Version |
