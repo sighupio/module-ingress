@@ -1,15 +1,15 @@
 # cert-manager Package Maintenance Guide
 
 You can find the support matrix of cert-manager here:
-<https://cert-manager.io/docs/installation/supported-releases/>
+<https://cert-manager.io/docs/releases/>
 
 Install instructions here:
 <https://cert-manager.io/docs/installation/kubectl/>
 
 Upgrade instructions are here:
-<https://cert-manager.io/docs/installation/upgrading/>
+<https://cert-manager.io/docs/releases/upgrading/>
 There are also docs for each minor upgrade, for example:
-<https://cert-manager.io/docs/installation/upgrading/upgrading-1.18-1.19>
+<https://cert-manager.io/docs/releases/upgrading/upgrading-1.20-1.21/>
 
 And here you can find instructions on how to verify that the installation is OK:
 <https://cert-manager.io/docs/installation/verify/>
@@ -36,7 +36,7 @@ References:
 - Specific version
 
   ```bash
-  curl --location --remote-name https://github.com/cert-manager/cert-manager/releases/download/v1.19.2/cert-manager.yaml
+  curl --location --remote-name https://github.com/cert-manager/cert-manager/releases/download/v1.21.2/cert-manager.yaml
   ```
 
 - Latest version
@@ -183,23 +183,21 @@ References:
         cert-manager-controller-certificates-cr.yaml \
         cert-manager-controller-orders-cr.yaml \
         cert-manager-controller-challenges-cr.yaml \
-        cert-manager-controller-certificatesigningrequests-cr.yaml \
         cert-manager-controller-ingress-shim-cr.yaml \
         cert-manager-cluster-view-cr.yaml \
         cert-manager-view-cr.yaml \
         cert-manager-edit-cr.yaml \
         cert-manager-controller-approve:cert-manager-io-cr.yaml \
+        cert-manager-controller-certificatesigningrequests-cr.yaml \
         cert-manager-controller-issuers-crb.yaml \
         cert-manager-controller-clusterissuers-crb.yaml \
         cert-manager-controller-certificates-crb.yaml \
         cert-manager-controller-orders-crb.yaml \
         cert-manager-controller-challenges-crb.yaml \
-        cert-manager-controller-certificatesigningrequests-crb.yaml \
         cert-manager-controller-ingress-shim-crb.yaml \
         cert-manager-controller-approve:cert-manager-io-crb.yaml \
-        cert-manager-tokenrequest-role.yaml \
+        cert-manager-controller-certificatesigningrequests-crb.yaml \
         cert-manager:leaderelection-role.yaml \
-        cert-manager-tokenrequest-rb.yaml \
         cert-manager:leaderelection-rb.yaml \
         > rbac.yml
     mv cert-manager-sa.yaml \
@@ -208,23 +206,21 @@ References:
         cert-manager-controller-certificates-cr.yaml \
         cert-manager-controller-orders-cr.yaml \
         cert-manager-controller-challenges-cr.yaml \
-        cert-manager-controller-certificatesigningrequests-cr.yaml \
         cert-manager-controller-ingress-shim-cr.yaml \
         cert-manager-cluster-view-cr.yaml \
         cert-manager-view-cr.yaml \
         cert-manager-edit-cr.yaml \
         cert-manager-controller-approve:cert-manager-io-cr.yaml \
+        cert-manager-controller-certificatesigningrequests-cr.yaml \
         cert-manager-controller-issuers-crb.yaml \
         cert-manager-controller-clusterissuers-crb.yaml \
         cert-manager-controller-certificates-crb.yaml \
         cert-manager-controller-orders-crb.yaml \
         cert-manager-controller-challenges-crb.yaml \
-        cert-manager-controller-certificatesigningrequests-crb.yaml \
         cert-manager-controller-ingress-shim-crb.yaml \
         cert-manager-controller-approve:cert-manager-io-crb.yaml \
-        cert-manager-tokenrequest-role.yaml \
+        cert-manager-controller-certificatesigningrequests-crb.yaml \
         cert-manager:leaderelection-role.yaml \
-        cert-manager-tokenrequest-rb.yaml \
         cert-manager:leaderelection-rb.yaml \
         done
 
@@ -253,7 +249,7 @@ References:
         patch: |-
         - op: replace
             path: /spec/template/spec/containers/0/args/3
-            value: --acme-http01-solver-image=registry.sighup.io/fury/cert-manager-acmesolver:v1.19.2
+            value: --acme-http01-solver-image=registry.sighup.io/fury/jetstack/cert-manager-acmesolver:v1.21.2
 
     ```
 
