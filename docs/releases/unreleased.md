@@ -4,6 +4,10 @@ Welcome to the latest release of `Ingress` module of [`SIGHUP Distribution`](htt
 
 This release also validates the module against Kubernetes 1.36, removes the support for Kubernetes 1.32 and bumps the packages. See the maxtrix below.
 
+## Fixes 🐞
+
+- [#185](https://github.com/sighupio/module-ingress/pull/185) Updates HAProxy Ingress alerts to include information about the affected application, avoid duplicate alerts from controller replicas, and monitor configuration sync failures through the admin endpoint.
+
 ## Component Images 🚢
 
 | Component          | Supported Version                                                                                       | Previous Version |
