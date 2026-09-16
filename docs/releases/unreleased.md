@@ -10,6 +10,18 @@ This release also validates the module against Kubernetes 1.36, removes the supp
 
 ## Breaking Changes 💔
 
+### HAProxy Ingress alerts renamed
+
+HAProxy Ingress alert names now start with `HaproxyIngress`:
+
+- `HaproxyHighHttp5xxErrorRateBackend` becomes `HaproxyIngressHighHttp5xxErrorRateBackend`.
+- `HaproxyServerResponseErrors` becomes `HaproxyIngressServerResponseErrors`.
+- `HaproxyBackendConnectionErrors` becomes `HaproxyIngressBackendConnectionErrors`.
+- `HaproxyBackendPendingRequests` becomes `HaproxyIngressBackendPendingRequests`.
+- `HaproxyServerHealthcheckFailure` becomes `HaproxyIngressServerHealthcheckFailure`.
+- `HaproxyFrontendSecurityBlockedRequests` becomes `HaproxyIngressFrontendSecurityBlockedRequests`.
+- `HaproxyBackendLatencyHigh` becomes `HaproxyIngressBackendLatencyHigh`.
+
 ### TokenRequest removed
 
 The module removes the `cert-manager-tokenrequest` `Role` and `RoleBinding`. Issuers using `serviceAccountRef.name: cert-manager` must use a dedicated ServiceAccount with the required RBAC or grant `serviceaccounts/token: create` to the controller ServiceAccount.
