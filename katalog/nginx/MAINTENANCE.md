@@ -1,7 +1,7 @@
 # Ingress NGINX controller package maintenance guide
 
-**Current Version**: v1.15.10-chainguard (Helm Chart 4.15.10)
-**Previous Version**: v1.15.5-chainguard (Helm Chart 4.15.5)
+**Current Version**: v1.15.16-chainguard (Helm Chart 4.15.1)
+**Previous Version**: v1.15.10-chainguard (Helm Chart 4.15.1)
 **Last Updated**: May 2026
 
 > ℹ️ **Image source**: starting from `v1.15.5-chainguard`, the controller image is
@@ -40,7 +40,7 @@ kustomize build . > current-release.yaml
 ```bash
 helm template ingress-nginx ingress-nginx \
   --repo https://kubernetes.github.io/ingress-nginx \
-  --namespace ingress-nginx --create-namespace --version $VERSION --values MAINTENANCE.values.yml | yq --split-exp '.kind + "-" + .metadata.name'
+  --namespace ingress-nginx --create-namespace --version ${VERSION:?} --values MAINTENANCE.values.yml | yq --split-exp '.kind + "-" + .metadata.name'
 ```
 
 3. Sometimes, you might get an empty file called ".yml" from the template, you can safely delete it.

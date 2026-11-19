@@ -10,7 +10,7 @@ controller:
   image:
     registry: registry.sighup.io
     image: fury/ingress-nginx/controller
-    tag: "v1.15.10-chainguard"
+    tag: "v1.15.16-chainguard"
     pullPolicy: Always
     digest: ""
   containerPort:
@@ -128,7 +128,7 @@ controller:
         expr: |
           (avg(nginx_ingress_controller_ssl_expire_time_seconds{job="ingress-nginx-controller-metrics"}) by (host) - time()) < 86400
         labels:
-          severity: critical        
+          severity: critical
   config:
     enable-access-log-for-default-backend: true
     http-redirect-code: 301

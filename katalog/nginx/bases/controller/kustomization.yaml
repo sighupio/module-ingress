@@ -13,11 +13,6 @@ labels:
     pairs:
       app: ingress-nginx
 
-images:
-  - name: k8s.gcr.io/ingress-nginx/controller
-    newName: registry.sighup.io/fury/ingress-nginx/controller
-    newTag: v1.15.10-chainguard
-
 resources:
   - Certificate-ingress-nginx-admission.yml
   - ConfigMap-ingress-nginx-controller.yml
